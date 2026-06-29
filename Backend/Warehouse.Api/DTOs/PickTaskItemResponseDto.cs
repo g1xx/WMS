@@ -1,0 +1,21 @@
+﻿namespace Warehouse.Api.DTOs;
+
+public class PickTaskResponseDto
+{
+    public Guid Id { get; set; }
+    public string Sector { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public string? AssignedWorkerId { get; set; }
+
+    public List<PickTaskItemResponseDto> Items { get; set; } = new List<PickTaskItemResponseDto>();
+}
+
+public class PickTaskItemResponseDto
+{
+    public Guid Id { get; set; }
+    public string LocationBarcode { get; set; } = string.Empty;
+    public string ProductName { get; set; } = string.Empty;
+    public string ProductSku { get; set; } = string.Empty;
+    public int RequiredQuantity { get; set; }
+    public int PickedQuantity { get; set; }
+}

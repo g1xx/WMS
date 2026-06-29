@@ -1,0 +1,11 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+
+node_modules/
+dist/
+build/
+.env
+npm-debug.log
