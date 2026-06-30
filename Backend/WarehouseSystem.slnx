@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Warehouse.Api/Warehouse.Api.csproj" />
+  <Project Path="Warehouse.Domain/Warehouse.Domain.csproj" />
+  <Project Path="Warehouse.Infrastructure/Warehouse.Infrastructure.csproj" />
+</Solution>

@@ -1,0 +1,16 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Warehouse.Domain;
+
+namespace Warehouse.Infrastructure.Configurations;
+
+public class ContainerConfiguration : IEntityTypeConfiguration<Container>
+{
+    public void Configure(EntityTypeBuilder<Container> builder)
+    {
+        builder.HasOne(c => c.Location)
+               .WithMany()
+               .HasForeignKey(c => c.LocationId)
+               .OnDelete(DeleteBehavior.SetNull);
+    }
+}
