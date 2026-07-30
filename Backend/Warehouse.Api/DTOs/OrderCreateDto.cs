@@ -2,7 +2,6 @@
 
 public class OrderCreateDto
 {
-    public string OrderNumber { get; set; } = string.Empty;
     public string CustomerName { get; set; } = string.Empty;
     public string DestinationAddress { get; set; } = string.Empty;
     public List<OrderItemCreateDto> Items { get; set; } = new List<OrderItemCreateDto>();

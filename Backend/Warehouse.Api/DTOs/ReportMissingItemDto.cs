@@ -1,0 +1,10 @@
+﻿namespace Warehouse.Api.DTOs
+{
+    public class ReportMissingItemDto
+    {
+        public string LocationBarcode { get; set; } = string.Empty;
+        public string ProductSku { get; set; } = string.Empty;
+        public int MissingQuantity { get; set; } // Сколько штук не смогли найти
+        public string BrigadierBarcode { get; set; } = string.Empty;
+    }
+}

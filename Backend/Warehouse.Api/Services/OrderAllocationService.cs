@@ -29,17 +29,17 @@ public class OrderAllocationService : IOrderAllocationService
 
             var availableStocks = await _context.Stocks
                 .Include(s => s.Location)
-                .Where(s => s.ProductId == item.ProductId && s.Quantity > 0)
-                .OrderBy(s => s.Quantity)
+                .Where(s => s.ProductId == item.ProductId && (s.PhysicalQuantity - s.ReservedQuantity) > 0)
+                .OrderByDescending(s => (s.PhysicalQuantity - s.ReservedQuantity)) 
                 .ToListAsync();
 
             foreach (var stock in availableStocks)
             {
                 if (remainingToAllocate == 0) break;
 
-                var quantityToTake = Math.Min(remainingToAllocate, stock.Quantity);
+                var quantityToTake = Math.Min(remainingToAllocate, stock.AvailableQuantity);
 
-                stock.Quantity -= quantityToTake;
+                stock.ReservedQuantity += quantityToTake;
                 remainingToAllocate -= quantityToTake;
 
                 plannedPicks.Add((item.ProductId, stock.LocationId, stock.Location!.Sector, quantityToTake));
@@ -47,7 +47,7 @@ public class OrderAllocationService : IOrderAllocationService
 
             if (remainingToAllocate > 0)
             {
-                throw new Exception($"Warehouse deficit! {remainingToAllocate} units missing for product {item.ProductId}");
+                throw new Exception($"Дефицит на складе! Не хватает {remainingToAllocate} шт. для товара {item.ProductId}");
             }
         }
 

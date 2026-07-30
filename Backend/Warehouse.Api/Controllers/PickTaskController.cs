@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Warehouse.Domain;
-using Warehouse.Infrastructure;
-using System.ComponentModel.DataAnnotations;
 using Warehouse.Api.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Warehouse.Application.Services;
 
 namespace Warehouse.Api.Controllers
 {
@@ -15,140 +12,150 @@ namespace Warehouse.Api.Controllers
     [Route("api/[controller]")]
     public class PickTaskController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IPickTaskService _pickTaskService;
 
-        public PickTaskController(AppDbContext context)
+        // Подключаем наш сервис вместо AppDbContext!
+        public PickTaskController(IPickTaskService pickTaskService)
         {
-            _context = context;
+            _pickTaskService = pickTaskService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PickTaskResponseDto>>> GetPickTasks()
         {
-            var tasks = await _context.PickTasks
-                .AsNoTracking()
-                .Select(t => new PickTaskResponseDto
-                {
-                    Id = t.Id,
-                    Sector = t.Sector,
-                    Status = t.Status.ToString(),
-                    AssignedWorkerId = t.AssignedWorkerId,
-                    Items = t.Items.Select(i => new PickTaskItemResponseDto
-                    {
-                        Id = i.Id,
-                        LocationBarcode = i.Location!.AddressBarcode,
-                        ProductName = i.Product!.Name,
-                        ProductSku = i.Product.Sku,
-                        RequiredQuantity = i.RequiredQuantity,
-                        PickedQuantity = i.PickedQuantity
-                    }).ToList()
-                })
-                .ToListAsync();
-
+            var tasks = await _pickTaskService.GetPickTasksAsync();
             return Ok(tasks);
+        }
+
+        // ВОССТАНОВИЛИ метод получения следующего задания
+        [HttpGet("next")]
+        public async Task<IActionResult> GetNextTask()
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Не удалось определить пользователя.");
+
+            var task = await _pickTaskService.GetNextTaskAsync(userId);
+
+            if (task == null) return Ok(null);
+
+            return Ok(task);
         }
 
         [HttpPost("{id}/start")]
         public async Task<ActionResult> StartPickTask(Guid id, StartPickTaskDto dto)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                              ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            if (string.IsNullOrEmpty(currentUserId))
+            try
             {
-                return Unauthorized("Unable to determine user from token.");
+                var message = await _pickTaskService.StartPickTaskAsync(id, dto, userId);
+                return Ok(message);
             }
-
-            var task = await _context.PickTasks.FindAsync(id);
-            if (task == null) return NotFound("Pick task not found.");
-
-            if (!string.IsNullOrEmpty(task.AssignedWorkerId) && task.AssignedWorkerId != currentUserId)
+            catch (KeyNotFoundException ex)
             {
-                return BadRequest("Error! This task is already being performed by another worker.");
+                return NotFound(ex.Message);
             }
-
-            if (task.Status == PickTaskStatus.Completed)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest("This task has already been fully picked.");
+                return BadRequest(ex.Message);
             }
-
-            var container = await _context.Containers
-                .FirstOrDefaultAsync(c => c.Barcode == dto.ContainerBarcode);
-
-            if (container == null)
-            {
-                return BadRequest($"Container with barcode '{dto.ContainerBarcode}' not found.");
-            }
-
-            task.Status = PickTaskStatus.InProgress;
-            task.AssignedWorkerId = currentUserId;
-            task.ContainerId = container.Id;
-
-            await _context.SaveChangesAsync();
-
-            return Ok("Picking successfully started. Container linked, task locked to you.");
         }
 
         [HttpPost("{id}/pick")]
         public async Task<ActionResult> PickItem(Guid id, PickItemDto dto)
         {
-            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                              ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            if (string.IsNullOrEmpty(currentUserId))
+            try
             {
-                return Unauthorized("Unable to determine user.");
+                var message = await _pickTaskService.PickItemAsync(id, dto, userId);
+                return Ok(message);
             }
-
-            var task = await _context.PickTasks
-                .Include(t => t.Items)
-                    .ThenInclude(i => i.Product)
-                .Include(t => t.Items)
-                    .ThenInclude(i => i.Location)
-                .FirstOrDefaultAsync(t => t.Id == id);
-
-            if (task == null) return NotFound("Task not found.");
-
-            if (task.Status != PickTaskStatus.InProgress)
+            catch (KeyNotFoundException ex)
             {
-                return BadRequest("Cannot scan item: task is not active.");
+                return NotFound(ex.Message);
             }
-
-            if (task.AssignedWorkerId != currentUserId)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest("Access error! The task is being performed by another worker.");
+                return BadRequest(ex.Message);
             }
+        }
 
-            var taskItem = task.Items.FirstOrDefault(i =>
-                i.Location!.AddressBarcode == dto.LocationBarcode &&
-                i.Product!.Sku == dto.ProductSku);
+        // ДОБАВИЛИ ТОТ САМЫЙ МЕТОД, ИЗ-ЗА КОТОРОГО БЫЛА ОШИБКА 404
+        [HttpPost("{id}/dispatch")]
+        public async Task<ActionResult> DispatchContainer(Guid id, [FromBody] DispatchContainerDto dto)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            if (taskItem == null)
+            try
             {
-                return BadRequest("Scan error! You are at the wrong location or picked the wrong item.");
-            }
+                // Вызываем метод из сервиса, который обрабатывает и штатное закрытие, и "Полный контейнер"
+                var newTaskId = await _pickTaskService.DispatchContainerAsync(id, dto, userId);
 
-            if (taskItem.PickedQuantity + dto.Quantity > taskItem.RequiredQuantity)
+                return Ok(new
+                {
+                    Message = "Контейнер успешно проверен и отправлен на конвейер.",
+                    NextTaskId = newTaskId
+                });
+            }
+            catch (KeyNotFoundException ex)
             {
-                var leftToPick = taskItem.RequiredQuantity - taskItem.PickedQuantity;
-                return BadRequest($"Over-pick! You only need to pick {leftToPick} more units of this item.");
+                return NotFound(ex.Message);
             }
-
-            taskItem.PickedQuantity += dto.Quantity;
-
-            bool isTaskFinished = task.Items.All(i => i.PickedQuantity == i.RequiredQuantity);
-
-            string resultMessage = $"Successfully picked: {dto.Quantity} units.";
-
-            if (isTaskFinished)
+            catch (InvalidOperationException ex)
             {
-                task.Status = PickTaskStatus.Completed;
-                resultMessage = "All items picked! Task completed. Container is ready for dispatch.";
+                return BadRequest(ex.Message);
             }
+        }
 
-            await _context.SaveChangesAsync();
+        [HttpPost("{id}/cancel")]
+        public async Task<ActionResult> CancelTask(Guid id)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            return Ok(resultMessage);
+            try
+            {
+                var message = await _pickTaskService.CancelPickTaskAsync(id, userId);
+                return Ok(new { Message = message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("{id}/report-missing")]
+        public async Task<ActionResult> ReportMissingItem(Guid id, [FromBody] ReportMissingItemDto dto)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
+
+            try
+            {
+                var message = await _pickTaskService.ReportMissingItemAsync(id, dto, userId);
+                return Ok(new { Message = message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        private string? GetUserId()
+        {
+            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
         }
     }
 }

@@ -51,7 +51,7 @@ public class OrdersController : ControllerBase
     {
         var newOrder = new Order
         {
-            OrderNumber = dto.OrderNumber,
+            OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}",
             CustomerName = dto.CustomerName,
             DestinationAddress = dto.DestinationAddress,
             Status = OrderStatus.New,
