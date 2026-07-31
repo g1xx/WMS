@@ -1,19 +1,35 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import PickTasks from './pages/PickTasks';
+import Login from './pages/Login/Login'; 
+import PickTasks from './pages/PickTasks/PickTasks';
+import type { JSX } from 'react/jsx-runtime';
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/tasks" element={<PickTasks />} />
-        
-        {/* Если кто-то зашел в корень или по несуществующей ссылке, перекидываем на логин */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+    
+    return children;
+};
+
+export default function App() {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+
+                <Route 
+                    path="/" 
+                    element={
+                        <ProtectedRoute>
+                            <PickTasks />
+                        </ProtectedRoute>
+                    } 
+                />
+
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
-
-export default App;

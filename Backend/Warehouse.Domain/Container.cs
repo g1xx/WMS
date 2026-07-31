@@ -26,4 +26,6 @@ public class Container
 
     public Guid? LocationId { get; set; }
     public Location? Location { get; set; }
+    public ICollection<Stock> Stocks { get; set; } = new List<Stock>();
+
 }

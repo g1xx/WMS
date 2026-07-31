@@ -46,7 +46,7 @@ namespace Warehouse.Api.Controllers
 
             if (existingStock != null)
             {
-                existingStock.Quantity += dto.Quantity;
+                existingStock.PhysicalQuantity += dto.Quantity;
             }
             else
             {
@@ -54,7 +54,8 @@ namespace Warehouse.Api.Controllers
                 {
                     ProductId = dto.ProductId,
                     LocationId = location.Id,
-                    Quantity = dto.Quantity
+                    PhysicalQuantity = dto.Quantity,
+                    ReservedQuantity = 0 
                 };
                 _context.Stocks.Add(newStock);
             }

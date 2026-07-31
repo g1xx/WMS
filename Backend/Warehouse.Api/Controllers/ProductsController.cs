@@ -63,7 +63,7 @@ namespace Warehouse.Api.Controllers
                     {
                         ProductId = s.ProductId,
                         LocationBarcode = s.Location != null ? s.Location.AddressBarcode : "NO_LOCATION",
-                        Quantity = s.Quantity
+                        Quantity = s.PhysicalQuantity - s.ReservedQuantity
                     }).ToList()
                 })
                 .ToListAsync();

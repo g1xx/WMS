@@ -1,30 +1,24 @@
 import { useState } from 'react';
-import axiosClient from '../api/axiosClient';
+import axiosClient from '../../api/axiosClient';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
     const navigate = useNavigate();
-    // 1. Создаем ячейки памяти для логина и пароля
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     
-
-    // 2. Эта функция сработает, когда кладовщик нажмет кнопку "Войти"
     const handleLogin = async (e: React.FormEvent) => {
-        // Обязательная строчка: запрещаем браузеру перезагружать страницу при отправке формы
         e.preventDefault(); 
 
         try {
             const response = await axiosClient.post('/Auth/login', {
-                username: username, // Ключ слева - это имя из LoginDto, значение справа - переменная из useState
+                username: username,
                 password: password
             });
 
-            // 2. Достаем токен из ответа сервера (C# вернул { Token = ... }, Axios кладет это в response.data)
             const token = response.data.token;
 
-            // 3. Кладем пропуск в память браузера
             localStorage.setItem('token', token);
 
             navigate('/tasks');

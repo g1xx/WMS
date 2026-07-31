@@ -46,6 +46,42 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
                 Sector = "Rampa",
                 WarehouseCode = "MAIN",
                 Type = LocationType.DockDoor
+            },
+            new Location
+            {
+                Id = Guid.Parse("50000000-0000-0000-0000-000000000005"),
+                AddressBarcode = "HZA301",
+                Floor = 3,
+                Sector = "ConveyorDrop",
+                WarehouseCode = "MAIN",
+                Type = LocationType.ConveyorDrop
+            },
+            new Location
+            {
+                Id = Guid.Parse("60000000-0000-0000-0000-000000000006"),
+                AddressBarcode = "HZA302",
+                Floor = 3,
+                Sector = "ConveyorDrop",
+                WarehouseCode = "MAIN",
+                Type = LocationType.ConveyorDrop
+            },
+            new Location
+            {
+                Id = Guid.Parse("70000000-0000-0000-0000-000000000007"),
+                AddressBarcode = "HZA303",
+                Floor = 3,
+                Sector = "ConveyorDrop",
+                WarehouseCode = "MAIN",
+                Type = LocationType.ConveyorDrop
+            },
+            new Location
+            {
+                Id = Guid.Parse("80000000-0000-0000-0000-000000000008"),
+                AddressBarcode = "HZA304",
+                Floor = 3,
+                Sector = "ConveyorDrop",
+                WarehouseCode = "MAIN",
+                Type = LocationType.ConveyorDrop
             }
         );
     }

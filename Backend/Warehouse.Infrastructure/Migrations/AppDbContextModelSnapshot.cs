@@ -346,6 +346,58 @@ namespace Warehouse.Infrastructure.Migrations
                             Sector = "Rampa",
                             Type = 2,
                             WarehouseCode = "MAIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("50000000-0000-0000-0000-000000000005"),
+                            AddressBarcode = "HZA301",
+                            Aisle = "",
+                            Floor = 3,
+                            Level = "",
+                            Position = "",
+                            Rack = "",
+                            Sector = "ConveyorDrop",
+                            Type = 3,
+                            WarehouseCode = "MAIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("60000000-0000-0000-0000-000000000006"),
+                            AddressBarcode = "HZA302",
+                            Aisle = "",
+                            Floor = 3,
+                            Level = "",
+                            Position = "",
+                            Rack = "",
+                            Sector = "ConveyorDrop",
+                            Type = 3,
+                            WarehouseCode = "MAIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("70000000-0000-0000-0000-000000000007"),
+                            AddressBarcode = "HZA303",
+                            Aisle = "",
+                            Floor = 3,
+                            Level = "",
+                            Position = "",
+                            Rack = "",
+                            Sector = "ConveyorDrop",
+                            Type = 3,
+                            WarehouseCode = "MAIN"
+                        },
+                        new
+                        {
+                            Id = new Guid("80000000-0000-0000-0000-000000000008"),
+                            AddressBarcode = "HZA304",
+                            Aisle = "",
+                            Floor = 3,
+                            Level = "",
+                            Position = "",
+                            Rack = "",
+                            Sector = "ConveyorDrop",
+                            Type = 3,
+                            WarehouseCode = "MAIN"
                         });
                 });
 
@@ -536,16 +588,24 @@ namespace Warehouse.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ContainerId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("PhysicalQuantity")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("ReservedQuantity")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContainerId");
 
                     b.HasIndex("LocationId");
 
@@ -681,6 +741,10 @@ namespace Warehouse.Infrastructure.Migrations
 
             modelBuilder.Entity("Warehouse.Domain.Stock", b =>
                 {
+                    b.HasOne("Warehouse.Domain.Container", null)
+                        .WithMany("Stocks")
+                        .HasForeignKey("ContainerId");
+
                     b.HasOne("Warehouse.Domain.Location", "Location")
                         .WithMany("Stocks")
                         .HasForeignKey("LocationId")
@@ -696,6 +760,11 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Warehouse.Domain.Container", b =>
+                {
+                    b.Navigation("Stocks");
                 });
 
             modelBuilder.Entity("Warehouse.Domain.Location", b =>
