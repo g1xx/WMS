@@ -199,7 +199,7 @@ namespace Warehouse.Application.Services
                     bool isOrderFullyPicked = order.Items.All(i => i.PickedQuantity >= i.RequiredQuantity);
                     if (isOrderFullyPicked)
                     {
-                        order.Status = OrderStatus.Completed; // Если у тебя другой Enum для финиша, поменяй здесь
+                        order.Status = OrderStatus.Packed;
                     }
                 }
 
@@ -240,6 +240,62 @@ namespace Warehouse.Application.Services
                 await transaction.RollbackAsync();
                 throw;
             }
+        }
+
+        public async Task<string> CancelPickTaskAsync(Guid id, string userId)
+        {
+            var task = await _context.PickTasks
+                .Include(t => t.Items)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (task == null) throw new KeyNotFoundException("Pick task not found.");
+
+            if (task.Status != PickTaskStatus.InProgress)
+                throw new InvalidOperationException("Only a task that is in progress can be cancelled.");
+
+            // Возвращаем задание в исходное состояние: снимаем исполнителя, тару и сбрасываем прогресс
+            task.Status = PickTaskStatus.New;
+            task.AssignedWorkerId = null;
+            task.ContainerId = null;
+
+            foreach (var item in task.Items)
+            {
+                item.PickedQuantity = 0;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return "Pick task cancelled and returned to the queue.";
+        }
+
+        public async Task<string> ReportMissingItemAsync(Guid taskId, ReportMissingItemDto dto, string workerId)
+        {
+            var task = await _context.PickTasks
+                .Include(t => t.Items).ThenInclude(i => i.Product)
+                .Include(t => t.Items).ThenInclude(i => i.Location)
+                .FirstOrDefaultAsync(t => t.Id == taskId);
+
+            if (task == null) throw new KeyNotFoundException("Pick task not found.");
+
+            var taskItem = task.Items.FirstOrDefault(i =>
+                i.Location!.AddressBarcode == dto.LocationBarcode &&
+                i.Product!.Sku == dto.ProductSku);
+
+            if (taskItem == null)
+                throw new InvalidOperationException("Item not found in this task: wrong location or SKU.");
+
+            // Фиксируем фактически собранное количество: требуемое минус ненайденное
+            var actuallyPicked = taskItem.RequiredQuantity - dto.MissingQuantity;
+            if (actuallyPicked < 0) actuallyPicked = 0;
+
+            taskItem.PickedQuantity = actuallyPicked;
+
+            // Stage 1: здесь будет корректировка резервов на складе
+            task.Status = PickTaskStatus.Completed;
+
+            await _context.SaveChangesAsync();
+
+            return $"Missing item reported. Recorded {actuallyPicked} of {taskItem.RequiredQuantity} units picked.";
         }
 
         private PickTaskResponseDto MapToDto(PickTask task)
