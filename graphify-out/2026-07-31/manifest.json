@@ -5,9 +5,9 @@
     "semantic_hash": "d581d8be28f89060c4e257bf1bfb9134"
   },
   ".claude/settings.local.json": {
-    "mtime": 1785375539.3191044,
-    "ast_hash": "a9af41f172b0e8178c6b72e6e09774e2",
-    "semantic_hash": "a9af41f172b0e8178c6b72e6e09774e2"
+    "mtime": 1785377606.3403423,
+    "ast_hash": "3e0695bc61f7b760121fc653c284756d",
+    "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Controllers/AuthController.cs": {
     "mtime": 1783389696.0802655,
@@ -125,9 +125,9 @@
     "semantic_hash": "92cb66b9bbed543bc70b1bc49540203c"
   },
   "Backend/Warehouse.Api/Program.cs": {
-    "mtime": 1783390164.6498888,
-    "ast_hash": "c55d4311bf7f10e597ff5df976790226",
-    "semantic_hash": "c55d4311bf7f10e597ff5df976790226"
+    "mtime": 1785509971.0960107,
+    "ast_hash": "87bad617baf94c8216c71f6291309d6a",
+    "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Properties/launchSettings.json": {
     "mtime": 1780855605.207828,
@@ -160,9 +160,9 @@
     "semantic_hash": "bf97e232a75212f13d9ce2d0f38e40a9"
   },
   "Backend/Warehouse.Api/Services/PickTaskService.cs": {
-    "mtime": 1785093889.800764,
-    "ast_hash": "8388cce24023a480edbfb333f745dfb6",
-    "semantic_hash": "8388cce24023a480edbfb333f745dfb6"
+    "mtime": 1785509682.236919,
+    "ast_hash": "8f9788e36949d96f19c8f050fe761a3f",
+    "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Warehouse.Api.csproj": {
     "mtime": 1782617944.9791431,
@@ -473,5 +473,45 @@
     "mtime": 1782620068.6610966,
     "ast_hash": "88439104b3c207f17d33ef3160e3b080",
     "semantic_hash": "88439104b3c207f17d33ef3160e3b080"
+  },
+  "CLAUDE.md": {
+    "mtime": 1785094407.1078465,
+    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/README.md": {
+    "mtime": 1782620068.4842427,
+    "ast_hash": "10495bfcc6c568eca4dab6dd5df795d3",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/index.html": {
+    "mtime": 1782660701.1132216,
+    "ast_hash": "dfe271a288b915b719e8344d6dccc199",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/public/favicon.svg": {
+    "mtime": 1782620068.55095,
+    "ast_hash": "7e840862161341271697daa99a40d76b",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/public/icons.svg": {
+    "mtime": 1782620068.577659,
+    "ast_hash": "3b4fcfcf393eca4d264dca4a4663bc37",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/assets/hero.png": {
+    "mtime": 1782620068.5067332,
+    "ast_hash": "aead493361b27e7510691c5d7072dfc1",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/assets/react.svg": {
+    "mtime": 1782620068.6104429,
+    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/assets/vite.svg": {
+    "mtime": 1782620068.6342483,
+    "ast_hash": "9960a24288958394ac50e57ff638b036",
+    "semantic_hash": ""
   }
 }

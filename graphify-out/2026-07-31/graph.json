@@ -11,6 +11,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "authcontroller.cs"
     },
     {
@@ -26,6 +27,7 @@
       "_origin": "ast",
       "id": "csharp_namespace:5570456fd233eaf4",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "warehouse.api.controllers"
     },
     {
@@ -42,6 +44,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "authcontroller"
     },
     {
@@ -52,6 +55,7 @@
       "_origin": "ast",
       "id": "controllerbase",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "controllerbase"
     },
     {
@@ -62,6 +66,7 @@
       "_origin": "ast",
       "id": "usermanager",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "usermanager"
     },
     {
@@ -72,6 +77,7 @@
       "_origin": "ast",
       "id": "rolemanager",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "rolemanager"
     },
     {
@@ -82,6 +88,7 @@
       "_origin": "ast",
       "id": "iconfiguration",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "iconfiguration"
     },
     {
@@ -98,6 +105,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_register",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": ".register()"
     },
     {
@@ -108,6 +116,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_task",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "task"
     },
     {
@@ -118,6 +127,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_iactionresult",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "iactionresult"
     },
     {
@@ -128,6 +138,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_httppost",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "httppost"
     },
     {
@@ -144,6 +155,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_registerbrigadier",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": ".registerbrigadier()"
     },
     {
@@ -160,6 +172,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_registeruserwithrole",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": ".registeruserwithrole()"
     },
     {
@@ -176,6 +189,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_login",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": ".login()"
     },
     {
@@ -186,6 +200,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_actionresult",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "actionresult"
     },
     {
@@ -202,6 +217,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_generatejwttoken",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": ".generatejwttoken()"
     },
     {
@@ -212,6 +228,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_identityuser",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "identityuser"
     },
     {
@@ -222,6 +239,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_guid",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "guid"
     },
     {
@@ -232,6 +250,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "containerscontroller.cs"
     },
     {
@@ -248,6 +267,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_warehouse_api_controllers_containerscontroller",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containerscontroller"
     },
     {
@@ -264,6 +284,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_warehouse_api_controllers_containerscontroller_getcontainers",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": ".getcontainers()"
     },
     {
@@ -274,6 +295,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_cs_task",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "task"
     },
     {
@@ -284,6 +306,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_cs_actionresult",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "actionresult"
     },
     {
@@ -294,6 +317,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_cs_ienumerable",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "ienumerable"
     },
     {
@@ -304,6 +328,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_cs_httpget",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "httpget"
     },
     {
@@ -320,6 +345,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_warehouse_api_controllers_containerscontroller_getcontainer",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": ".getcontainer()"
     },
     {
@@ -330,6 +356,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_cs_guid",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "guid"
     },
     {
@@ -346,6 +373,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_warehouse_api_controllers_containerscontroller_getcontainerbybarcode",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": ".getcontainerbybarcode()"
     },
     {
@@ -362,6 +390,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_warehouse_api_controllers_containerscontroller_createcontainer",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": ".createcontainer()"
     },
     {
@@ -372,6 +401,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_cs_httppost",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "httppost"
     },
     {
@@ -388,6 +418,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_containerscontroller_warehouse_api_controllers_containerscontroller_movecontainer",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": ".movecontainer()"
     },
     {
@@ -398,6 +429,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "locationscontroller.cs"
     },
     {
@@ -414,6 +446,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "locationscontroller"
     },
     {
@@ -430,6 +463,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_getlocations",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".getlocations()"
     },
     {
@@ -440,6 +474,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_task",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "task"
     },
     {
@@ -450,6 +485,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_actionresult",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "actionresult"
     },
     {
@@ -460,6 +496,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_ienumerable",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "ienumerable"
     },
     {
@@ -470,6 +507,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_httpget",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httpget"
     },
     {
@@ -486,6 +524,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_getlocation",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".getlocation()"
     },
     {
@@ -496,6 +535,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_guid",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -512,6 +552,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_createlocation",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".createlocation()"
     },
     {
@@ -522,6 +563,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_httppost",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httppost"
     },
     {
@@ -538,6 +580,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_createlocations",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".createlocations()"
     },
     {
@@ -554,6 +597,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_seedmasslocations",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".seedmasslocations()"
     },
     {
@@ -564,6 +608,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_iactionresult",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "iactionresult"
     },
     {
@@ -580,6 +625,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_generatezone",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".generatezone()"
     },
     {
@@ -590,6 +636,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_list",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "list"
     },
     {
@@ -600,6 +647,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "orderscontroller.cs"
     },
     {
@@ -616,6 +664,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_warehouse_api_controllers_orderscontroller",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "orderscontroller"
     },
     {
@@ -632,6 +681,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_warehouse_api_controllers_orderscontroller_getorders",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".getorders()"
     },
     {
@@ -642,6 +692,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_cs_task",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "task"
     },
     {
@@ -652,6 +703,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_cs_actionresult",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "actionresult"
     },
     {
@@ -662,6 +714,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_cs_ienumerable",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "ienumerable"
     },
     {
@@ -672,6 +725,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_cs_httpget",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "httpget"
     },
     {
@@ -688,6 +742,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_warehouse_api_controllers_orderscontroller_getorder",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".getorder()"
     },
     {
@@ -698,6 +753,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_cs_guid",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "guid"
     },
     {
@@ -714,6 +770,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_warehouse_api_controllers_orderscontroller_createorder",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".createorder()"
     },
     {
@@ -724,6 +781,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_cs_httppost",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "httppost"
     },
     {
@@ -740,6 +798,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_warehouse_api_controllers_orderscontroller_allocateorder",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".allocateorder()"
     },
     {
@@ -756,6 +815,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_orderscontroller_warehouse_api_controllers_orderscontroller_packorder",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".packorder()"
     },
     {
@@ -766,6 +826,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "picktaskcontroller.cs"
     },
     {
@@ -782,6 +843,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskcontroller"
     },
     {
@@ -798,6 +860,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_getpicktasks",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getpicktasks()"
     },
     {
@@ -808,6 +871,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_task",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -818,6 +882,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_actionresult",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "actionresult"
     },
     {
@@ -828,6 +893,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_ienumerable",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "ienumerable"
     },
     {
@@ -838,6 +904,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_httpget",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "httpget"
     },
     {
@@ -854,6 +921,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_getnexttask",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getnexttask()"
     },
     {
@@ -864,6 +932,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_iactionresult",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "iactionresult"
     },
     {
@@ -880,6 +949,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_startpicktask",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".startpicktask()"
     },
     {
@@ -890,6 +960,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_guid",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -900,6 +971,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_cs_httppost",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "httppost"
     },
     {
@@ -916,6 +988,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_pickitem",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".pickitem()"
     },
     {
@@ -932,6 +1005,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_dispatchcontainer",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".dispatchcontainer()"
     },
     {
@@ -948,6 +1022,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_canceltask",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".canceltask()"
     },
     {
@@ -964,6 +1039,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_reportmissingitem",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitem()"
     },
     {
@@ -980,6 +1056,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_picktaskcontroller_warehouse_api_controllers_picktaskcontroller_getuserid",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getuserid()"
     },
     {
@@ -990,6 +1067,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "productscontroller.cs"
     },
     {
@@ -1006,6 +1084,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "productscontroller"
     },
     {
@@ -1022,6 +1101,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller_getproduct",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": ".getproduct()"
     },
     {
@@ -1032,6 +1112,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_guid",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "guid"
     },
     {
@@ -1042,6 +1123,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_task",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "task"
     },
     {
@@ -1052,6 +1134,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_actionresult",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "actionresult"
     },
     {
@@ -1062,6 +1145,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_httpget",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "httpget"
     },
     {
@@ -1078,6 +1162,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller_getproducts",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": ".getproducts()"
     },
     {
@@ -1088,6 +1173,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_datetime",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "datetime"
     },
     {
@@ -1098,6 +1184,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_ienumerable",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "ienumerable"
     },
     {
@@ -1114,6 +1201,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller_createproduct",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": ".createproduct()"
     },
     {
@@ -1124,6 +1212,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_httppost",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "httppost"
     },
     {
@@ -1134,6 +1223,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "stockscontroller.cs"
     },
     {
@@ -1150,6 +1240,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_warehouse_api_controllers_stockscontroller",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "stockscontroller"
     },
     {
@@ -1166,6 +1257,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_warehouse_api_controllers_stockscontroller_getstocks",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": ".getstocks()"
     },
     {
@@ -1176,6 +1268,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_task",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "task"
     },
     {
@@ -1186,6 +1279,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_actionresult",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "actionresult"
     },
     {
@@ -1196,6 +1290,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_ienumerable",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "ienumerable"
     },
     {
@@ -1206,6 +1301,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_httpget",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "httpget"
     },
     {
@@ -1222,6 +1318,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_warehouse_api_controllers_stockscontroller_addstock",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": ".addstock()"
     },
     {
@@ -1232,6 +1329,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_httppost",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "httppost"
     },
     {
@@ -1242,6 +1340,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_containermovedto",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containermovedto.cs"
     },
     {
@@ -1257,6 +1356,7 @@
       "_origin": "ast",
       "id": "csharp_namespace:1eb25f0d0f42d2c8",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "warehouse.api.dtos"
     },
     {
@@ -1273,6 +1373,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_containermovedto_warehouse_api_dtos_containermovedto",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containermovedto"
     },
     {
@@ -1283,6 +1384,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_dispatchcontainerdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "dispatchcontainerdto.cs"
     },
     {
@@ -1299,6 +1401,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_dispatchcontainerdto_warehouse_api_dtos_dispatchcontainerdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "dispatchcontainerdto"
     },
     {
@@ -1309,6 +1412,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_locationcreatedto",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "locationcreatedto.cs"
     },
     {
@@ -1325,6 +1429,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_locationcreatedto_warehouse_api_dtos_locationcreatedto",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "locationcreatedto"
     },
     {
@@ -1335,6 +1440,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_locationresponsedto",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "locationresponsedto.cs"
     },
     {
@@ -1351,6 +1457,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_locationresponsedto_warehouse_api_dtos_locationresponsedto",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "locationresponsedto"
     },
     {
@@ -1361,6 +1468,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_locationresponsedto_cs_guid",
       "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -1371,6 +1479,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_logindto",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "logindto.cs"
     },
     {
@@ -1387,6 +1496,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_logindto_warehouse_api_dtos_logindto",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "logindto"
     },
     {
@@ -1397,6 +1507,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_ordercreatedto",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "ordercreatedto.cs"
     },
     {
@@ -1413,6 +1524,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_ordercreatedto_warehouse_api_dtos_ordercreatedto",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "ordercreatedto"
     },
     {
@@ -1423,6 +1535,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_ordercreatedto_cs_list",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "list"
     },
     {
@@ -1439,6 +1552,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_ordercreatedto_warehouse_api_dtos_orderitemcreatedto",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "orderitemcreatedto"
     },
     {
@@ -1449,6 +1563,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_ordercreatedto_cs_guid",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "guid"
     },
     {
@@ -1459,6 +1574,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_pickitemdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "pickitemdto.cs"
     },
     {
@@ -1475,6 +1591,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_pickitemdto_warehouse_api_dtos_pickitemdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "pickitemdto"
     },
     {
@@ -1485,6 +1602,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskitemresponsedto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskitemresponsedto.cs"
     },
     {
@@ -1501,6 +1619,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskitemresponsedto_warehouse_api_dtos_picktaskitemresponsedto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskitemresponsedto"
     },
     {
@@ -1511,6 +1630,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskitemresponsedto_cs_guid",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -1521,6 +1641,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskresponsedto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskresponsedto.cs"
     },
     {
@@ -1537,6 +1658,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskresponsedto_warehouse_api_dtos_picktaskresponsedto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskresponsedto"
     },
     {
@@ -1547,6 +1669,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskresponsedto_cs_guid",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -1557,6 +1680,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_picktaskresponsedto_cs_list",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "list"
     },
     {
@@ -1567,6 +1691,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_productcreatedto",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "productcreatedto.cs"
     },
     {
@@ -1583,6 +1708,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_productcreatedto_warehouse_api_dtos_productcreatedto",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "productcreatedto"
     },
     {
@@ -1593,6 +1719,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_productresponsedto",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "productresponsedto.cs"
     },
     {
@@ -1609,6 +1736,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_productresponsedto_warehouse_api_dtos_productresponsedto",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "productresponsedto"
     },
     {
@@ -1619,6 +1747,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_productresponsedto_cs_guid",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "guid"
     },
     {
@@ -1629,6 +1758,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_productresponsedto_cs_list",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "list"
     },
     {
@@ -1639,6 +1769,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_registerdto",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "registerdto.cs"
     },
     {
@@ -1655,6 +1786,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_registerdto_warehouse_api_dtos_registerdto",
       "community": 9,
+      "community_name": "Auth Controller & Login",
       "norm_label": "registerdto"
     },
     {
@@ -1665,6 +1797,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_reportmissingitemdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "reportmissingitemdto.cs"
     },
     {
@@ -1681,6 +1814,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_reportmissingitemdto_warehouse_api_dtos_reportmissingitemdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "reportmissingitemdto"
     },
     {
@@ -1691,6 +1825,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_splitandclosedto",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "splitandclosedto.cs"
     },
     {
@@ -1707,6 +1842,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_splitandclosedto_warehouse_api_dtos_splitandclosedto",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "splitandclosedto"
     },
     {
@@ -1717,6 +1853,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_startpicktaskdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "startpicktaskdto.cs"
     },
     {
@@ -1733,6 +1870,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_startpicktaskdto_warehouse_api_dtos_startpicktaskdto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "startpicktaskdto"
     },
     {
@@ -1743,6 +1881,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_stockcreatedto",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "stockcreatedto.cs"
     },
     {
@@ -1759,6 +1898,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_stockcreatedto_warehouse_api_dtos_stockcreatedto",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "stockcreatedto"
     },
     {
@@ -1769,6 +1909,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_dtos_stockcreatedto_cs_guid",
       "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "guid"
     },
     {
@@ -1778,7 +1919,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_api_program",
-      "community": 22,
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "program.cs"
     },
     {
@@ -1789,6 +1931,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "launchsettings.json"
     },
     {
@@ -1799,6 +1942,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_schema",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "$schema"
     },
     {
@@ -1809,6 +1953,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_profiles",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "profiles"
     },
     {
@@ -1819,6 +1964,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_profiles_http",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "http"
     },
     {
@@ -1829,6 +1975,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_http_commandname",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "commandname"
     },
     {
@@ -1839,6 +1986,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_http_dotnetrunmessages",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "dotnetrunmessages"
     },
     {
@@ -1849,6 +1997,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_http_launchbrowser",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "launchbrowser"
     },
     {
@@ -1859,6 +2008,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_http_applicationurl",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "applicationurl"
     },
     {
@@ -1869,6 +2019,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_http_environmentvariables",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "environmentvariables"
     },
     {
@@ -1879,6 +2030,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_environmentvariables_aspnetcore_environment",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "aspnetcore_environment"
     },
     {
@@ -1889,6 +2041,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_profiles_https",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "https"
     },
     {
@@ -1899,6 +2052,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_https_commandname",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "commandname"
     },
     {
@@ -1909,6 +2063,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_https_dotnetrunmessages",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "dotnetrunmessages"
     },
     {
@@ -1919,6 +2074,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_https_launchbrowser",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "launchbrowser"
     },
     {
@@ -1929,6 +2085,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_https_applicationurl",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "applicationurl"
     },
     {
@@ -1939,6 +2096,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_properties_launchsettings_https_environmentvariables",
       "community": 12,
+      "community_name": "API Launch Settings",
       "norm_label": "environmentvariables"
     },
     {
@@ -1949,6 +2107,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderallocationservice",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "iorderallocationservice.cs"
     },
     {
@@ -1963,7 +2122,8 @@
       },
       "_origin": "ast",
       "id": "csharp_namespace:981331080814bfa6",
-      "community": 22,
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "warehouse.api.services"
     },
     {
@@ -1980,6 +2140,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderallocationservice_warehouse_api_services_iorderallocationservice",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "iorderallocationservice"
     },
     {
@@ -1996,6 +2157,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderallocationservice_warehouse_api_services_iorderallocationservice_allocateorderasync",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".allocateorderasync()"
     },
     {
@@ -2006,6 +2168,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderallocationservice_cs_guid",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "guid"
     },
     {
@@ -2016,6 +2179,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderallocationservice_cs_task",
       "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "task"
     },
     {
@@ -2026,6 +2190,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "iorderservice.cs"
     },
     {
@@ -2042,6 +2207,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice_warehouse_api_services_iorderservice",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "iorderservice"
     },
     {
@@ -2058,6 +2224,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice_warehouse_api_services_iorderservice_markaspickingasync",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": ".markaspickingasync()"
     },
     {
@@ -2068,6 +2235,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice_cs_guid",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "guid"
     },
     {
@@ -2078,6 +2246,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice_cs_task",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "task"
     },
     {
@@ -2094,6 +2263,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice_warehouse_api_services_iorderservice_updateitemprogressasync",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": ".updateitemprogressasync()"
     },
     {
@@ -2110,6 +2280,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_iorderservice_warehouse_api_services_iorderservice_checkandcloseorderasync",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": ".checkandcloseorderasync()"
     },
     {
@@ -2120,6 +2291,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "ipicktaskservice.cs"
     },
     {
@@ -2135,6 +2307,7 @@
       "_origin": "ast",
       "id": "csharp_namespace:b65f71fb24ba607c",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "warehouse.application.services"
     },
     {
@@ -2151,6 +2324,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "ipicktaskservice"
     },
     {
@@ -2167,6 +2341,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_getpicktasksasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getpicktasksasync()"
     },
     {
@@ -2177,6 +2352,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_cs_task",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -2187,6 +2363,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_cs_ienumerable",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "ienumerable"
     },
     {
@@ -2203,6 +2380,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_getnexttaskasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getnexttaskasync()"
     },
     {
@@ -2219,6 +2397,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_startpicktaskasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".startpicktaskasync()"
     },
     {
@@ -2229,6 +2408,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_cs_guid",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -2245,6 +2425,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_pickitemasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".pickitemasync()"
     },
     {
@@ -2261,6 +2442,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_dispatchcontainerasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".dispatchcontainerasync()"
     },
     {
@@ -2277,6 +2459,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_cancelpicktaskasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".cancelpicktaskasync()"
     },
     {
@@ -2293,6 +2476,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_reportmissingitemasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitemasync()"
     },
     {
@@ -2302,7 +2486,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderallocationservice",
-      "community": 22,
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "orderallocationservice.cs"
     },
     {
@@ -2318,7 +2503,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderallocationservice_warehouse_api_services_orderallocationservice",
-      "community": 4,
+      "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "orderallocationservice"
     },
     {
@@ -2334,7 +2520,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderallocationservice_warehouse_api_services_orderallocationservice_allocateorderasync",
-      "community": 4,
+      "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": ".allocateorderasync()"
     },
     {
@@ -2344,7 +2531,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderallocationservice_cs_guid",
-      "community": 4,
+      "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "guid"
     },
     {
@@ -2354,7 +2542,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderallocationservice_cs_task",
-      "community": 4,
+      "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "task"
     },
     {
@@ -2364,7 +2553,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice",
-      "community": 22,
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "orderservice.cs"
     },
     {
@@ -2381,6 +2571,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice_warehouse_api_services_orderservice",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "orderservice"
     },
     {
@@ -2397,6 +2588,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice_warehouse_api_services_orderservice_markaspickingasync",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": ".markaspickingasync()"
     },
     {
@@ -2407,6 +2599,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice_cs_guid",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "guid"
     },
     {
@@ -2417,6 +2610,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice_cs_task",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": "task"
     },
     {
@@ -2433,6 +2627,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice_warehouse_api_services_orderservice_updateitemprogressasync",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": ".updateitemprogressasync()"
     },
     {
@@ -2449,6 +2644,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_orderservice_warehouse_api_services_orderservice_checkandcloseorderasync",
       "community": 14,
+      "community_name": "Order Service Layer",
       "norm_label": ".checkandcloseorderasync()"
     },
     {
@@ -2459,6 +2655,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "picktaskservice.cs"
     },
     {
@@ -2475,6 +2672,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskservice"
     },
     {
@@ -2491,6 +2689,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_getpicktasksasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getpicktasksasync()"
     },
     {
@@ -2501,6 +2700,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_cs_task",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -2511,6 +2711,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_cs_ienumerable",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "ienumerable"
     },
     {
@@ -2527,6 +2728,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_getnexttaskasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getnexttaskasync()"
     },
     {
@@ -2543,6 +2745,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_startpicktaskasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".startpicktaskasync()"
     },
     {
@@ -2553,6 +2756,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_cs_guid",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -2569,6 +2773,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_pickitemasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".pickitemasync()"
     },
     {
@@ -2585,10 +2790,11 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_dispatchcontainerasync",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".dispatchcontainerasync()"
     },
     {
-      "label": ".MapToDto()",
+      "label": ".CancelPickTaskAsync()",
       "file_type": "code",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
       "source_location": "L245",
@@ -2599,8 +2805,43 @@
         ]
       },
       "_origin": "ast",
+      "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_cancelpicktaskasync",
+      "community": 0,
+      "community_name": "PickTask API & Service",
+      "norm_label": ".cancelpicktaskasync()"
+    },
+    {
+      "label": ".ReportMissingItemAsync()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L271",
+      "metadata": {
+        "namespace": "Warehouse.Application.Services",
+        "scope_chain": [
+          "s128"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_reportmissingitemasync",
+      "community": 0,
+      "community_name": "PickTask API & Service",
+      "norm_label": ".reportmissingitemasync()"
+    },
+    {
+      "label": ".MapToDto()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L301",
+      "metadata": {
+        "namespace": "Warehouse.Application.Services",
+        "scope_chain": [
+          "s128"
+        ]
+      },
+      "_origin": "ast",
       "id": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_maptodto",
       "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".maptodto()"
     },
     {
@@ -2611,6 +2852,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_warehouse_api",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "warehouse.api"
     },
     {
@@ -2621,6 +2863,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_warehouse_api_csproj_framework_net10_0",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "net10.0"
     },
     {
@@ -2631,6 +2874,7 @@
       "_origin": "ast",
       "id": "nuget_microsoft_aspnetcore_authentication_jwtbearer",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.aspnetcore.authentication.jwtbearer (10.0.9)"
     },
     {
@@ -2641,6 +2885,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_warehouse_api_csproj_nuget_microsoft_aspnetcore_identity_entityframeworkcore",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.aspnetcore.identity.entityframeworkcore (10.0.9)"
     },
     {
@@ -2651,6 +2896,7 @@
       "_origin": "ast",
       "id": "nuget_microsoft_entityframeworkcore_design",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.entityframeworkcore.design (10.0.9)"
     },
     {
@@ -2661,6 +2907,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_api_warehouse_api_csproj_nuget_npgsql_entityframeworkcore_postgresql",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "npgsql.entityframeworkcore.postgresql (10.0.2)"
     },
     {
@@ -2671,6 +2918,7 @@
       "_origin": "ast",
       "id": "nuget_swashbuckle_aspnetcore",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "swashbuckle.aspnetcore (6.6.2)"
     },
     {
@@ -2681,6 +2929,7 @@
       "_origin": "ast",
       "id": "nuget_microsoft_openapi",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.openapi (1.6.14)"
     },
     {
@@ -2691,6 +2940,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_warehouse_infrastructure",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "warehouse.infrastructure"
     },
     {
@@ -2701,6 +2951,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_warehouse_domain",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "warehouse.domain"
     },
     {
@@ -2711,6 +2962,7 @@
       "_origin": "ast",
       "id": "sdk_microsoft_net_sdk_web",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.net.sdk.web"
     },
     {
@@ -2721,6 +2973,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_container",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "container.cs"
     },
     {
@@ -2736,6 +2989,7 @@
       "_origin": "ast",
       "id": "csharp_namespace:5b271472b1d3c446",
       "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "warehouse.domain"
     },
     {
@@ -2752,6 +3006,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_container_warehouse_domain_containertype",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containertype"
     },
     {
@@ -2768,6 +3023,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_container_warehouse_domain_containerstatus",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containerstatus"
     },
     {
@@ -2784,6 +3040,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_container_warehouse_domain_container",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "container"
     },
     {
@@ -2794,6 +3051,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_container_cs_guid",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "guid"
     },
     {
@@ -2804,6 +3062,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_container_cs_icollection",
       "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "icollection"
     },
     {
@@ -2814,6 +3073,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_location",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "location.cs"
     },
     {
@@ -2830,6 +3090,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_location_warehouse_domain_locationtype",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "locationtype"
     },
     {
@@ -2846,6 +3107,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_location_warehouse_domain_location",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "location"
     },
     {
@@ -2856,6 +3118,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_location_cs_guid",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "guid"
     },
     {
@@ -2866,6 +3129,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_location_cs_icollection",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "icollection"
     },
     {
@@ -2875,7 +3139,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_domain_order",
-      "community": 17,
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "order.cs"
     },
     {
@@ -2891,7 +3156,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_order_warehouse_domain_orderstatus",
-      "community": 17,
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "orderstatus"
     },
     {
@@ -2907,7 +3173,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_order_warehouse_domain_order",
-      "community": 17,
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "order"
     },
     {
@@ -2917,7 +3184,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_order_cs_guid",
-      "community": 17,
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "guid"
     },
     {
@@ -2927,7 +3195,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_order_cs_datetime",
-      "community": 17,
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "datetime"
     },
     {
@@ -2937,7 +3206,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_order_cs_icollection",
-      "community": 17,
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "icollection"
     },
     {
@@ -2948,6 +3218,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_orderitem",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": "warehouse.domain/orderitem.cs"
     },
     {
@@ -2964,6 +3235,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_orderitem_warehouse_domain_orderitem",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": "orderitem"
     },
     {
@@ -2974,6 +3246,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_orderitem_cs_guid",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": "guid"
     },
     {
@@ -2984,6 +3257,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktask",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktask.cs"
     },
     {
@@ -3000,6 +3274,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktask_warehouse_domain_picktaskstatus",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktaskstatus"
     },
     {
@@ -3016,6 +3291,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktask_warehouse_domain_picktask",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktask"
     },
     {
@@ -3026,6 +3302,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktask_cs_guid",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "guid"
     },
     {
@@ -3036,6 +3313,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktask_cs_datetime",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "datetime"
     },
     {
@@ -3046,6 +3324,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktask_cs_icollection",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "icollection"
     },
     {
@@ -3056,6 +3335,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktaskitem",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": "picktaskitem.cs"
     },
     {
@@ -3072,6 +3352,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktaskitem_warehouse_domain_picktaskitem",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": "picktaskitem"
     },
     {
@@ -3082,6 +3363,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_picktaskitem_cs_guid",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": "guid"
     },
     {
@@ -3092,6 +3374,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "product.cs"
     },
     {
@@ -3108,6 +3391,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_warehouse_domain_productsize",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "productsize"
     },
     {
@@ -3124,6 +3408,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_warehouse_domain_unittype",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "unittype"
     },
     {
@@ -3140,6 +3425,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_warehouse_domain_product",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "product"
     },
     {
@@ -3150,6 +3436,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_cs_guid",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "guid"
     },
     {
@@ -3160,6 +3447,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_cs_datetime",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "datetime"
     },
     {
@@ -3170,6 +3458,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_cs_icollection",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "icollection"
     },
     {
@@ -3180,6 +3469,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_stock",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "stock.cs"
     },
     {
@@ -3196,6 +3486,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_stock_warehouse_domain_stock",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "stock"
     },
     {
@@ -3206,6 +3497,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_stock_cs_guid",
       "community": 16,
+      "community_name": "Product & Stock Entities",
       "norm_label": "guid"
     },
     {
@@ -3216,6 +3508,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_warehouse_domain_csproj_framework_net10_0",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "net10.0"
     },
     {
@@ -3226,6 +3519,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_domain_warehouse_domain_csproj_sdk_microsoft_net_sdk",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.net.sdk"
     },
     {
@@ -3235,7 +3529,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_appdbcontext",
-      "community": 22,
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "appdbcontext.cs"
     },
     {
@@ -3250,7 +3545,8 @@
       },
       "_origin": "ast",
       "id": "csharp_namespace:39d919b363062cf9",
-      "community": 22,
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "warehouse.infrastructure"
     },
     {
@@ -3267,6 +3563,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_appdbcontext_warehouse_infrastructure_appdbcontext",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "appdbcontext"
     },
     {
@@ -3277,6 +3574,7 @@
       "_origin": "ast",
       "id": "identitydbcontext",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "identitydbcontext"
     },
     {
@@ -3287,6 +3585,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_appdbcontext_cs_identityuser",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "identityuser"
     },
     {
@@ -3297,6 +3596,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_appdbcontext_cs_guid",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "guid"
     },
     {
@@ -3307,6 +3607,7 @@
       "_origin": "ast",
       "id": "identityrole",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "identityrole"
     },
     {
@@ -3317,6 +3618,7 @@
       "_origin": "ast",
       "id": "dbset",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "dbset"
     },
     {
@@ -3333,6 +3635,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_appdbcontext_warehouse_infrastructure_appdbcontext_onmodelcreating",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": ".onmodelcreating()"
     },
     {
@@ -3343,6 +3646,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_appdbcontext_cs_modelbuilder",
       "community": 20,
+      "community_name": "AppDbContext & Identity",
       "norm_label": "modelbuilder"
     },
     {
@@ -3352,7 +3656,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration",
-      "community": 5,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "containerconfiguration.cs"
     },
     {
@@ -3367,7 +3672,8 @@
       },
       "_origin": "ast",
       "id": "csharp_namespace:6d804dae53990bbd",
-      "community": 47,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "warehouse.infrastructure.configurations"
     },
     {
@@ -3383,7 +3689,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration_warehouse_infrastructure_configurations_containerconfiguration",
-      "community": 5,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "containerconfiguration"
     },
     {
@@ -3393,7 +3700,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ientitytypeconfiguration",
-      "community": 19,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "ientitytypeconfiguration"
     },
     {
@@ -3409,7 +3717,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration_warehouse_infrastructure_configurations_containerconfiguration_configure",
-      "community": 5,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -3419,7 +3728,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration_cs_entitytypebuilder",
-      "community": 5,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -3429,7 +3739,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_locationconfiguration",
-      "community": 47,
+      "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "locationconfiguration.cs"
     },
     {
@@ -3446,6 +3757,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_locationconfiguration_warehouse_infrastructure_configurations_locationconfiguration",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "locationconfiguration"
     },
     {
@@ -3462,6 +3774,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_locationconfiguration_warehouse_infrastructure_configurations_locationconfiguration_configure",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -3472,6 +3785,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_locationconfiguration_cs_entitytypebuilder",
       "community": 18,
+      "community_name": "Location Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -3481,7 +3795,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderconfiguration",
-      "community": 47,
+      "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "orderconfiguration.cs"
     },
     {
@@ -3498,6 +3813,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderconfiguration_warehouse_infrastructure_configurations_orderconfiguration",
       "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "orderconfiguration"
     },
     {
@@ -3514,6 +3830,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderconfiguration_warehouse_infrastructure_configurations_orderconfiguration_configure",
       "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -3524,6 +3841,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderconfiguration_cs_entitytypebuilder",
       "community": 17,
+      "community_name": "Order Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -3534,6 +3852,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderitem",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": "configurations/orderitem.cs"
     },
     {
@@ -3550,6 +3869,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderitem_warehouse_infrastructure_configurations_orderitemconfiguration",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": "orderitemconfiguration"
     },
     {
@@ -3566,6 +3886,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderitem_warehouse_infrastructure_configurations_orderitemconfiguration_configure",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -3576,6 +3897,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderitem_cs_entitytypebuilder",
       "community": 19,
+      "community_name": "OrderItem Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -3586,6 +3908,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktaskconfiguration.cs"
     },
     {
@@ -3602,6 +3925,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_warehouse_infrastructure_configurations_picktaskconfiguration",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktaskconfiguration"
     },
     {
@@ -3618,6 +3942,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_warehouse_infrastructure_configurations_picktaskconfiguration_configure",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -3628,6 +3953,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_cs_entitytypebuilder",
       "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -3638,6 +3964,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskitemconfiguration",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": "picktaskitemconfiguration.cs"
     },
     {
@@ -3654,6 +3981,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskitemconfiguration_warehouse_infrastructure_configurations_picktaskitemconfiguration",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": "picktaskitemconfiguration"
     },
     {
@@ -3670,6 +3998,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskitemconfiguration_warehouse_infrastructure_configurations_picktaskitemconfiguration_configure",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -3680,6 +4009,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskitemconfiguration_cs_entitytypebuilder",
       "community": 21,
+      "community_name": "PickTaskItem Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -3690,6 +4020,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer",
       "community": 36,
+      "community_name": "Snapshot: InitialCreate",
       "norm_label": "20260611180526_initialcreate.designer.cs"
     },
     {
@@ -3705,6 +4036,7 @@
       "_origin": "ast",
       "id": "csharp_namespace:01f1a1d52f272867",
       "community": 13,
+      "community_name": "EF Model Snapshot",
       "norm_label": "warehouse.infrastructure.migrations"
     },
     {
@@ -3721,6 +4053,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_warehouse_infrastructure_migrations_initialcreate",
       "community": 36,
+      "community_name": "Snapshot: InitialCreate",
       "norm_label": "initialcreate"
     },
     {
@@ -3737,6 +4070,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_warehouse_infrastructure_migrations_initialcreate_buildtargetmodel",
       "community": 36,
+      "community_name": "Snapshot: InitialCreate",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -3747,6 +4081,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_cs_modelbuilder",
       "community": 36,
+      "community_name": "Snapshot: InitialCreate",
       "norm_label": "modelbuilder"
     },
     {
@@ -3757,6 +4092,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate",
       "community": 24,
+      "community_name": "Migration: InitialCreate",
       "norm_label": "20260611180526_initialcreate.cs"
     },
     {
@@ -3773,6 +4109,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_warehouse_infrastructure_migrations_initialcreate",
       "community": 24,
+      "community_name": "Migration: InitialCreate",
       "norm_label": "initialcreate"
     },
     {
@@ -3782,7 +4119,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "migration",
-      "community": 23,
+      "community": 24,
+      "community_name": "Migration: InitialCreate",
       "norm_label": "migration"
     },
     {
@@ -3799,6 +4137,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_warehouse_infrastructure_migrations_initialcreate_up",
       "community": 24,
+      "community_name": "Migration: InitialCreate",
       "norm_label": ".up()"
     },
     {
@@ -3809,6 +4148,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_cs_migrationbuilder",
       "community": 24,
+      "community_name": "Migration: InitialCreate",
       "norm_label": "migrationbuilder"
     },
     {
@@ -3825,6 +4165,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_warehouse_infrastructure_migrations_initialcreate_down",
       "community": 24,
+      "community_name": "Migration: InitialCreate",
       "norm_label": ".down()"
     },
     {
@@ -3835,6 +4176,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_designer",
       "community": 37,
+      "community_name": "Snapshot: ProductUpdatedAt",
       "norm_label": "20260614131504_addproductupdatedat.designer.cs"
     },
     {
@@ -3851,6 +4193,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_designer_warehouse_infrastructure_migrations_addproductupdatedat",
       "community": 37,
+      "community_name": "Snapshot: ProductUpdatedAt",
       "norm_label": "addproductupdatedat"
     },
     {
@@ -3867,6 +4210,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_designer_warehouse_infrastructure_migrations_addproductupdatedat_buildtargetmodel",
       "community": 37,
+      "community_name": "Snapshot: ProductUpdatedAt",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -3877,6 +4221,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_designer_cs_modelbuilder",
       "community": 37,
+      "community_name": "Snapshot: ProductUpdatedAt",
       "norm_label": "modelbuilder"
     },
     {
@@ -3887,6 +4232,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat",
       "community": 25,
+      "community_name": "Migration: ProductUpdatedAt",
       "norm_label": "20260614131504_addproductupdatedat.cs"
     },
     {
@@ -3903,6 +4249,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_warehouse_infrastructure_migrations_addproductupdatedat",
       "community": 25,
+      "community_name": "Migration: ProductUpdatedAt",
       "norm_label": "addproductupdatedat"
     },
     {
@@ -3919,6 +4266,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_warehouse_infrastructure_migrations_addproductupdatedat_up",
       "community": 25,
+      "community_name": "Migration: ProductUpdatedAt",
       "norm_label": ".up()"
     },
     {
@@ -3929,6 +4277,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_cs_migrationbuilder",
       "community": 25,
+      "community_name": "Migration: ProductUpdatedAt",
       "norm_label": "migrationbuilder"
     },
     {
@@ -3945,6 +4294,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260614131504_addproductupdatedat_warehouse_infrastructure_migrations_addproductupdatedat_down",
       "community": 25,
+      "community_name": "Migration: ProductUpdatedAt",
       "norm_label": ".down()"
     },
     {
@@ -3955,6 +4305,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_designer",
       "community": 38,
+      "community_name": "Snapshot: PiecePackageProduct",
       "norm_label": "20260615013749_addpiecepackageproduct.designer.cs"
     },
     {
@@ -3971,6 +4322,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_designer_warehouse_infrastructure_migrations_addpiecepackageproduct",
       "community": 38,
+      "community_name": "Snapshot: PiecePackageProduct",
       "norm_label": "addpiecepackageproduct"
     },
     {
@@ -3987,6 +4339,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_designer_warehouse_infrastructure_migrations_addpiecepackageproduct_buildtargetmodel",
       "community": 38,
+      "community_name": "Snapshot: PiecePackageProduct",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -3997,6 +4350,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_designer_cs_modelbuilder",
       "community": 38,
+      "community_name": "Snapshot: PiecePackageProduct",
       "norm_label": "modelbuilder"
     },
     {
@@ -4007,6 +4361,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct",
       "community": 23,
+      "community_name": "Migration: PiecePackageProduct",
       "norm_label": "20260615013749_addpiecepackageproduct.cs"
     },
     {
@@ -4023,6 +4378,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_warehouse_infrastructure_migrations_addpiecepackageproduct",
       "community": 23,
+      "community_name": "Migration: PiecePackageProduct",
       "norm_label": "addpiecepackageproduct"
     },
     {
@@ -4039,6 +4395,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_warehouse_infrastructure_migrations_addpiecepackageproduct_up",
       "community": 23,
+      "community_name": "Migration: PiecePackageProduct",
       "norm_label": ".up()"
     },
     {
@@ -4049,6 +4406,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_cs_migrationbuilder",
       "community": 23,
+      "community_name": "Migration: PiecePackageProduct",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4065,6 +4423,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260615013749_addpiecepackageproduct_warehouse_infrastructure_migrations_addpiecepackageproduct_down",
       "community": 23,
+      "community_name": "Migration: PiecePackageProduct",
       "norm_label": ".down()"
     },
     {
@@ -4075,6 +4434,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_designer",
       "community": 39,
+      "community_name": "Snapshot: ProductVolumetrics",
       "norm_label": "20260618193047_addproductvolumetrics.designer.cs"
     },
     {
@@ -4091,6 +4451,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_designer_warehouse_infrastructure_migrations_addproductvolumetrics",
       "community": 39,
+      "community_name": "Snapshot: ProductVolumetrics",
       "norm_label": "addproductvolumetrics"
     },
     {
@@ -4107,6 +4468,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_designer_warehouse_infrastructure_migrations_addproductvolumetrics_buildtargetmodel",
       "community": 39,
+      "community_name": "Snapshot: ProductVolumetrics",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4117,6 +4479,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_designer_cs_modelbuilder",
       "community": 39,
+      "community_name": "Snapshot: ProductVolumetrics",
       "norm_label": "modelbuilder"
     },
     {
@@ -4127,6 +4490,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics",
       "community": 26,
+      "community_name": "Migration: ProductVolumetrics",
       "norm_label": "20260618193047_addproductvolumetrics.cs"
     },
     {
@@ -4143,6 +4507,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_warehouse_infrastructure_migrations_addproductvolumetrics",
       "community": 26,
+      "community_name": "Migration: ProductVolumetrics",
       "norm_label": "addproductvolumetrics"
     },
     {
@@ -4159,6 +4524,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_warehouse_infrastructure_migrations_addproductvolumetrics_up",
       "community": 26,
+      "community_name": "Migration: ProductVolumetrics",
       "norm_label": ".up()"
     },
     {
@@ -4169,6 +4535,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_cs_migrationbuilder",
       "community": 26,
+      "community_name": "Migration: ProductVolumetrics",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4185,6 +4552,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193047_addproductvolumetrics_warehouse_infrastructure_migrations_addproductvolumetrics_down",
       "community": 26,
+      "community_name": "Migration: ProductVolumetrics",
       "norm_label": ".down()"
     },
     {
@@ -4195,6 +4563,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_designer",
       "community": 40,
+      "community_name": "Snapshot: ProductVolumetrics1",
       "norm_label": "20260618193642_addproductvolumetrics1.designer.cs"
     },
     {
@@ -4211,6 +4580,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_designer_warehouse_infrastructure_migrations_addproductvolumetrics1",
       "community": 40,
+      "community_name": "Snapshot: ProductVolumetrics1",
       "norm_label": "addproductvolumetrics1"
     },
     {
@@ -4227,6 +4597,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_designer_warehouse_infrastructure_migrations_addproductvolumetrics1_buildtargetmodel",
       "community": 40,
+      "community_name": "Snapshot: ProductVolumetrics1",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4237,6 +4608,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_designer_cs_modelbuilder",
       "community": 40,
+      "community_name": "Snapshot: ProductVolumetrics1",
       "norm_label": "modelbuilder"
     },
     {
@@ -4247,6 +4619,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1",
       "community": 27,
+      "community_name": "Migration: ProductVolumetrics1",
       "norm_label": "20260618193642_addproductvolumetrics1.cs"
     },
     {
@@ -4263,6 +4636,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_warehouse_infrastructure_migrations_addproductvolumetrics1",
       "community": 27,
+      "community_name": "Migration: ProductVolumetrics1",
       "norm_label": "addproductvolumetrics1"
     },
     {
@@ -4279,6 +4653,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_warehouse_infrastructure_migrations_addproductvolumetrics1_up",
       "community": 27,
+      "community_name": "Migration: ProductVolumetrics1",
       "norm_label": ".up()"
     },
     {
@@ -4289,6 +4664,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_cs_migrationbuilder",
       "community": 27,
+      "community_name": "Migration: ProductVolumetrics1",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4305,6 +4681,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618193642_addproductvolumetrics1_warehouse_infrastructure_migrations_addproductvolumetrics1_down",
       "community": 27,
+      "community_name": "Migration: ProductVolumetrics1",
       "norm_label": ".down()"
     },
     {
@@ -4315,6 +4692,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_designer",
       "community": 41,
+      "community_name": "Snapshot: Locations & Containers",
       "norm_label": "20260618212045_refactorlocationsandaddcontainers.designer.cs"
     },
     {
@@ -4331,6 +4709,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_designer_warehouse_infrastructure_migrations_refactorlocationsandaddcontainers",
       "community": 41,
+      "community_name": "Snapshot: Locations & Containers",
       "norm_label": "refactorlocationsandaddcontainers"
     },
     {
@@ -4347,6 +4726,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_designer_warehouse_infrastructure_migrations_refactorlocationsandaddcontainers_buildtargetmodel",
       "community": 41,
+      "community_name": "Snapshot: Locations & Containers",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4357,6 +4737,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_designer_cs_modelbuilder",
       "community": 41,
+      "community_name": "Snapshot: Locations & Containers",
       "norm_label": "modelbuilder"
     },
     {
@@ -4367,6 +4748,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers",
       "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": "20260618212045_refactorlocationsandaddcontainers.cs"
     },
     {
@@ -4383,6 +4765,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_warehouse_infrastructure_migrations_refactorlocationsandaddcontainers",
       "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": "refactorlocationsandaddcontainers"
     },
     {
@@ -4399,6 +4782,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_warehouse_infrastructure_migrations_refactorlocationsandaddcontainers_up",
       "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": ".up()"
     },
     {
@@ -4409,6 +4793,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_cs_migrationbuilder",
       "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4425,6 +4810,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618212045_refactorlocationsandaddcontainers_warehouse_infrastructure_migrations_refactorlocationsandaddcontainers_down",
       "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": ".down()"
     },
     {
@@ -4435,6 +4821,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_designer",
       "community": 42,
+      "community_name": "Snapshot: Orders & OrderItems",
       "norm_label": "20260618215939_addordersandorderitems.designer.cs"
     },
     {
@@ -4451,6 +4838,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_designer_warehouse_infrastructure_migrations_addordersandorderitems",
       "community": 42,
+      "community_name": "Snapshot: Orders & OrderItems",
       "norm_label": "addordersandorderitems"
     },
     {
@@ -4467,6 +4855,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_designer_warehouse_infrastructure_migrations_addordersandorderitems_buildtargetmodel",
       "community": 42,
+      "community_name": "Snapshot: Orders & OrderItems",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4477,6 +4866,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_designer_cs_modelbuilder",
       "community": 42,
+      "community_name": "Snapshot: Orders & OrderItems",
       "norm_label": "modelbuilder"
     },
     {
@@ -4487,6 +4877,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems",
       "community": 29,
+      "community_name": "Migration: Orders & OrderItems",
       "norm_label": "20260618215939_addordersandorderitems.cs"
     },
     {
@@ -4503,6 +4894,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_warehouse_infrastructure_migrations_addordersandorderitems",
       "community": 29,
+      "community_name": "Migration: Orders & OrderItems",
       "norm_label": "addordersandorderitems"
     },
     {
@@ -4519,6 +4911,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_warehouse_infrastructure_migrations_addordersandorderitems_up",
       "community": 29,
+      "community_name": "Migration: Orders & OrderItems",
       "norm_label": ".up()"
     },
     {
@@ -4529,6 +4922,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_cs_migrationbuilder",
       "community": 29,
+      "community_name": "Migration: Orders & OrderItems",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4545,6 +4939,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618215939_addordersandorderitems_warehouse_infrastructure_migrations_addordersandorderitems_down",
       "community": 29,
+      "community_name": "Migration: Orders & OrderItems",
       "norm_label": ".down()"
     },
     {
@@ -4555,6 +4950,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_designer",
       "community": 43,
+      "community_name": "Snapshot: Orders Constraints",
       "norm_label": "20260618220034_configureordersconstraints.designer.cs"
     },
     {
@@ -4571,6 +4967,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_designer_warehouse_infrastructure_migrations_configureordersconstraints",
       "community": 43,
+      "community_name": "Snapshot: Orders Constraints",
       "norm_label": "configureordersconstraints"
     },
     {
@@ -4587,6 +4984,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_designer_warehouse_infrastructure_migrations_configureordersconstraints_buildtargetmodel",
       "community": 43,
+      "community_name": "Snapshot: Orders Constraints",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4597,6 +4995,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_designer_cs_modelbuilder",
       "community": 43,
+      "community_name": "Snapshot: Orders Constraints",
       "norm_label": "modelbuilder"
     },
     {
@@ -4607,6 +5006,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints",
       "community": 30,
+      "community_name": "Migration: Orders Constraints",
       "norm_label": "20260618220034_configureordersconstraints.cs"
     },
     {
@@ -4623,6 +5023,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_warehouse_infrastructure_migrations_configureordersconstraints",
       "community": 30,
+      "community_name": "Migration: Orders Constraints",
       "norm_label": "configureordersconstraints"
     },
     {
@@ -4639,6 +5040,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_warehouse_infrastructure_migrations_configureordersconstraints_up",
       "community": 30,
+      "community_name": "Migration: Orders Constraints",
       "norm_label": ".up()"
     },
     {
@@ -4649,6 +5051,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_cs_migrationbuilder",
       "community": 30,
+      "community_name": "Migration: Orders Constraints",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4665,6 +5068,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260618220034_configureordersconstraints_warehouse_infrastructure_migrations_configureordersconstraints_down",
       "community": 30,
+      "community_name": "Migration: Orders Constraints",
       "norm_label": ".down()"
     },
     {
@@ -4675,6 +5079,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_designer",
       "community": 44,
+      "community_name": "Snapshot: PickTasks & Items",
       "norm_label": "20260622124211_addpicktasksanditems.designer.cs"
     },
     {
@@ -4691,6 +5096,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_designer_warehouse_infrastructure_migrations_addpicktasksanditems",
       "community": 44,
+      "community_name": "Snapshot: PickTasks & Items",
       "norm_label": "addpicktasksanditems"
     },
     {
@@ -4707,6 +5113,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_designer_warehouse_infrastructure_migrations_addpicktasksanditems_buildtargetmodel",
       "community": 44,
+      "community_name": "Snapshot: PickTasks & Items",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4717,6 +5124,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_designer_cs_modelbuilder",
       "community": 44,
+      "community_name": "Snapshot: PickTasks & Items",
       "norm_label": "modelbuilder"
     },
     {
@@ -4727,6 +5135,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems",
       "community": 31,
+      "community_name": "Migration: PickTasks & Items",
       "norm_label": "20260622124211_addpicktasksanditems.cs"
     },
     {
@@ -4743,6 +5152,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_warehouse_infrastructure_migrations_addpicktasksanditems",
       "community": 31,
+      "community_name": "Migration: PickTasks & Items",
       "norm_label": "addpicktasksanditems"
     },
     {
@@ -4759,6 +5169,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_warehouse_infrastructure_migrations_addpicktasksanditems_up",
       "community": 31,
+      "community_name": "Migration: PickTasks & Items",
       "norm_label": ".up()"
     },
     {
@@ -4769,6 +5180,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_cs_migrationbuilder",
       "community": 31,
+      "community_name": "Migration: PickTasks & Items",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4785,6 +5197,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622124211_addpicktasksanditems_warehouse_infrastructure_migrations_addpicktasksanditems_down",
       "community": 31,
+      "community_name": "Migration: PickTasks & Items",
       "norm_label": ".down()"
     },
     {
@@ -4794,7 +5207,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_designer",
-      "community": 13,
+      "community": 22,
+      "community_name": "DI Composition Root",
       "norm_label": "20260622151115_addpicktasksanditems1.designer.cs"
     },
     {
@@ -4810,7 +5224,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_designer_warehouse_infrastructure_migrations_addpicktasksanditems1",
-      "community": 13,
+      "community": 22,
+      "community_name": "DI Composition Root",
       "norm_label": "addpicktasksanditems1"
     },
     {
@@ -4826,7 +5241,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_designer_warehouse_infrastructure_migrations_addpicktasksanditems1_buildtargetmodel",
-      "community": 13,
+      "community": 22,
+      "community_name": "DI Composition Root",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4836,7 +5252,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_designer_cs_modelbuilder",
-      "community": 13,
+      "community": 22,
+      "community_name": "DI Composition Root",
       "norm_label": "modelbuilder"
     },
     {
@@ -4847,6 +5264,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1",
       "community": 32,
+      "community_name": "Migration: PickTasks & Items 1",
       "norm_label": "20260622151115_addpicktasksanditems1.cs"
     },
     {
@@ -4863,6 +5281,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_warehouse_infrastructure_migrations_addpicktasksanditems1",
       "community": 32,
+      "community_name": "Migration: PickTasks & Items 1",
       "norm_label": "addpicktasksanditems1"
     },
     {
@@ -4879,6 +5298,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_warehouse_infrastructure_migrations_addpicktasksanditems1_up",
       "community": 32,
+      "community_name": "Migration: PickTasks & Items 1",
       "norm_label": ".up()"
     },
     {
@@ -4889,6 +5309,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_cs_migrationbuilder",
       "community": 32,
+      "community_name": "Migration: PickTasks & Items 1",
       "norm_label": "migrationbuilder"
     },
     {
@@ -4905,6 +5326,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260622151115_addpicktasksanditems1_warehouse_infrastructure_migrations_addpicktasksanditems1_down",
       "community": 32,
+      "community_name": "Migration: PickTasks & Items 1",
       "norm_label": ".down()"
     },
     {
@@ -4914,7 +5336,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_designer",
-      "community": 13,
+      "community": 47,
+      "community_name": "EF Configuration Namespace",
       "norm_label": "20260624095509_addidentitytables.designer.cs"
     },
     {
@@ -4930,7 +5353,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_designer_warehouse_infrastructure_migrations_addidentitytables",
-      "community": 13,
+      "community": 47,
+      "community_name": "EF Configuration Namespace",
       "norm_label": "addidentitytables"
     },
     {
@@ -4946,7 +5370,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_designer_warehouse_infrastructure_migrations_addidentitytables_buildtargetmodel",
-      "community": 13,
+      "community": 47,
+      "community_name": "EF Configuration Namespace",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -4956,7 +5381,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_designer_cs_modelbuilder",
-      "community": 13,
+      "community": 47,
+      "community_name": "EF Configuration Namespace",
       "norm_label": "modelbuilder"
     },
     {
@@ -4967,6 +5393,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables",
       "community": 33,
+      "community_name": "Migration: Identity Tables",
       "norm_label": "20260624095509_addidentitytables.cs"
     },
     {
@@ -4983,6 +5410,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_warehouse_infrastructure_migrations_addidentitytables",
       "community": 33,
+      "community_name": "Migration: Identity Tables",
       "norm_label": "addidentitytables"
     },
     {
@@ -4999,6 +5427,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_warehouse_infrastructure_migrations_addidentitytables_up",
       "community": 33,
+      "community_name": "Migration: Identity Tables",
       "norm_label": ".up()"
     },
     {
@@ -5009,6 +5438,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_cs_migrationbuilder",
       "community": 33,
+      "community_name": "Migration: Identity Tables",
       "norm_label": "migrationbuilder"
     },
     {
@@ -5025,6 +5455,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260624095509_addidentitytables_warehouse_infrastructure_migrations_addidentitytables_down",
       "community": 33,
+      "community_name": "Migration: Identity Tables",
       "norm_label": ".down()"
     },
     {
@@ -5035,6 +5466,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_designer",
       "community": 45,
+      "community_name": "Snapshot: Containers Stock",
       "norm_label": "20260703175827_addcontainersstock.designer.cs"
     },
     {
@@ -5051,6 +5483,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_designer_warehouse_infrastructure_migrations_addcontainersstock",
       "community": 45,
+      "community_name": "Snapshot: Containers Stock",
       "norm_label": "addcontainersstock"
     },
     {
@@ -5067,6 +5500,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_designer_warehouse_infrastructure_migrations_addcontainersstock_buildtargetmodel",
       "community": 45,
+      "community_name": "Snapshot: Containers Stock",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -5077,6 +5511,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_designer_cs_modelbuilder",
       "community": 45,
+      "community_name": "Snapshot: Containers Stock",
       "norm_label": "modelbuilder"
     },
     {
@@ -5087,6 +5522,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock",
       "community": 34,
+      "community_name": "Migration: Containers Stock",
       "norm_label": "20260703175827_addcontainersstock.cs"
     },
     {
@@ -5103,6 +5539,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_warehouse_infrastructure_migrations_addcontainersstock",
       "community": 34,
+      "community_name": "Migration: Containers Stock",
       "norm_label": "addcontainersstock"
     },
     {
@@ -5119,6 +5556,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_warehouse_infrastructure_migrations_addcontainersstock_up",
       "community": 34,
+      "community_name": "Migration: Containers Stock",
       "norm_label": ".up()"
     },
     {
@@ -5129,6 +5567,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_cs_migrationbuilder",
       "community": 34,
+      "community_name": "Migration: Containers Stock",
       "norm_label": "migrationbuilder"
     },
     {
@@ -5145,6 +5584,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_warehouse_infrastructure_migrations_addcontainersstock_down",
       "community": 34,
+      "community_name": "Migration: Containers Stock",
       "norm_label": ".down()"
     },
     {
@@ -5155,6 +5595,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_designer",
       "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "20260719160713_addreservedavailablequantity.designer.cs"
     },
     {
@@ -5171,6 +5612,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_designer_warehouse_infrastructure_migrations_addreservedavailablequantity",
       "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "addreservedavailablequantity"
     },
     {
@@ -5187,6 +5629,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_designer_warehouse_infrastructure_migrations_addreservedavailablequantity_buildtargetmodel",
       "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -5197,6 +5640,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_designer_cs_modelbuilder",
       "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "modelbuilder"
     },
     {
@@ -5207,6 +5651,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity",
       "community": 35,
+      "community_name": "Migration: Reserved/Available Qty",
       "norm_label": "20260719160713_addreservedavailablequantity.cs"
     },
     {
@@ -5223,6 +5668,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_warehouse_infrastructure_migrations_addreservedavailablequantity",
       "community": 35,
+      "community_name": "Migration: Reserved/Available Qty",
       "norm_label": "addreservedavailablequantity"
     },
     {
@@ -5239,6 +5685,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_warehouse_infrastructure_migrations_addreservedavailablequantity_up",
       "community": 35,
+      "community_name": "Migration: Reserved/Available Qty",
       "norm_label": ".up()"
     },
     {
@@ -5249,6 +5696,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_cs_migrationbuilder",
       "community": 35,
+      "community_name": "Migration: Reserved/Available Qty",
       "norm_label": "migrationbuilder"
     },
     {
@@ -5265,6 +5713,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260719160713_addreservedavailablequantity_warehouse_infrastructure_migrations_addreservedavailablequantity_down",
       "community": 35,
+      "community_name": "Migration: Reserved/Available Qty",
       "norm_label": ".down()"
     },
     {
@@ -5275,6 +5724,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_appdbcontextmodelsnapshot",
       "community": 13,
+      "community_name": "EF Model Snapshot",
       "norm_label": "appdbcontextmodelsnapshot.cs"
     },
     {
@@ -5291,6 +5741,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_appdbcontextmodelsnapshot_warehouse_infrastructure_migrations_appdbcontextmodelsnapshot",
       "community": 13,
+      "community_name": "EF Model Snapshot",
       "norm_label": "appdbcontextmodelsnapshot"
     },
     {
@@ -5301,6 +5752,7 @@
       "_origin": "ast",
       "id": "modelsnapshot",
       "community": 13,
+      "community_name": "EF Model Snapshot",
       "norm_label": "modelsnapshot"
     },
     {
@@ -5317,6 +5769,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_appdbcontextmodelsnapshot_warehouse_infrastructure_migrations_appdbcontextmodelsnapshot_buildmodel",
       "community": 13,
+      "community_name": "EF Model Snapshot",
       "norm_label": ".buildmodel()"
     },
     {
@@ -5327,6 +5780,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_appdbcontextmodelsnapshot_cs_modelbuilder",
       "community": 13,
+      "community_name": "EF Model Snapshot",
       "norm_label": "modelbuilder"
     },
     {
@@ -5337,6 +5791,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_warehouse_infrastructure_csproj_framework_net10_0",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "net10.0"
     },
     {
@@ -5347,6 +5802,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_warehouse_infrastructure_csproj_nuget_microsoft_aspnetcore_identity_entityframeworkcore",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.aspnetcore.identity.entityframeworkcore (10.0.9)"
     },
     {
@@ -5357,6 +5813,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_warehouse_infrastructure_csproj_nuget_npgsql_entityframeworkcore_postgresql",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "npgsql.entityframeworkcore.postgresql (10.0.2)"
     },
     {
@@ -5367,6 +5824,7 @@
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_warehouse_infrastructure_csproj_sdk_microsoft_net_sdk",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "microsoft.net.sdk"
     },
     {
@@ -5377,6 +5835,7 @@
       "_origin": "ast",
       "id": "backend_warehousesystem",
       "community": 11,
+      "community_name": "Project Build Targets",
       "norm_label": "warehousesystem.slnx"
     },
     {
@@ -5387,6 +5846,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_oxlintrc",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": ".oxlintrc.json"
     },
     {
@@ -5397,6 +5857,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_oxlintrc_schema",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "$schema"
     },
     {
@@ -5407,6 +5868,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_oxlintrc_plugins",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "plugins"
     },
     {
@@ -5417,6 +5879,7 @@
       "_origin": "ast",
       "id": "ref_react",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "react"
     },
     {
@@ -5427,6 +5890,7 @@
       "_origin": "ast",
       "id": "ref_typescript",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "typescript"
     },
     {
@@ -5437,6 +5901,7 @@
       "_origin": "ast",
       "id": "ref_oxc",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "oxc"
     },
     {
@@ -5447,6 +5912,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_oxlintrc_rules",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "rules"
     },
     {
@@ -5457,6 +5923,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_oxlintrc_rules_react_rules_of_hooks",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "react/rules-of-hooks"
     },
     {
@@ -5467,6 +5934,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_oxlintrc_rules_react_only_export_components",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "react/only-export-components"
     },
     {
@@ -5477,6 +5945,7 @@
       "_origin": "ast",
       "id": "ref_warn",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "warn"
     },
     {
@@ -5487,6 +5956,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "package.json"
     },
     {
@@ -5497,6 +5967,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_name",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "name"
     },
     {
@@ -5507,6 +5978,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_private",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "private"
     },
     {
@@ -5517,6 +5989,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_version",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "version"
     },
     {
@@ -5527,6 +6000,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_type",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "type"
     },
     {
@@ -5537,6 +6011,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_scripts",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "scripts"
     },
     {
@@ -5547,6 +6022,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_scripts_dev",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "dev"
     },
     {
@@ -5557,6 +6033,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_scripts_build",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "build"
     },
     {
@@ -5567,6 +6044,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_scripts_lint",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "lint"
     },
     {
@@ -5577,6 +6055,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_scripts_preview",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "preview"
     },
     {
@@ -5587,6 +6066,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "dependencies"
     },
     {
@@ -5597,6 +6077,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_axios",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "axios"
     },
     {
@@ -5607,6 +6088,7 @@
       "_origin": "ast",
       "id": "axios",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "axios"
     },
     {
@@ -5617,6 +6099,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_react",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "react"
     },
     {
@@ -5627,6 +6110,7 @@
       "_origin": "ast",
       "id": "react",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "react"
     },
     {
@@ -5637,6 +6121,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_react_dom",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "react-dom"
     },
     {
@@ -5647,6 +6132,7 @@
       "_origin": "ast",
       "id": "react_dom",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "react-dom"
     },
     {
@@ -5657,6 +6143,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_react_router_dom",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "react-router-dom"
     },
     {
@@ -5667,6 +6154,7 @@
       "_origin": "ast",
       "id": "react_router_dom",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "react-router-dom"
     },
     {
@@ -5677,6 +6165,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "devdependencies"
     },
     {
@@ -5687,6 +6176,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_types_node",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@types/node"
     },
     {
@@ -5697,6 +6187,7 @@
       "_origin": "ast",
       "id": "types_node",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@types/node"
     },
     {
@@ -5707,6 +6198,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_types_react",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@types/react"
     },
     {
@@ -5717,6 +6209,7 @@
       "_origin": "ast",
       "id": "types_react",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@types/react"
     },
     {
@@ -5727,6 +6220,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_types_react_dom",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@types/react-dom"
     },
     {
@@ -5737,6 +6231,7 @@
       "_origin": "ast",
       "id": "types_react_dom",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@types/react-dom"
     },
     {
@@ -5747,6 +6242,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_vitejs_plugin_react",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@vitejs/plugin-react"
     },
     {
@@ -5757,6 +6253,7 @@
       "_origin": "ast",
       "id": "vitejs_plugin_react",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "@vitejs/plugin-react"
     },
     {
@@ -5767,6 +6264,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_oxlint",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "oxlint"
     },
     {
@@ -5777,6 +6275,7 @@
       "_origin": "ast",
       "id": "oxlint",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "oxlint"
     },
     {
@@ -5787,6 +6286,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_typescript",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "typescript"
     },
     {
@@ -5797,6 +6297,7 @@
       "_origin": "ast",
       "id": "typescript",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "typescript"
     },
     {
@@ -5807,6 +6308,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_vite",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "vite"
     },
     {
@@ -5817,6 +6319,7 @@
       "_origin": "ast",
       "id": "vite",
       "community": 1,
+      "community_name": "Frontend NPM Dependencies",
       "norm_label": "vite"
     },
     {
@@ -5827,6 +6330,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_app",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "app.tsx"
     },
     {
@@ -5837,6 +6341,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_app_protectedroute",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "protectedroute()"
     },
     {
@@ -5847,6 +6352,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_app_app",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "app()"
     },
     {
@@ -5857,6 +6363,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_api_axiosclient",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "axiosclient.ts"
     },
     {
@@ -5867,6 +6374,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "axiosclient"
     },
     {
@@ -5877,6 +6385,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_main",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "main.tsx"
     },
     {
@@ -5887,6 +6396,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_login_login",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "login.tsx"
     },
     {
@@ -5897,6 +6407,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_login_login_login",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "login()"
     },
     {
@@ -5907,6 +6418,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_activetaskscreen",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "activetaskscreen.tsx"
     },
     {
@@ -5917,6 +6429,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_activetaskscreen_props",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "props"
     },
     {
@@ -5927,6 +6440,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_activetaskscreen_activetaskscreen",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "activetaskscreen()"
     },
     {
@@ -5937,6 +6451,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_newtaskscreen",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "newtaskscreen.tsx"
     },
     {
@@ -5947,6 +6462,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_newtaskscreen_props",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "props"
     },
     {
@@ -5957,6 +6473,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_newtaskscreen_newtaskscreen",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "newtaskscreen()"
     },
     {
@@ -5967,6 +6484,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_picktasks",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "picktasks.tsx"
     },
     {
@@ -5977,6 +6495,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "picktasks()"
     },
     {
@@ -5987,6 +6506,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_types_task",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "task.ts"
     },
     {
@@ -5997,6 +6517,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_types_task_picktaskitem",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "picktaskitem"
     },
     {
@@ -6007,6 +6528,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_types_task_picktask",
       "community": 3,
+      "community_name": "Frontend Lint & Axios Client",
       "norm_label": "picktask"
     },
     {
@@ -6017,6 +6539,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "tsconfig.app.json"
     },
     {
@@ -6027,6 +6550,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "compileroptions"
     },
     {
@@ -6037,6 +6561,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_tsbuildinfofile",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "tsbuildinfofile"
     },
     {
@@ -6047,6 +6572,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_target",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "target"
     },
     {
@@ -6057,6 +6583,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_lib",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "lib"
     },
     {
@@ -6067,6 +6594,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_json_ref_es2023",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "es2023"
     },
     {
@@ -6077,6 +6605,7 @@
       "_origin": "ast",
       "id": "ref_dom",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "dom"
     },
     {
@@ -6087,6 +6616,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_module",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "module"
     },
     {
@@ -6097,6 +6627,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_types",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "types"
     },
     {
@@ -6107,6 +6638,7 @@
       "_origin": "ast",
       "id": "ref_vite_client",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "vite/client"
     },
     {
@@ -6117,6 +6649,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_skiplibcheck",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "skiplibcheck"
     },
     {
@@ -6127,6 +6660,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_moduleresolution",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "moduleresolution"
     },
     {
@@ -6137,6 +6671,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_allowimportingtsextensions",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "allowimportingtsextensions"
     },
     {
@@ -6147,6 +6682,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_verbatimmodulesyntax",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "verbatimmodulesyntax"
     },
     {
@@ -6157,6 +6693,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_moduledetection",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "moduledetection"
     },
     {
@@ -6167,6 +6704,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_noemit",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "noemit"
     },
     {
@@ -6177,6 +6715,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_jsx",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "jsx"
     },
     {
@@ -6187,6 +6726,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_nounusedlocals",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "nounusedlocals"
     },
     {
@@ -6197,6 +6737,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_nounusedparameters",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "nounusedparameters"
     },
     {
@@ -6207,6 +6748,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_erasablesyntaxonly",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "erasablesyntaxonly"
     },
     {
@@ -6217,6 +6759,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_compileroptions_nofallthroughcasesinswitch",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "nofallthroughcasesinswitch"
     },
     {
@@ -6227,6 +6770,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_app_include",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "include"
     },
     {
@@ -6237,6 +6781,7 @@
       "_origin": "ast",
       "id": "ref_src",
       "community": 6,
+      "community_name": "TS App Compiler Config",
       "norm_label": "src"
     },
     {
@@ -6247,6 +6792,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig",
       "community": 48,
+      "community_name": "TS Project References",
       "norm_label": "tsconfig.json"
     },
     {
@@ -6257,6 +6803,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_files",
       "community": 48,
+      "community_name": "TS Project References",
       "norm_label": "files"
     },
     {
@@ -6267,6 +6814,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_references",
       "community": 48,
+      "community_name": "TS Project References",
       "norm_label": "references"
     },
     {
@@ -6277,6 +6825,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "tsconfig.node.json"
     },
     {
@@ -6287,6 +6836,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "compileroptions"
     },
     {
@@ -6297,6 +6847,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_tsbuildinfofile",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "tsbuildinfofile"
     },
     {
@@ -6307,6 +6858,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_target",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "target"
     },
     {
@@ -6317,6 +6869,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_lib",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "lib"
     },
     {
@@ -6327,6 +6880,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_json_ref_es2023",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "es2023"
     },
     {
@@ -6337,6 +6891,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_types",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "types"
     },
     {
@@ -6347,6 +6902,7 @@
       "_origin": "ast",
       "id": "ref_node",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "node"
     },
     {
@@ -6357,6 +6913,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_skiplibcheck",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "skiplibcheck"
     },
     {
@@ -6367,6 +6924,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_module",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "module"
     },
     {
@@ -6377,6 +6935,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_allowimportingtsextensions",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "allowimportingtsextensions"
     },
     {
@@ -6387,6 +6946,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_verbatimmodulesyntax",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "verbatimmodulesyntax"
     },
     {
@@ -6397,6 +6957,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_moduledetection",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "moduledetection"
     },
     {
@@ -6407,6 +6968,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_noemit",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "noemit"
     },
     {
@@ -6417,6 +6979,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_nounusedlocals",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "nounusedlocals"
     },
     {
@@ -6427,6 +6990,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_nounusedparameters",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "nounusedparameters"
     },
     {
@@ -6437,6 +7001,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_erasablesyntaxonly",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "erasablesyntaxonly"
     },
     {
@@ -6447,6 +7012,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_compileroptions_nofallthroughcasesinswitch",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "nofallthroughcasesinswitch"
     },
     {
@@ -6457,6 +7023,7 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_tsconfig_node_include",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "include"
     },
     {
@@ -6467,6 +7034,7 @@
       "_origin": "ast",
       "id": "ref_vite_config_ts",
       "community": 7,
+      "community_name": "TS Node Compiler Config",
       "norm_label": "vite.config.ts"
     },
     {
@@ -6477,7 +7045,74 @@
       "_origin": "ast",
       "id": "frontend_warehouse_client_vite_config",
       "community": 49,
+      "community_name": "Vite Build Config",
       "norm_label": "vite.config.ts"
+    },
+    {
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "claude",
+      "community": 51,
+      "community_name": "CLAUDE.md",
+      "norm_label": "claude.md"
+    },
+    {
+      "label": "graphify",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "claude_graphify",
+      "community": 51,
+      "community_name": "CLAUDE.md",
+      "norm_label": "graphify"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_readme",
+      "community": 50,
+      "community_name": "React + TypeScript + Vite",
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "React + TypeScript + Vite",
+      "file_type": "document",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_readme_react_typescript_vite",
+      "community": 50,
+      "community_name": "React + TypeScript + Vite",
+      "norm_label": "react + typescript + vite"
+    },
+    {
+      "label": "React Compiler",
+      "file_type": "document",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_readme_react_compiler",
+      "community": 50,
+      "community_name": "React + TypeScript + Vite",
+      "norm_label": "react compiler"
+    },
+    {
+      "label": "Expanding the Oxlint configuration",
+      "file_type": "document",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_readme_expanding_the_oxlint_configuration",
+      "community": 50,
+      "community_name": "React + TypeScript + Vite",
+      "norm_label": "expanding the oxlint configuration"
     }
   ],
   "links": [
@@ -10599,7 +11234,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
-      "source_location": "L245",
+      "source_location": "L301",
       "weight": 1.0,
       "context": "return_type",
       "metadata": {
@@ -10711,6 +11346,21 @@
       },
       "_origin": "ast",
       "source": "backend_warehouse_api_services_ipicktaskservice_warehouse_application_services_ipicktaskservice_reportmissingitemasync",
+      "target": "backend_warehouse_api_dtos_reportmissingitemdto_warehouse_api_dtos_reportmissingitemdto",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L271",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "ReportMissingItemDto"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_reportmissingitemasync",
       "target": "backend_warehouse_api_dtos_reportmissingitemdto_warehouse_api_dtos_reportmissingitemdto",
       "confidence_score": 1.0
     },
@@ -11929,6 +12579,17 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L245",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice",
+      "target": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_cancelpicktaskasync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
       "source_location": "L149",
       "weight": 1.0,
       "_origin": "ast",
@@ -11962,7 +12623,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
-      "source_location": "L245",
+      "source_location": "L301",
       "weight": 1.0,
       "_origin": "ast",
       "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice",
@@ -11978,6 +12639,17 @@
       "_origin": "ast",
       "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice",
       "target": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_pickitemasync",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L271",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice",
+      "target": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_reportmissingitemasync",
       "confidence_score": 1.0
     },
     {
@@ -12040,6 +12712,21 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L245",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Task"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_cancelpicktaskasync",
+      "target": "backend_warehouse_api_services_picktaskservice_cs_task",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
       "source_location": "L149",
       "weight": 1.0,
       "context": "return_type",
@@ -12078,6 +12765,21 @@
       },
       "_origin": "ast",
       "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_pickitemasync",
+      "target": "backend_warehouse_api_services_picktaskservice_cs_task",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L271",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Task"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_reportmissingitemasync",
       "target": "backend_warehouse_api_services_picktaskservice_cs_task",
       "confidence_score": 1.0
     },
@@ -12127,6 +12829,21 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L245",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "Guid"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_cancelpicktaskasync",
+      "target": "backend_warehouse_api_services_picktaskservice_cs_guid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
       "source_location": "L149",
       "weight": 1.0,
       "context": "generic_arg",
@@ -12157,7 +12874,22 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
-      "source_location": "L245",
+      "source_location": "L271",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "Guid"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_api_services_picktaskservice_warehouse_application_services_picktaskservice_reportmissingitemasync",
+      "target": "backend_warehouse_api_services_picktaskservice_cs_guid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Api/Services/PickTaskService.cs",
+      "source_location": "L301",
       "weight": 1.0,
       "context": "parameter_type",
       "metadata": {
@@ -17488,6 +18220,50 @@
       "_origin": "ast",
       "source": "frontend_warehouse_client_tsconfig_node_include",
       "target": "ref_vite_config_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "claude",
+      "target": "claude_graphify",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_readme",
+      "target": "frontend_warehouse_client_readme_react_typescript_vite",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_readme_react_typescript_vite",
+      "target": "frontend_warehouse_client_readme_expanding_the_oxlint_configuration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/README.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_readme_react_typescript_vite",
+      "target": "frontend_warehouse_client_readme_react_compiler",
       "confidence_score": 1.0
     }
   ],
