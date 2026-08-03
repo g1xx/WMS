@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Warehouse.Api.Common;
 using Warehouse.Api.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ namespace Warehouse.Api.Controllers
     {
         private readonly IPickTaskService _pickTaskService;
 
-        // Подключаем наш сервис вместо AppDbContext!
+        // Inject the service instead of AppDbContext
         public PickTaskController(IPickTaskService pickTaskService)
         {
             _pickTaskService = pickTaskService;
@@ -27,16 +28,29 @@ namespace Warehouse.Api.Controllers
             return Ok(tasks);
         }
 
-        // ВОССТАНОВИЛИ метод получения следующего задания
-        [HttpGet("next")]
-        public async Task<IActionResult> GetNextTask()
+        // The worker's own in-flight task, regardless of sector. Called before sector
+        // selection so a re-login can resume straight into an already-started task.
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveTask()
         {
             var userId = GetUserId();
-            if (string.IsNullOrEmpty(userId)) return Unauthorized("Не удалось определить пользователя.");
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            var task = await _pickTaskService.GetNextTaskAsync(userId);
+            var task = await _pickTaskService.GetActiveTaskForUserAsync(userId);
 
-            if (task == null) return Ok(null);
+            return Ok(task);
+        }
+
+        [HttpGet("next")]
+        public async Task<IActionResult> GetNextTask([FromQuery] string sector)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
+
+            if (string.IsNullOrWhiteSpace(sector))
+                return BadRequest("A sector is required to request the next task.");
+
+            var task = await _pickTaskService.GetNextTaskAsync(userId, sector.Trim());
 
             return Ok(task);
         }
@@ -47,19 +61,19 @@ namespace Warehouse.Api.Controllers
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            try
+            var result = await _pickTaskService.StartPickTaskAsync(id, dto, userId);
+
+            if (!result.IsSuccess)
             {
-                var message = await _pickTaskService.StartPickTaskAsync(id, dto, userId);
-                return Ok(message);
+                return result.ErrorType switch
+                {
+                    ResultErrorType.NotFound => NotFound(result.Error),
+                    ResultErrorType.Conflict => Conflict(result.Error),
+                    _ => BadRequest(result.Error)
+                };
             }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
+            return Ok(result.Value);
         }
 
         [HttpPost("{id}/pick")]
@@ -83,7 +97,6 @@ namespace Warehouse.Api.Controllers
             }
         }
 
-        // ДОБАВИЛИ ТОТ САМЫЙ МЕТОД, ИЗ-ЗА КОТОРОГО БЫЛА ОШИБКА 404
         [HttpPost("{id}/dispatch")]
         public async Task<ActionResult> DispatchContainer(Guid id, [FromBody] DispatchContainerDto dto)
         {
@@ -92,12 +105,12 @@ namespace Warehouse.Api.Controllers
 
             try
             {
-                // Вызываем метод из сервиса, который обрабатывает и штатное закрытие, и "Полный контейнер"
+                // Handles both the normal close-out and the "Full container" case
                 var newTaskId = await _pickTaskService.DispatchContainerAsync(id, dto, userId);
 
                 return Ok(new
                 {
-                    Message = "Контейнер успешно проверен и отправлен на конвейер.",
+                    Message = "Container successfully verified and sent to the conveyor.",
                     NextTaskId = newTaskId
                 });
             }
@@ -151,6 +164,27 @@ namespace Warehouse.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("{id}/report-defect")]
+        public async Task<ActionResult> ReportDefect(Guid id, [FromBody] ReportDefectDto dto)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
+
+            var result = await _pickTaskService.ReportDefectAsync(id, dto, userId);
+
+            if (!result.IsSuccess)
+            {
+                return result.ErrorType switch
+                {
+                    ResultErrorType.NotFound => NotFound(result.Error),
+                    ResultErrorType.Conflict => Conflict(result.Error),
+                    _ => BadRequest(result.Error)
+                };
+            }
+
+            return Ok(result.Value);
         }
 
         private string? GetUserId()

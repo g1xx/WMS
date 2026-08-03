@@ -71,10 +71,10 @@ namespace Warehouse.Api.Controllers
         public async Task<ActionResult> Login(LoginDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.Username);
-            if (user == null) return Unauthorized("Неверный логин или пароль");
+            if (user == null) return Unauthorized("Invalid username or password.");
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-            if (!isPasswordValid) return Unauthorized("Неверный логин или пароль");
+            if (!isPasswordValid) return Unauthorized("Invalid username or password.");
 
             var token = await GenerateJwtToken(user); 
 

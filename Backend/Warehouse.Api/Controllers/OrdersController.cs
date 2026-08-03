@@ -75,22 +75,16 @@ public class OrdersController : ControllerBase
     [HttpPost("{id}/allocate")]
     public async Task<ActionResult> AllocateOrder(Guid id)
     {
-        try
+        var result = await _orderAllocationService.AllocateOrderAsync(id);
+
+        if (!result.IsAllocated)
         {
-            var success = await _orderAllocationService.AllocateOrderAsync(id);
-
-            if (!success)
-            {
-                return BadRequest("Cannot reserve order; it may not exist or is already in progress.");
-            }
-
-            return Ok("Order reserved, products allocated to locations, and status set to Picking.");
-
+            // A shortage (or an order that is not allocatable) is a valid domain
+            // state rather than a malformed request, so report it as a conflict.
+            return Conflict(result.Message ?? "Cannot reserve order; it may not exist or is already in progress.");
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        return Ok("Order reserved, products allocated to locations, and status set to Picking.");
     }
 
     [HttpPost("{id}/pack")]

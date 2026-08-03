@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login/Login'; 
+import Login from './pages/Login/Login';
 import PickTasks from './pages/PickTasks/PickTasks';
+import InventoryAdmin from './pages/Admin/InventoryAdmin';
 import type { JSX } from 'react/jsx-runtime';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -19,13 +20,22 @@ export default function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
 
-                <Route 
-                    path="/" 
+                <Route
+                    path="/"
                     element={
                         <ProtectedRoute>
                             <PickTasks />
                         </ProtectedRoute>
-                    } 
+                    }
+                />
+
+                <Route
+                    path="/admin/inventory"
+                    element={
+                        <ProtectedRoute>
+                            <InventoryAdmin />
+                        </ProtectedRoute>
+                    }
                 />
 
                 <Route path="*" element={<Navigate to="/" replace />} />

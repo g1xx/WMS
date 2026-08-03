@@ -28,6 +28,18 @@ public class ContainersController : ControllerBase
         return Ok(containers);
     }
 
+    [HttpGet("free")]
+    public async Task<ActionResult<IEnumerable<Container>>> GetFreeContainers()
+    {
+        var containers = await _context.Containers
+            .Where(c => c.Status == ContainerStatus.New)
+            .Include(c => c.Location)
+            .AsNoTracking()
+            .ToListAsync();
+
+        return Ok(containers);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Container>> GetContainer(Guid id)
     {
@@ -69,29 +81,29 @@ public class ContainersController : ControllerBase
     [HttpPost("move")]
     public async Task<ActionResult> MoveContainer(ContainerMoveDto dto)
     {
-        // 1. Ищем контейнер
+        // 1. Look up the container
         var container = await _context.Containers
             .FirstOrDefaultAsync(c => c.Barcode == dto.ContainerBarcode);
 
         if (container == null)
         {
-            return NotFound($"Контейнер {dto.ContainerBarcode} не найден.");
+            return NotFound($"Container {dto.ContainerBarcode} was not found.");
         }
 
-        // 2. Ищем новую локацию (куда ставим)
+        // 2. Look up the destination location
         var destination = await _context.Locations
             .FirstOrDefaultAsync(l => l.AddressBarcode == dto.DestinationLocationBarcode);
 
         if (destination == null)
         {
-            return BadRequest($"Целевая локация {dto.DestinationLocationBarcode} не существует.");
+            return BadRequest($"Destination location {dto.DestinationLocationBarcode} does not exist.");
         }
 
-        // 3. Физически перемещаем ящик в базе
+        // 3. Physically move the container in the database
         container.LocationId = destination.Id;
 
         await _context.SaveChangesAsync();
 
-        return Ok($"Контейнер {dto.ContainerBarcode} успешно перемещен на {dto.DestinationLocationBarcode}");
+        return Ok($"Container {dto.ContainerBarcode} successfully moved to {dto.DestinationLocationBarcode}.");
     }
 }

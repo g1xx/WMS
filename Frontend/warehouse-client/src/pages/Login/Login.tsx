@@ -24,37 +24,37 @@ export default function Login() {
             navigate('/tasks');
 
         } catch (error) {
-            console.error("Ошибка при входе:", error);
-            alert("Ошибка входа! Проверьте логин и пароль.");
+            console.error("Login error:", error);
+            alert("Login failed! Check your username and password.");
         }
     };
 
    return (
     <div className="login-container">
-        <h2>Вход в систему WMS</h2>
-        
+        <h2>WMS Sign In</h2>
+
         <form className="login-form" onSubmit={handleLogin}>
             <div className="form-group">
-                <label>Логин (Имя пользователя):</label>
-                <input 
-                    type="text" 
-                    placeholder="Введите логин"
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)} 
+                <label>Username:</label>
+                <input
+                    type="text"
+                    placeholder="Enter username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
 
             <div className="form-group">
-                <label>Пароль:</label>
-                <input 
-                    type="password" 
-                    placeholder="Введите пароль"
+                <label>Password:</label>
+                <input
+                    type="password"
+                    placeholder="Enter password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
-            
-            <button className="submit-btn" type="submit">Войти на склад</button>
+
+            <button className="submit-btn" type="submit">Sign in to warehouse</button>
         </form>
     </div>
 );

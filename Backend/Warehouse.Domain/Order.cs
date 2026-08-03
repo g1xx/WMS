@@ -2,11 +2,15 @@
 
 public enum OrderStatus
 {
-    New,        // Упал в систему, еще никто не трогал
-    Picking,    // Кладовщик собирает его прямо сейчас
-    Packed,     // Собран, лежит на рампе
-    Shipped,    // Уехал к клиенту
-    Canceled    // Отменен
+    New,        // Landed in the system, nobody has touched it yet
+    Picking,    // A warehouse worker is picking it right now
+    Packed,     // Picked, sitting on the ramp
+    Shipped,    // Left for the customer
+    Canceled,   // Canceled
+
+    // Appended last on purpose: the enum is persisted as int, so inserting
+    // a value above would shift the stored values of the existing statuses.
+    AwaitingReplenishment // Parked: not enough stock to allocate the order
 }
 
 public class Order
