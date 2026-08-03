@@ -390,7 +390,7 @@
     "semantic_hash": "8ba01d7922ba2c838a9c7fd664664f15"
   },
   "Backend/Warehouse.Infrastructure/Migrations/AppDbContextModelSnapshot.cs": {
-    "mtime": 1785615154.1132607,
+    "mtime": 1785612852.552831,
     "ast_hash": "51ce61cc4ba8aa966da0cc76c7ba2fb8",
     "semantic_hash": ""
   },
@@ -420,9 +420,9 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/api/axiosClient.ts": {
-    "mtime": 1785745176.552121,
-    "ast_hash": "7b97412a9fd4421d99a5d66c0036d58d",
-    "semantic_hash": ""
+    "mtime": 1782925937.0902598,
+    "ast_hash": "b73fcd54302d231a7e4813ab12ea5d63",
+    "semantic_hash": "b73fcd54302d231a7e4813ab12ea5d63"
   },
   "Frontend/warehouse-client/src/main.tsx": {
     "mtime": 1782620068.6779175,
@@ -435,8 +435,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/PickTasks/ActiveTaskScreen.tsx": {
-    "mtime": 1785748338.4978192,
-    "ast_hash": "548f87c7849321f0ddcdf2efe95c2a8b",
+    "mtime": 1785613422.7094758,
+    "ast_hash": "7e02735a5f4f383a53452c22f2ae60e5",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/PickTasks/NewTaskScreen.tsx": {
@@ -445,8 +445,8 @@
     "semantic_hash": "cb3851bc11c1545d8d1a6856e5a8b2c5"
   },
   "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx": {
-    "mtime": 1785748301.8991332,
-    "ast_hash": "1fabc988c0c4c330cfef9da49658424d",
+    "mtime": 1785613208.4928856,
+    "ast_hash": "3aeca2f745ed564ad28eecd60fffc8e8",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/types/task.ts": {
@@ -630,23 +630,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/PickTasks/MainMenu.tsx": {
-    "mtime": 1785745198.3816552,
-    "ast_hash": "598de9f4b310c25a7bf8850a0f1f99a3",
-    "semantic_hash": ""
-  },
-  "Backend/Warehouse.Infrastructure/Migrations/20260801201234_Add1.Designer.cs": {
-    "mtime": 1785615154.1132607,
-    "ast_hash": "7be739a325cc253c5c2e6544aac2cabd",
-    "semantic_hash": ""
-  },
-  "Backend/Warehouse.Infrastructure/Migrations/20260801201234_Add1.cs": {
-    "mtime": 1785615154.108755,
-    "ast_hash": "feb656068b727bc0d444ddc09dc872e9",
-    "semantic_hash": ""
-  },
-  "Frontend/warehouse-client/src/pages/PickTasks/SectorSelect.tsx": {
-    "mtime": 1785745188.6449277,
-    "ast_hash": "020a5c13de88bfc1b3640ff616847b18",
+    "mtime": 1785613184.3174698,
+    "ast_hash": "600fcdd1750610b9594f5a960399c5a1",
     "semantic_hash": ""
   }
 }

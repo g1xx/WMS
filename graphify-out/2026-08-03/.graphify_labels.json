@@ -56,14 +56,5 @@
   "54": "TestOrderGenerator/tsconfig.json",
   "55": "SplitAndCloseDto.cs",
   "56": "TestOrderGenerator/vite.config.ts",
-  "57": "20260801193412_AddOrderItemPendingReplenishment.Designer.cs",
-  "58": "Add1",
-  "59": "20260624095509_AddIdentityTables.Designer.cs",
-  "60": "LocationResponseDto.cs",
-  "61": "DispatchContainerDto.cs",
-  "62": "LoginDto.cs",
-  "63": "PickItemDto.cs",
-  "64": "RegisterDto.cs",
-  "65": "IdentityUser",
-  "66": "DateTime"
+  "57": "20260801193412_AddOrderItemPendingReplenishment.Designer.cs"
 }
