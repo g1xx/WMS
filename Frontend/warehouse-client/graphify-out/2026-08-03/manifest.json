@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "src/pages/PickTasks/ActiveTaskScreen.tsx": {
-    "mtime": 1785613422.7094758,
-    "ast_hash": "7e02735a5f4f383a53452c22f2ae60e5",
+    "mtime": 1785748338.4978192,
+    "ast_hash": "548f87c7849321f0ddcdf2efe95c2a8b",
     "semantic_hash": ""
   },
   "src/pages/PickTasks/NewTaskScreen.tsx": {
@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "src/pages/PickTasks/PickTasks.tsx": {
-    "mtime": 1785745232.815696,
-    "ast_hash": "74cb237bf7277e98adb2fea2091f9371",
+    "mtime": 1785748301.8991332,
+    "ast_hash": "1fabc988c0c4c330cfef9da49658424d",
     "semantic_hash": ""
   },
   "src/types/task.ts": {

@@ -1,11 +1,11 @@
 # Graph Report - warehouse-client  (2026-08-03)
 
 ## Corpus Check
-- 18 files · ~7,720 words
+- 18 files · ~7,844 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 130 nodes · 149 edges · 11 communities (10 shown, 1 thin omitted)
+- 130 nodes · 147 edges · 11 communities (10 shown, 1 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -32,8 +32,8 @@
 3. `react` - 7 edges
 4. `PickTask` - 6 edges
 5. `scripts` - 5 edges
-6. `axiosClient` - 5 edges
-7. `plugins` - 4 edges
+6. `plugins` - 4 edges
+7. `axiosClient` - 4 edges
 8. `rules` - 3 edges
 9. `InventoryAdmin()` - 3 edges
 10. `lib` - 3 edges
@@ -58,8 +58,8 @@ Cohesion: 0.10
 Nodes (19): node, vite.config.ts, compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection (+11 more)
 
 ### Community 2 - "PickTasks.tsx"
-Cohesion: 0.16
-Nodes (9): axiosClient, logout(), Props, Props, Props, Screen, Props, PickTask (+1 more)
+Cohesion: 0.20
+Nodes (7): react, Props, Props, Screen, Props, PickTask, PickTaskItem
 
 ### Community 3 - "devDependencies"
 Cohesion: 0.13
@@ -82,8 +82,8 @@ Cohesion: 0.50
 Nodes (3): Expanding the Oxlint configuration, React Compiler, React + TypeScript + Vite
 
 ### Community 10 - "InventoryAdmin.tsx"
-Cohesion: 0.19
-Nodes (10): react, App(), extractErrorMessage(), getAvailableQuantity(), inputStyle, InventoryAdmin(), labelStyle, Product (+2 more)
+Cohesion: 0.14
+Nodes (12): axiosClient, logout(), App(), extractErrorMessage(), getAvailableQuantity(), inputStyle, InventoryAdmin(), labelStyle (+4 more)
 
 ## Knowledge Gaps
 - **69 isolated node(s):** `$schema`, `typescript`, `oxc`, `react/rules-of-hooks`, `warn` (+64 more)
@@ -93,11 +93,11 @@ Nodes (10): react, App(), extractErrorMessage(), getAvailableQuantity(), inputSt
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `react` connect `InventoryAdmin.tsx` to `PickTasks.tsx`, `plugins`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+- **Why does `react` connect `PickTasks.tsx` to `InventoryAdmin.tsx`, `plugins`?**
+  _High betweenness centrality (0.050) - this node is a cross-community bridge._
 - **Why does `devDependencies` connect `devDependencies` to `package.json`?**
   _High betweenness centrality (0.042) - this node is a cross-community bridge._
-- **Why does `plugins` connect `plugins` to `InventoryAdmin.tsx`?**
+- **Why does `plugins` connect `plugins` to `PickTasks.tsx`?**
   _High betweenness centrality (0.036) - this node is a cross-community bridge._
 - **What connects `$schema`, `typescript`, `oxc` to the rest of the system?**
   _69 weakly-connected nodes found - possible documentation gaps or missing edges._

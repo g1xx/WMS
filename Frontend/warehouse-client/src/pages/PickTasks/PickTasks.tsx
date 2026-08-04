@@ -23,19 +23,29 @@ export default function PickTasks() {
         void resumeOrShowMenu();
     }, []);
 
-    // Escape returns PICKING -> MENU, but ONLY when ActiveTaskScreen isn't already
-    // mounted: it has its own window keydown listener for Escape (its exceptions
-    // menu), and firing both on the same keypress would open that menu AND boot
-    // the worker out to MENU at once. So this only applies to the "no tasks"
-    // empty state and the container-scan (NewTaskScreen) state.
+    // The single source of truth for "return to MENU" — used identically by the
+    // physical Escape key and by every on-screen ESC button, so the two can
+    // never drift apart.
+    const returnToMenu = () => {
+        setTask(null);
+        setScreen('MENU');
+    };
+
+    // Escape returns to MENU from SECTOR_SELECT and from PICKING, but ONLY when
+    // ActiveTaskScreen isn't already mounted there: it has its own window keydown
+    // listener for Escape (its exceptions menu), and firing both on the same
+    // keypress would open that menu AND boot the worker out to MENU at once. So
+    // within PICKING this only applies to the "no tasks" empty state and the
+    // container-scan (NewTaskScreen) state.
     useEffect(() => {
-        if (screen !== 'PICKING') return;
-        if (task && task.status !== 'New') return; // ActiveTaskScreen owns Escape here
+        const activeTaskScreenOwnsEscape = screen === 'PICKING' && !!task && task.status !== 'New';
+        const shouldHandleEscapeHere = (screen === 'SECTOR_SELECT' || screen === 'PICKING') && !activeTaskScreenOwnsEscape;
+
+        if (!shouldHandleEscapeHere) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key !== 'Escape') return;
-            setTask(null);
-            setScreen('MENU');
+            returnToMenu();
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -264,11 +274,17 @@ export default function PickTasks() {
                 {screen === 'MENU' ? (
                     <MainMenu onStartPicking={handleStartPicking} onChangeSector={handleChangeSector} />
                 ) : screen === 'SECTOR_SELECT' ? (
-                    <SectorSelect onConfirm={handleSectorConfirm} onBack={() => setScreen('MENU')} />
+                    <SectorSelect onConfirm={handleSectorConfirm} onBack={returnToMenu} onEscape={returnToMenu} />
                 ) : taskLoading ? (
                     <p>Loading task...</p>
                 ) : !task ? (
-                    <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
+                        <button
+                            onClick={returnToMenu}
+                            style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem', zIndex: 5 }}
+                        >
+                            ESC (Menu)
+                        </button>
                         <p style={{ color: '#aaa' }}>No tasks available in sector {sector}</p>
                         <button
                             onClick={() => fetchTask()}

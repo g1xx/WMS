@@ -4,9 +4,10 @@ import { SECTOR_STORAGE_KEY } from '../../api/axiosClient';
 interface Props {
     onConfirm: (sector: string) => void;
     onBack: () => void;
+    onEscape: () => void;
 }
 
-export default function SectorSelect({ onConfirm, onBack }: Props) {
+export default function SectorSelect({ onConfirm, onBack, onEscape }: Props) {
     // Pre-fill with whatever was last saved, so "Change Sector" is a quick edit, not a blank restart
     const [sector, setSector] = useState<string>(() => localStorage.getItem(SECTOR_STORAGE_KEY) ?? '');
 
@@ -20,7 +21,14 @@ export default function SectorSelect({ onConfirm, onBack }: Props) {
     };
 
     return (
-        <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.5)', textAlign: 'center' }}>
+        <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.5)', textAlign: 'center', position: 'relative' }}>
+            <button
+                onClick={onEscape}
+                style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem', zIndex: 5 }}
+            >
+                ESC (Menu)
+            </button>
+
             <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Select Sector</h2>
             <p style={{ color: '#aaa', marginBottom: '25px' }}>
                 Enter the sector you are picking in (e.g. mp1, mr1):
