@@ -2,6 +2,7 @@ namespace Warehouse.Api.Common;
 
 public enum ResultErrorType
 {
+    None = 0,
     NotFound,
     Conflict,
     BadRequest

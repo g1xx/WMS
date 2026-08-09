@@ -20,5 +20,12 @@ public class PickTaskConfiguration : IEntityTypeConfiguration<PickTask>
                .WithMany()
                .HasForeignKey(t => t.ContainerId)
                .OnDelete(DeleteBehavior.Restrict);
+
+        builder.UseXminAsConcurrencyToken();
+
+        // One container can only have one active pick task at a time.
+        builder.HasIndex(t => t.ContainerId)
+               .IsUnique()
+               .HasFilter($"\"Status\" = {(int)PickTaskStatus.InProgress}");
     }
 }

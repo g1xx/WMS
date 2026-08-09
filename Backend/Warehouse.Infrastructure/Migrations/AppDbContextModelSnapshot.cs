@@ -223,6 +223,10 @@ namespace Warehouse.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AssignedSector")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<string>("Barcode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -238,6 +242,12 @@ namespace Warehouse.Infrastructure.Migrations
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -428,6 +438,12 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderNumber")
@@ -493,9 +509,17 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ContainerId");
+                    b.HasIndex("ContainerId")
+                        .IsUnique()
+                        .HasFilter("\"Status\" = 1");
 
                     b.HasIndex("OrderId");
 
@@ -510,6 +534,9 @@ namespace Warehouse.Infrastructure.Migrations
 
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("MissingQuantity")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("PickTaskId")
                         .HasColumnType("uuid");
@@ -585,6 +612,78 @@ namespace Warehouse.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("Warehouse.Domain.PutawayTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AssignedWorkerId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("ContainerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Sector")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContainerId");
+
+                    b.ToTable("PutawayTasks");
+                });
+
+            modelBuilder.Entity("Warehouse.Domain.PutawayTaskItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DestinationLocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ExpectedQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MissingQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("PutAwayQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PutawayTaskId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinationLocationId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PutawayTaskId");
+
+                    b.ToTable("PutawayTaskItems");
+                });
+
             modelBuilder.Entity("Warehouse.Domain.Stock", b =>
                 {
                     b.Property<Guid>("Id")
@@ -606,15 +705,66 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Property<int>("ReservedQuantity")
                         .HasColumnType("integer");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ContainerId");
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId", "LocationId")
+                        .IsUnique();
 
-                    b.ToTable("Stocks");
+                    b.ToTable("Stocks", t =>
+                        {
+                            t.HasCheckConstraint("CK_Stock_PhysicalQuantity_NonNegative", "\"PhysicalQuantity\" >= 0");
+
+                            t.HasCheckConstraint("CK_Stock_ReservedNotExceedingPhysical", "\"ReservedQuantity\" <= \"PhysicalQuantity\"");
+
+                            t.HasCheckConstraint("CK_Stock_ReservedQuantity_NonNegative", "\"ReservedQuantity\" >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("Warehouse.Domain.StockTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("QuantityChange")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("Timestamp");
+
+                    b.HasIndex("ProductId", "LocationId");
+
+                    b.ToTable("StockTransactions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -742,6 +892,44 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Warehouse.Domain.PutawayTask", b =>
+                {
+                    b.HasOne("Warehouse.Domain.Container", "Container")
+                        .WithMany()
+                        .HasForeignKey("ContainerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Container");
+                });
+
+            modelBuilder.Entity("Warehouse.Domain.PutawayTaskItem", b =>
+                {
+                    b.HasOne("Warehouse.Domain.Location", "DestinationLocation")
+                        .WithMany()
+                        .HasForeignKey("DestinationLocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Warehouse.Domain.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Warehouse.Domain.PutawayTask", "PutawayTask")
+                        .WithMany("Items")
+                        .HasForeignKey("PutawayTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DestinationLocation");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("PutawayTask");
+                });
+
             modelBuilder.Entity("Warehouse.Domain.Stock", b =>
                 {
                     b.HasOne("Warehouse.Domain.Container", null)
@@ -756,6 +944,25 @@ namespace Warehouse.Infrastructure.Migrations
 
                     b.HasOne("Warehouse.Domain.Product", "Product")
                         .WithMany("Stocks")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Warehouse.Domain.StockTransaction", b =>
+                {
+                    b.HasOne("Warehouse.Domain.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Warehouse.Domain.Product", "Product")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -788,6 +995,11 @@ namespace Warehouse.Infrastructure.Migrations
             modelBuilder.Entity("Warehouse.Domain.Product", b =>
                 {
                     b.Navigation("Stocks");
+                });
+
+            modelBuilder.Entity("Warehouse.Domain.PutawayTask", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,7 +15,7 @@ public class InventoryService : IInventoryService
         _context = context;
     }
 
-    public async Task<Result<StockAdjustmentResultDto>> AdjustPhysicalStockAsync(Guid productId, string locationBarcode, int quantityDelta, string reason)
+    public async Task<Result<StockAdjustmentResultDto>> AdjustPhysicalStockAsync(Guid productId, string locationBarcode, int quantityDelta, string reason, string userId)
     {
         if (quantityDelta == 0)
             return Result<StockAdjustmentResultDto>.Failure("Quantity delta must not be zero.");
@@ -55,6 +55,15 @@ public class InventoryService : IInventoryService
                 $"Adjustment would take physical quantity negative (currently {stock.PhysicalQuantity}, delta {quantityDelta}).");
 
         stock.PhysicalQuantity = newPhysicalQuantity;
+
+        _context.StockTransactions.Add(new StockTransaction
+        {
+            ProductId = productId,
+            LocationId = location.Id,
+            QuantityChange = quantityDelta,
+            TransactionType = StockTransactionType.ManualAdjustment,
+            UserId = userId
+        });
 
         await _context.SaveChangesAsync();
 

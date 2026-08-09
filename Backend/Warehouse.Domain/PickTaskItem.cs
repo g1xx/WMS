@@ -15,4 +15,5 @@ public class PickTaskItem
 
     public int RequiredQuantity { get; set; }
     public int PickedQuantity { get; set; } = 0;
+    public int MissingQuantity { get; set; } = 0;
 }

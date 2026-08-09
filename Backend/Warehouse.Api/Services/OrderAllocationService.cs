@@ -41,15 +41,25 @@ public class OrderAllocationService : IOrderAllocationService
         // during the dry run ReservedQuantity does not yet reflect the plan.
         var earmarked = new Dictionary<Guid, int>();
 
+        // Batch-fetch every candidate stock row for every product in the order up front,
+        // instead of running one query per order item (N+1).
+        var productIds = order.Items.Select(i => i.ProductId).Distinct().ToList();
+
+        var candidateStocks = await _context.Stocks
+            .Include(s => s.Location)
+            .Where(s => productIds.Contains(s.ProductId) && (s.PhysicalQuantity - s.ReservedQuantity) > 0)
+            .ToListAsync();
+
+        var stocksByProduct = candidateStocks
+            .GroupBy(s => s.ProductId)
+            .ToDictionary(g => g.Key, g => g.OrderByDescending(s => s.AvailableQuantity).ToList());
+
         foreach (var item in order.Items)
         {
             var remainingToAllocate = item.RequiredQuantity;
 
-            var availableStocks = await _context.Stocks
-                .Include(s => s.Location)
-                .Where(s => s.ProductId == item.ProductId && (s.PhysicalQuantity - s.ReservedQuantity) > 0)
-                .OrderByDescending(s => (s.PhysicalQuantity - s.ReservedQuantity))
-                .ToListAsync();
+            stocksByProduct.TryGetValue(item.ProductId, out var availableStocks);
+            availableStocks ??= new List<Stock>();
 
             foreach (var stock in availableStocks)
             {

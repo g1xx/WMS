@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login/Login';
-import PickTasks from './pages/PickTasks/PickTasks';
+import Terminal from './pages/Terminal/Terminal';
 import InventoryAdmin from './pages/Admin/InventoryAdmin';
 import type { JSX } from 'react/jsx-runtime';
 
@@ -24,7 +24,7 @@ export default function App() {
                     path="/"
                     element={
                         <ProtectedRoute>
-                            <PickTasks />
+                            <Terminal />
                         </ProtectedRoute>
                     }
                 />

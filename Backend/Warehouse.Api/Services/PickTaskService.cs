@@ -81,10 +81,10 @@ namespace Warehouse.Application.Services
             if (task.Status == PickTaskStatus.Completed)
                 return Result<string>.Failure("This task has already been fully picked.");
 
-            // Only ever fetch/suggest containers that are free (New) — an
+            // Only ever fetch/suggest containers that are free (New or Available) — an
             // InProgress or Ready container is already committed elsewhere.
             var container = await _context.Containers
-                .Where(c => c.Status == ContainerStatus.New)
+                .Where(c => c.Status == ContainerStatus.New || c.Status == ContainerStatus.Available)
                 .FirstOrDefaultAsync(c => c.Barcode == dto.ContainerBarcode);
 
             if (container == null)
@@ -103,6 +103,7 @@ namespace Warehouse.Application.Services
             task.AssignedWorkerId = userId;
             task.ContainerId = container.Id;
             container.Status = ContainerStatus.InProgress;
+            container.AssignedSector = task.Sector;
 
             // Move the ORDER itself into the "Picking" status
             var order = await _context.Orders.FindAsync(task.OrderId);
@@ -116,27 +117,33 @@ namespace Warehouse.Application.Services
             return Result<string>.Success("Picking successfully started. Container linked, task locked to you.");
         }
 
-        public async Task<string> PickItemAsync(Guid id, PickItemDto dto, string userId)
+        public async Task<Result<string>> PickItemAsync(Guid id, PickItemDto dto, string userId)
         {
             var task = await _context.PickTasks
                 .Include(t => t.Items).ThenInclude(i => i.Product)
                 .Include(t => t.Items).ThenInclude(i => i.Location)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (task == null) throw new KeyNotFoundException("Task not found.");
-            if (task.Status != PickTaskStatus.InProgress) throw new InvalidOperationException("Cannot scan item: task is not active.");
-            if (task.AssignedWorkerId != userId) throw new InvalidOperationException("Access error! The task is being performed by another worker.");
+            if (task == null)
+                return Result<string>.Failure("Task not found.", ResultErrorType.NotFound);
+
+            if (task.Status != PickTaskStatus.InProgress)
+                return Result<string>.Failure("Cannot scan item: task is not active.");
+
+            if (task.AssignedWorkerId != userId)
+                return Result<string>.Failure("Access error! The task is being performed by another worker.");
 
             var taskItem = task.Items.FirstOrDefault(i =>
                 i.Location!.AddressBarcode == dto.LocationBarcode &&
                 i.Product!.Sku == dto.ProductSku);
 
-            if (taskItem == null) throw new InvalidOperationException("Scan error! You are at the wrong location or picked the wrong item.");
+            if (taskItem == null)
+                return Result<string>.Failure("Scan error! You are at the wrong location or picked the wrong item.");
 
             if (taskItem.PickedQuantity + dto.Quantity > taskItem.RequiredQuantity)
             {
                 var leftToPick = taskItem.RequiredQuantity - taskItem.PickedQuantity;
-                throw new InvalidOperationException($"Over-pick! You only need to pick {leftToPick} more units of this item.");
+                return Result<string>.Failure($"Over-pick! You only need to pick {leftToPick} more units of this item.");
             }
 
             // 1. Update the counter on the pick task
@@ -158,35 +165,41 @@ namespace Warehouse.Application.Services
 
             await _context.SaveChangesAsync();
 
-            return $"Successfully picked: {dto.Quantity} units.";
+            return Result<string>.Success($"Successfully picked: {dto.Quantity} units.");
         }
 
-        public async Task<Guid?> DispatchContainerAsync(Guid id, DispatchContainerDto dto, string userId)
+        public async Task<Result<DispatchContainerResultDto>> DispatchContainerAsync(Guid id, DispatchContainerDto dto, string userId)
         {
+            var task = await _context.PickTasks
+                .Include(t => t.Items)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+                return Result<DispatchContainerResultDto>.Failure("Pick task not found.", ResultErrorType.NotFound);
+
+            if (task.Status != PickTaskStatus.InProgress)
+                return Result<DispatchContainerResultDto>.Failure("Task is not in progress.");
+
+            if (task.AssignedWorkerId != userId)
+                return Result<DispatchContainerResultDto>.Failure("Task belongs to another worker.");
+
+            var container = await _context.Containers.FindAsync(task.ContainerId);
+            if (container == null || container.Barcode != dto.ContainerBarcode)
+                return Result<DispatchContainerResultDto>.Failure("Wrong container barcode! Scan the container linked to this task.");
+
+            var station = await _context.Locations.FirstOrDefaultAsync(l => l.AddressBarcode == dto.ConveyorBarcode);
+            if (station == null)
+                return Result<DispatchContainerResultDto>.Failure($"Conveyor '{dto.ConveyorBarcode}' was not found.", ResultErrorType.NotFound);
+
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var task = await _context.PickTasks
-                    .Include(t => t.Items)
-                    .FirstOrDefaultAsync(t => t.Id == id);
-
-                if (task == null) throw new KeyNotFoundException("Pick task not found.");
-                if (task.Status != PickTaskStatus.InProgress) throw new InvalidOperationException("Task is not in progress.");
-                if (task.AssignedWorkerId != userId) throw new InvalidOperationException("Task belongs to another worker.");
-
-                var container = await _context.Containers.FindAsync(task.ContainerId);
-                if (container == null || container.Barcode != dto.ContainerBarcode)
-                {
-                    throw new InvalidOperationException("Wrong container barcode! Scan the container linked to this task.");
-                }
-
-                var station = await _context.Locations.FirstOrDefaultAsync(l => l.AddressBarcode == dto.ConveyorBarcode);
-                if (station == null)
-                    throw new InvalidOperationException($"Conveyor '{dto.ConveyorBarcode}' was not found.");
-
                 container.LocationId = station.Id;
-                // The pick task closes out here, so the container is done being worked and heads to the conveyor
-                container.Status = ContainerStatus.Ready;
+                // Nothing downstream in this system models a separate "packing station
+                // unloads the container" event, so conveyor arrival IS the release point:
+                // free the container immediately instead of leaving it stuck in Ready forever.
+                container.Status = ContainerStatus.Available;
+                container.AssignedSector = null;
 
                 var leftoverItems = task.Items
                     .Where(i => i.RequiredQuantity > i.PickedQuantity)
@@ -214,6 +227,15 @@ namespace Warehouse.Application.Services
                     {
                         stock.PhysicalQuantity -= item.PickedQuantity;
                         stock.ReservedQuantity -= item.PickedQuantity;
+
+                        _context.StockTransactions.Add(new StockTransaction
+                        {
+                            ProductId = item.ProductId,
+                            LocationId = item.LocationId,
+                            QuantityChange = -item.PickedQuantity,
+                            TransactionType = StockTransactionType.Pick,
+                            UserId = userId
+                        });
                     }
                 }
 
@@ -264,7 +286,12 @@ namespace Warehouse.Application.Services
                 }
 
                 await transaction.CommitAsync();
-                return newTaskId;
+
+                return Result<DispatchContainerResultDto>.Success(new DispatchContainerResultDto
+                {
+                    Message = "Container successfully verified and sent to the conveyor.",
+                    NextTaskId = newTaskId
+                });
             }
             catch
             {
@@ -273,60 +300,94 @@ namespace Warehouse.Application.Services
             }
         }
 
-        public async Task<string> CancelPickTaskAsync(Guid id, string userId)
+        public async Task<Result<MessageResponseDto>> CancelPickTaskAsync(Guid id, string userId)
         {
             var task = await _context.PickTasks
                 .Include(t => t.Items)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (task == null) throw new KeyNotFoundException("Pick task not found.");
+            if (task == null)
+                return Result<MessageResponseDto>.Failure("Pick task not found.", ResultErrorType.NotFound);
+
+            if (task.AssignedWorkerId != userId)
+                return Result<MessageResponseDto>.Failure("Access error! The task is being performed by another worker.");
 
             if (task.Status != PickTaskStatus.InProgress)
-                throw new InvalidOperationException("Only a task that is in progress can be cancelled.");
+                return Result<MessageResponseDto>.Failure("Only a task that is in progress can be cancelled.");
 
-            // Return the task to its initial state: drop the worker and container, reset progress
+            // Once units have physically been picked into the container, cancelling would strand
+            // that stock in an unassigned container — reject instead of silently resetting progress.
+            if (task.Items.Any(i => i.PickedQuantity > 0))
+                return Result<MessageResponseDto>.Failure("Cannot cancel: some items have already been picked. Report missing items or dispatch the container instead.");
+
+            // Return the task to its initial state: drop the worker and container
             task.Status = PickTaskStatus.New;
             task.AssignedWorkerId = null;
             task.ContainerId = null;
 
-            foreach (var item in task.Items)
-            {
-                item.PickedQuantity = 0;
-            }
-
             await _context.SaveChangesAsync();
 
-            return "Pick task cancelled and returned to the queue.";
+            return Result<MessageResponseDto>.Success(new MessageResponseDto
+            {
+                Message = "Pick task cancelled and returned to the queue."
+            });
         }
 
-        public async Task<string> ReportMissingItemAsync(Guid taskId, ReportMissingItemDto dto, string workerId)
+        public async Task<Result<MessageResponseDto>> ReportMissingItemAsync(Guid taskId, ReportMissingItemDto dto, string workerId)
         {
             var task = await _context.PickTasks
                 .Include(t => t.Items).ThenInclude(i => i.Product)
                 .Include(t => t.Items).ThenInclude(i => i.Location)
                 .FirstOrDefaultAsync(t => t.Id == taskId);
 
-            if (task == null) throw new KeyNotFoundException("Pick task not found.");
+            if (task == null)
+                return Result<MessageResponseDto>.Failure("Pick task not found.", ResultErrorType.NotFound);
+
+            // No AssignedWorkerId ownership check here: this action is gated to the
+            // Brigadier/Admin role, and the caller is expected to be a supervisor
+            // confirming the shortage, not the picker the task is assigned to.
 
             var taskItem = task.Items.FirstOrDefault(i =>
                 i.Location!.AddressBarcode == dto.LocationBarcode &&
                 i.Product!.Sku == dto.ProductSku);
 
             if (taskItem == null)
-                throw new InvalidOperationException("Item not found in this task: wrong location or SKU.");
+                return Result<MessageResponseDto>.Failure("Item not found in this task: wrong location or SKU.");
 
-            // Record what was actually picked: required minus what could not be found
-            var actuallyPicked = taskItem.RequiredQuantity - dto.MissingQuantity;
-            if (actuallyPicked < 0) actuallyPicked = 0;
+            taskItem.MissingQuantity += dto.MissingQuantity;
 
-            taskItem.PickedQuantity = actuallyPicked;
+            // The units reported missing were never physically there, so they must come off both
+            // the physical count and the reservation this task item was holding at this location.
+            var stock = await _context.Stocks
+                .FirstOrDefaultAsync(s => s.ProductId == taskItem.ProductId && s.LocationId == taskItem.LocationId);
 
-            // Stage 1: stock reservation adjustments will go here
-            task.Status = PickTaskStatus.Completed;
+            if (stock == null)
+                return Result<MessageResponseDto>.Failure("No stock record found at this location for this product.");
+
+            stock.PhysicalQuantity -= dto.MissingQuantity;
+            stock.ReservedQuantity -= dto.MissingQuantity;
+
+            _context.StockTransactions.Add(new StockTransaction
+            {
+                ProductId = taskItem.ProductId,
+                LocationId = taskItem.LocationId,
+                QuantityChange = -dto.MissingQuantity,
+                TransactionType = StockTransactionType.Missing,
+                UserId = workerId
+            });
+
+            // Only close the task out once every line is fully accounted for (picked or missing).
+            if (task.Items.All(i => i.PickedQuantity + i.MissingQuantity == i.RequiredQuantity))
+            {
+                task.Status = PickTaskStatus.Completed;
+            }
 
             await _context.SaveChangesAsync();
 
-            return $"Missing item reported. Recorded {actuallyPicked} of {taskItem.RequiredQuantity} units picked.";
+            return Result<MessageResponseDto>.Success(new MessageResponseDto
+            {
+                Message = $"Missing item reported. {taskItem.MissingQuantity} unit(s) marked missing for this item."
+            });
         }
 
         // Bulk/high-rack storage sector (e.g. the "w" in "mw1") — never a valid
@@ -349,8 +410,9 @@ namespace Warehouse.Application.Services
             if (task.Status != PickTaskStatus.InProgress)
                 return Result<ReportDefectResultDto>.Failure("Cannot report a defect: task is not active.");
 
-            if (task.AssignedWorkerId != workerId)
-                return Result<ReportDefectResultDto>.Failure("Access error! The task is being performed by another worker.");
+            // No AssignedWorkerId ownership check here: this action is gated to the
+            // Brigadier/Admin role, and the caller is expected to be a supervisor
+            // confirming the defect, not the picker the task is assigned to.
 
             var taskItem = task.Items.FirstOrDefault(i =>
                 i.Location!.AddressBarcode == dto.LocationBarcode &&
@@ -373,6 +435,15 @@ namespace Warehouse.Application.Services
                 //    once we know where (or whether) it can be replaced below.
                 var defectiveQuantity = Math.Min(dto.DefectiveQuantity, sourceStock.PhysicalQuantity);
                 sourceStock.PhysicalQuantity -= defectiveQuantity;
+
+                _context.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = taskItem.ProductId,
+                    LocationId = taskItem.LocationId,
+                    QuantityChange = -defectiveQuantity,
+                    TransactionType = StockTransactionType.Defect,
+                    UserId = workerId
+                });
 
                 var remainingOnItem = taskItem.RequiredQuantity - taskItem.PickedQuantity;
                 var replacementNeeded = Math.Min(defectiveQuantity, remainingOnItem);

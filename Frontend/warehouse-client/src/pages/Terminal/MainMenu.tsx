@@ -3,21 +3,29 @@ import { logout } from '../../api/axiosClient';
 
 interface Props {
     onStartPicking: () => void;
+    onStartPutaway: () => void;
     onChangeSector: () => void;
 }
 
-export default function MainMenu({ onStartPicking, onChangeSector }: Props) {
+export default function MainMenu({ onStartPicking, onStartPutaway, onChangeSector }: Props) {
     const navigate = useNavigate();
 
     return (
         <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.5)', textAlign: 'center' }}>
-            <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Picking Terminal</h2>
+            <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Warehouse Terminal</h2>
 
             <button
                 onClick={onStartPicking}
                 style={{ width: '100%', padding: '18px', fontSize: '1.2rem', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '12px' }}
             >
                 Start Picking
+            </button>
+
+            <button
+                onClick={onStartPutaway}
+                style={{ width: '100%', padding: '18px', fontSize: '1.2rem', backgroundColor: '#ff9800', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '12px' }}
+            >
+                Start Putaway
             </button>
 
             <button

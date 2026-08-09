@@ -12,8 +12,8 @@ interface Props {
     onPickItem: () => Promise<void>;
     onDispatch: (containerBarcode: string, conveyorBarcode: string) => Promise<void>;
     onCancel: () => Promise<void>;
-    onReportDefect: (locationBarcode: string, productSku: string, defectiveQuantity: number) => Promise<void>;
-    onReportMissing: (locationBarcode: string, productSku: string, missingQuantity: number, brigadierBarcode: string) => Promise<void>;
+    onReportDefect: (locationBarcode: string, productSku: string, defectiveQuantity: number, supervisorBadge: string) => Promise<void>;
+    onReportMissing: (locationBarcode: string, productSku: string, missingQuantity: number, supervisorBadge: string) => Promise<void>;
 }
 
 export default function ActiveTaskScreen({
@@ -31,7 +31,9 @@ export default function ActiveTaskScreen({
 
     const [isMissingMode, setIsMissingMode] = useState<boolean>(false);
     const [missingQty, setMissingQty] = useState<number>(1);
-    const [brigadierBadge, setBrigadierBadge] = useState<string>('');
+    // Shared between the "missing" and "defect" submenus: both are supervisor-gated
+    // actions authorized the same way, and only one submenu is ever open at a time.
+    const [supervisorBadge, setSupervisorBadge] = useState<string>('');
     const [isReportingMissing, setIsReportingMissing] = useState<boolean>(false);
 
     const [isDefectMode, setIsDefectMode] = useState<boolean>(false);
@@ -108,20 +110,20 @@ export default function ActiveTaskScreen({
 
     const handleMissingSubmit = async () => {
         if (!currentItem) return;
-        if (!brigadierBadge.trim()) {
+        if (!supervisorBadge.trim()) {
             alert("Scan the supervisor's badge!");
             return;
         }
 
         setIsReportingMissing(true);
         try {
-            await onReportMissing(currentItem.locationBarcode, currentItem.productSku, missingQty, brigadierBadge);
+            await onReportMissing(currentItem.locationBarcode, currentItem.productSku, missingQty, supervisorBadge);
 
             // The parent handles clearing the task and fetching the next one on
             // success — this component only needs to close its own submenu.
             setIsMissingMode(false);
             setIsMenuOpen(false);
-            setBrigadierBadge('');
+            setSupervisorBadge('');
         } finally {
             setIsReportingMissing(false);
         }
@@ -129,16 +131,21 @@ export default function ActiveTaskScreen({
 
     const handleDefectSubmit = async () => {
         if (!currentItem) return;
+        if (!supervisorBadge.trim()) {
+            alert("Scan the supervisor's badge!");
+            return;
+        }
 
         setIsReportingDefect(true);
         try {
-            await onReportDefect(currentItem.locationBarcode, currentItem.productSku, defectiveQty);
+            await onReportDefect(currentItem.locationBarcode, currentItem.productSku, defectiveQty, supervisorBadge);
 
             // On success this line is closed out or rerouted server-side, so the
             // refreshed task naturally advances to the next product — nothing else to do here.
             setIsDefectMode(false);
             setIsMenuOpen(false);
             setDefectiveQty(1);
+            setSupervisorBadge('');
         } finally {
             setIsReportingDefect(false);
         }
@@ -356,8 +363,8 @@ export default function ActiveTaskScreen({
                                 type="text"
                                 autoFocus
                                 placeholder="Supervisor barcode..."
-                                value={brigadierBadge}
-                                onChange={(e) => setBrigadierBadge(e.target.value.trim())}
+                                value={supervisorBadge}
+                                onChange={(e) => setSupervisorBadge(e.target.value.trim())}
                                 style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '20px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem', textAlign: 'center' }}
                             />
 
@@ -387,6 +394,16 @@ export default function ActiveTaskScreen({
                                 These units are removed from stock here and, if possible, replaced automatically
                                 from another picking location.
                             </p>
+
+                            <p style={{ color: '#aaa', margin: '0 0 10px 0' }}>Scan the supervisor's badge:</p>
+                            <input
+                                type="text"
+                                autoFocus
+                                placeholder="Supervisor barcode..."
+                                value={supervisorBadge}
+                                onChange={(e) => setSupervisorBadge(e.target.value.trim())}
+                                style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '20px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem', textAlign: 'center' }}
+                            />
 
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 <button onClick={() => setIsDefectMode(false)} disabled={isReportingDefect} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingDefect ? 'not-allowed' : 'pointer' }}>Cancel</button>

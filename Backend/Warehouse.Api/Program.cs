@@ -22,6 +22,7 @@ builder.Services.AddScoped<IOrderAllocationService, OrderAllocationService>();
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IPutawayService, PutawayService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

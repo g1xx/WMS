@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
-import axiosClient, { SECTOR_STORAGE_KEY } from '../../api/axiosClient';
+import axiosClient, { fetchSupervisorAuthHeader, isSupervisorAuthError } from '../../api/axiosClient';
 import type { PickTask } from '../../types/task';
-import MainMenu from './MainMenu';
-import SectorSelect from './SectorSelect';
 import NewTaskScreen from './NewTaskScreen';
 import ActiveTaskScreen from './ActiveTaskScreen';
 
-type Screen = 'LOADING' | 'MENU' | 'SECTOR_SELECT' | 'PICKING';
+interface Props {
+    sector: string;
+    onExitToMenu: () => void;
+}
 
-export default function PickTasks() {
-    const [screen, setScreen] = useState<Screen>('LOADING');
-    const [sector, setSector] = useState<string>('');
+export default function PickTasks({ sector, onExitToMenu }: Props) {
     const [task, setTask] = useState<PickTask | null>(null);
-    const [taskLoading, setTaskLoading] = useState<boolean>(false);
+    const [taskLoading, setTaskLoading] = useState<boolean>(true);
 
     const [containerBarcode, setContainerBarcode] = useState<string>('');
     const [scanLocation, setScanLocation] = useState<string>('');
@@ -20,79 +19,42 @@ export default function PickTasks() {
     const [scanQty, setScanQty] = useState<number>(1);
 
     useEffect(() => {
-        void resumeOrShowMenu();
+        void fetchTask();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // The single source of truth for "return to MENU" — used identically by the
-    // physical Escape key and by every on-screen ESC button, so the two can
-    // never drift apart.
-    const returnToMenu = () => {
-        setTask(null);
-        setScreen('MENU');
-    };
-
-    // Escape returns to MENU from SECTOR_SELECT and from PICKING, but ONLY when
-    // ActiveTaskScreen isn't already mounted there: it has its own window keydown
-    // listener for Escape (its exceptions menu), and firing both on the same
-    // keypress would open that menu AND boot the worker out to MENU at once. So
-    // within PICKING this only applies to the "no tasks" empty state and the
-    // container-scan (NewTaskScreen) state.
+    // Escape returns to the terminal MENU, but ONLY when ActiveTaskScreen isn't
+    // already mounted: it has its own window keydown listener for Escape (its
+    // exceptions menu), and firing both on the same keypress would open that
+    // menu AND boot the worker out to MENU at once. So this only applies to the
+    // "no tasks" empty state and the container-scan (NewTaskScreen) state.
     useEffect(() => {
-        const activeTaskScreenOwnsEscape = screen === 'PICKING' && !!task && task.status !== 'New';
-        const shouldHandleEscapeHere = (screen === 'SECTOR_SELECT' || screen === 'PICKING') && !activeTaskScreenOwnsEscape;
-
-        if (!shouldHandleEscapeHere) return;
+        if (task && task.status !== 'New') return; // ActiveTaskScreen owns Escape here
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key !== 'Escape') return;
-            returnToMenu();
+            onExitToMenu();
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [screen, task]);
+    }, [task, onExitToMenu]);
 
     // Always checks for the worker's own in-flight task first, independent of any
-    // sector — this is what lets a re-login resume straight back into the task.
-    const resumeOrShowMenu = async () => {
-        setScreen('LOADING');
-        try {
-            const response = await axiosClient.get(`/PickTask/active?t=${new Date().getTime()}`);
-            if (response.data) {
-                setTask(response.data);
-                setSector(response.data.sector);
-                setContainerBarcode('');
-                setScreen('PICKING');
-                return;
-            }
-        } catch (error) {
-            console.error('Error checking for an active task:', error);
-        }
-        setScreen('MENU');
-    };
-
-    // Same resume-first logic, used for every refresh once picking has started:
-    // check for the worker's own active task, and only fall back to requesting a
-    // fresh one (scoped to the current sector) if nothing is in progress.
-    const fetchTask = async (sectorOverride?: string) => {
-        const targetSector = (sectorOverride ?? sector).trim();
-
+    // other state — this is what lets a re-login (or a page reload) resume
+    // straight back into it, and only falls back to requesting a fresh one
+    // (scoped to the current sector) if nothing is in progress.
+    const fetchTask = async () => {
         setTaskLoading(true);
         try {
             const activeResponse = await axiosClient.get(`/PickTask/active?t=${new Date().getTime()}`);
             if (activeResponse.data) {
                 setTask(activeResponse.data);
-                setSector(activeResponse.data.sector);
                 setContainerBarcode('');
                 return;
             }
 
-            if (!targetSector) {
-                setTask(null);
-                return;
-            }
-
-            const nextResponse = await axiosClient.get(`/PickTask/next?sector=${encodeURIComponent(targetSector)}&t=${new Date().getTime()}`);
+            const nextResponse = await axiosClient.get(`/PickTask/next?sector=${encodeURIComponent(sector)}&t=${new Date().getTime()}`);
             setTask(nextResponse.data ? nextResponse.data : null);
             setContainerBarcode('');
         } catch (error) {
@@ -101,31 +63,6 @@ export default function PickTasks() {
         } finally {
             setTaskLoading(false);
         }
-    };
-
-    // MENU: "Start Picking" — resume the saved sector if there is one, otherwise ask for it
-    const handleStartPicking = async () => {
-        const savedSector = localStorage.getItem(SECTOR_STORAGE_KEY);
-        if (!savedSector) {
-            setScreen('SECTOR_SELECT');
-            return;
-        }
-        setSector(savedSector);
-        setScreen('PICKING');
-        await fetchTask(savedSector);
-    };
-
-    // MENU: "Change Sector"
-    const handleChangeSector = () => {
-        setScreen('SECTOR_SELECT');
-    };
-
-    // SECTOR_SELECT: confirm — persists so it survives reloads/battery deaths
-    const handleSectorConfirm = async (chosenSector: string) => {
-        localStorage.setItem(SECTOR_STORAGE_KEY, chosenSector);
-        setSector(chosenSector);
-        setScreen('PICKING');
-        await fetchTask(chosenSector);
     };
 
     const handleStartTask = async () => {
@@ -201,15 +138,16 @@ export default function PickTasks() {
         }
     };
 
-    const handleReportMissing = async (locationBarcode: string, productSku: string, missingQuantity: number, brigadierBarcode: string) => {
+    const handleReportMissing = async (locationBarcode: string, productSku: string, missingQuantity: number, supervisorBadge: string) => {
         if (!task) return;
         try {
+            const elevatedConfig = await fetchSupervisorAuthHeader(supervisorBadge);
+
             const response = await axiosClient.post(`/PickTask/${task.id}/report-missing`, {
                 locationBarcode,
                 productSku,
-                missingQuantity,
-                brigadierBarcode
-            });
+                missingQuantity
+            }, elevatedConfig);
 
             alert(response.data?.message || "Shortage confirmed.");
 
@@ -225,19 +163,25 @@ export default function PickTasks() {
 
             await fetchTask();
         } catch (error: any) {
+            if (isSupervisorAuthError(error)) {
+                alert("Supervisor authorization failed: Invalid badge or missing permissions.");
+                return;
+            }
             console.error("Shortage write-off error:", error);
             alert(error.response?.data || "Failed to confirm the shortage.");
         }
     };
 
-    const handleReportDefect = async (locationBarcode: string, productSku: string, defectiveQuantity: number) => {
+    const handleReportDefect = async (locationBarcode: string, productSku: string, defectiveQuantity: number, supervisorBadge: string) => {
         if (!task) return;
         try {
+            const elevatedConfig = await fetchSupervisorAuthHeader(supervisorBadge);
+
             const response = await axiosClient.post(`/PickTask/${task.id}/report-defect`, {
                 locationBarcode,
                 productSku,
                 defectiveQuantity
-            });
+            }, elevatedConfig);
 
             alert(response.data?.message || "Defect reported.");
 
@@ -254,69 +198,64 @@ export default function PickTasks() {
 
             await fetchTask();
         } catch (error: any) {
+            if (isSupervisorAuthError(error)) {
+                alert("Supervisor authorization failed: Invalid badge or missing permissions.");
+                return;
+            }
             console.error("Error reporting defect:", error);
             alert(error.response?.data || "Failed to report the defect.");
         }
     };
 
-    if (screen === 'LOADING') {
-        return <h2 style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>Loading...</h2>;
+    if (taskLoading) {
+        return <p>Loading task...</p>;
+    }
+
+    if (!task) {
+        return (
+            <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
+                <button
+                    onClick={onExitToMenu}
+                    style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem', zIndex: 5 }}
+                >
+                    ESC (Menu)
+                </button>
+                <p style={{ color: '#aaa' }}>No tasks available in sector {sector}</p>
+                <button
+                    onClick={() => fetchTask()}
+                    style={{ width: '100%', padding: '12px', marginTop: '15px', fontSize: '0.9rem', backgroundColor: '#333', color: '#aaa', border: '1px solid #555', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                    Check again
+                </button>
+            </div>
+        );
+    }
+
+    if (task.status === 'New') {
+        return (
+            <NewTaskScreen
+                task={task}
+                containerBarcode={containerBarcode}
+                setContainerBarcode={setContainerBarcode}
+                onStartTask={handleStartTask}
+            />
+        );
     }
 
     return (
-        <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: '#e0e0e0', padding: '20px' }}>
-            <h2 style={{ textAlign: 'center', marginBottom: '10px' }}>Picking Terminal</h2>
-            {screen === 'PICKING' && sector && (
-                <p style={{ textAlign: 'center', color: '#888', marginBottom: '20px' }}>Sector: <strong style={{ color: '#64b5f6' }}>{sector}</strong></p>
-            )}
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
-                {screen === 'MENU' ? (
-                    <MainMenu onStartPicking={handleStartPicking} onChangeSector={handleChangeSector} />
-                ) : screen === 'SECTOR_SELECT' ? (
-                    <SectorSelect onConfirm={handleSectorConfirm} onBack={returnToMenu} onEscape={returnToMenu} />
-                ) : taskLoading ? (
-                    <p>Loading task...</p>
-                ) : !task ? (
-                    <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
-                        <button
-                            onClick={returnToMenu}
-                            style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem', zIndex: 5 }}
-                        >
-                            ESC (Menu)
-                        </button>
-                        <p style={{ color: '#aaa' }}>No tasks available in sector {sector}</p>
-                        <button
-                            onClick={() => fetchTask()}
-                            style={{ width: '100%', padding: '12px', marginTop: '15px', fontSize: '0.9rem', backgroundColor: '#333', color: '#aaa', border: '1px solid #555', borderRadius: '4px', cursor: 'pointer' }}
-                        >
-                            Check again
-                        </button>
-                    </div>
-                ) : task.status === 'New' ? (
-                    <NewTaskScreen
-                        task={task}
-                        containerBarcode={containerBarcode}
-                        setContainerBarcode={setContainerBarcode}
-                        onStartTask={handleStartTask}
-                    />
-                ) : (
-                    <ActiveTaskScreen
-                        task={task}
-                        scanLocation={scanLocation}
-                        setScanLocation={setScanLocation}
-                        scanSku={scanSku}
-                        setScanSku={setScanSku}
-                        scanQty={scanQty}
-                        setScanQty={setScanQty}
-                        onPickItem={handlePickItem}
-                        onDispatch={handleDispatch}
-                        onCancel={handleCancelTask}
-                        onReportDefect={handleReportDefect}
-                        onReportMissing={handleReportMissing}
-                    />
-                )}
-            </div>
-        </div>
+        <ActiveTaskScreen
+            task={task}
+            scanLocation={scanLocation}
+            setScanLocation={setScanLocation}
+            scanSku={scanSku}
+            setScanSku={setScanSku}
+            scanQty={scanQty}
+            setScanQty={setScanQty}
+            onPickItem={handlePickItem}
+            onDispatch={handleDispatch}
+            onCancel={handleCancelTask}
+            onReportDefect={handleReportDefect}
+            onReportMissing={handleReportMissing}
+        />
     );
 }

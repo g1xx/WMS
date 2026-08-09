@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Warehouse.Api.Common;
 using Warehouse.Api.DTOs;
 using Warehouse.Api.Services;
@@ -23,36 +25,22 @@ public class InventoryController : ControllerBase
     [HttpPost("adjust-stock")]
     public async Task<ActionResult> AdjustStock([FromBody] AdjustStockDto dto)
     {
-        var result = await _inventoryService.AdjustPhysicalStockAsync(dto.ProductId, dto.LocationBarcode, dto.QuantityDelta, dto.Reason);
+        var userId = GetUserId();
+        if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-        if (!result.IsSuccess)
-        {
-            return result.ErrorType switch
-            {
-                ResultErrorType.NotFound => NotFound(result.Error),
-                ResultErrorType.Conflict => Conflict(result.Error),
-                _ => BadRequest(result.Error)
-            };
-        }
-
-        return Ok(result.Value);
+        var result = await _inventoryService.AdjustPhysicalStockAsync(dto.ProductId, dto.LocationBarcode, dto.QuantityDelta, dto.Reason, userId);
+        return result.ToActionResult();
     }
 
     [HttpPost("products")]
     public async Task<ActionResult> CreateProduct([FromBody] CreateProductWithLocationDto dto)
     {
         var result = await _inventoryService.CreateProductWithLocationAsync(dto);
+        return result.ToActionResult();
+    }
 
-        if (!result.IsSuccess)
-        {
-            return result.ErrorType switch
-            {
-                ResultErrorType.NotFound => NotFound(result.Error),
-                ResultErrorType.Conflict => Conflict(result.Error),
-                _ => BadRequest(result.Error)
-            };
-        }
-
-        return Ok(result.Value);
+    private string? GetUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
     }
 }

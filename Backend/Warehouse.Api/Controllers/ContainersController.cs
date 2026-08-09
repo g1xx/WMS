@@ -32,7 +32,7 @@ public class ContainersController : ControllerBase
     public async Task<ActionResult<IEnumerable<Container>>> GetFreeContainers()
     {
         var containers = await _context.Containers
-            .Where(c => c.Status == ContainerStatus.New)
+            .Where(c => c.Status == ContainerStatus.New || c.Status == ContainerStatus.Available)
             .Include(c => c.Location)
             .AsNoTracking()
             .ToListAsync();

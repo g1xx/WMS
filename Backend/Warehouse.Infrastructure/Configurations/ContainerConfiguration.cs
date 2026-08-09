@@ -12,5 +12,9 @@ public class ContainerConfiguration : IEntityTypeConfiguration<Container>
                .WithMany()
                .HasForeignKey(c => c.LocationId)
                .OnDelete(DeleteBehavior.SetNull);
+
+        builder.Property(c => c.AssignedSector).HasMaxLength(50);
+
+        builder.UseXminAsConcurrencyToken();
     }
 }

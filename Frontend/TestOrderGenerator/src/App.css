@@ -133,13 +133,85 @@
     color: #aaa;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #555;
     background-color: #333;
     color: white;
     font-size: 1rem;
+}
+
+.inline-field {
+    display: flex;
+    gap: 8px;
+}
+
+.inline-field input {
+    flex: 1;
+}
+
+.mode-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.mode-tab {
+    flex: 1;
+    padding: 12px;
+    background-color: #1e1e1e;
+    color: #888;
+    border: 1px solid #333;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.mode-tab.active {
+    background-color: #2196F3;
+    color: white;
+    border-color: #2196F3;
+}
+
+.success-banner {
+    background-color: #2e7d32;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.putaway-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+.putaway-item-row {
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    padding: 12px;
+    border-left: 4px solid #ff9800;
+}
+
+.putaway-item-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.remove-btn {
+    background-color: transparent;
+    color: #ff5252;
+    border: 1px solid #663333;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
 }
 
 .actions {
