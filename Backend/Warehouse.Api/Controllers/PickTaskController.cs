@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Warehouse.Api.Common;
-using Warehouse.Api.DTOs;
+using Warehouse.Application.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;

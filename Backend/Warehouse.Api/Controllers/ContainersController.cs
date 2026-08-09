@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Warehouse.Api.DTOs;
+using Warehouse.Application.DTOs;
 using Warehouse.Domain;
 using Warehouse.Infrastructure;
 

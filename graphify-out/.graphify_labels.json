@@ -75,5 +75,12 @@
   "73": "20260611180526_InitialCreate.Designer.cs",
   "74": "20260615013749_AddPiecePackageProduct.Designer.cs",
   "75": "20260805012255_AddStockTransactionJournal.Designer.cs",
-  "76": "PickTaskItemResponseDto"
+  "76": "PickTaskItemResponseDto",
+  "77": "20260618193047_AddProductVolumetrics.Designer.cs",
+  "78": "AdjustStockDto.cs",
+  "79": "StockAdjustmentResultDto.cs",
+  "80": "ContainerMoveDto.cs",
+  "81": "CreateProductWithLocationDto.cs",
+  "82": "LoginDto.cs",
+  "83": "RegisterDto.cs"
 }

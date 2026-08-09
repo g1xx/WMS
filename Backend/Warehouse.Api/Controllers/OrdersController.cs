@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Warehouse.Domain;
 using Warehouse.Infrastructure;
-using Warehouse.Api.Services;
-using Warehouse.Api.DTOs;
+using Warehouse.Application.Services;
+using Warehouse.Application.DTOs;
 
 namespace Warehouse.Api.Controllers;
 

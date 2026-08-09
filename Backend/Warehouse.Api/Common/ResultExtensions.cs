@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Warehouse.Application.Common;
 
 namespace Warehouse.Api.Common;
 
