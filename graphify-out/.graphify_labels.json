@@ -10,8 +10,10 @@
   "8": "Controller Namespace Hub",
   "9": "Auth Controller & Login",
   "10": "Locations Controller API",
+  "11": "LocationsController",
   "12": "API Launch Settings",
   "13": "EF Model Snapshot",
+  "14": "IEntityTypeConfiguration",
   "15": "PickTask Entity Mapping",
   "16": "Product & Stock Entities",
   "17": "TestOrderGenerator/package.json",
@@ -21,6 +23,7 @@
   "21": "Product",
   "22": "DI Composition Root",
   "23": "Migration: PiecePackageProduct",
+  "24": "PutawayTaskConfiguration",
   "25": "Migration: ProductUpdatedAt",
   "26": "Migration: ProductVolumetrics",
   "27": "Migration: ProductVolumetrics1",
@@ -31,9 +34,7 @@
   "32": "Migration: PickTasks & Items 1",
   "33": "Migration: Identity Tables",
   "35": "Migration: Reserved/Available Qty",
-  "36": "Snapshot: InitialCreate",
   "38": "Snapshot: PiecePackageProduct",
-  "39": "XminConcurrencyExtensions.cs",
   "41": "StockTransaction",
   "42": "PickTask",
   "43": "PutawayTask",
@@ -72,6 +73,5 @@
   "80": "ContainerMoveDto.cs",
   "81": "Product",
   "82": "LoginDto.cs",
-  "84": "InitialCreate",
-  "85": "20260801201234_Add1.Designer.cs"
+  "84": "InitialCreate"
 }

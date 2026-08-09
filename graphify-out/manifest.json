@@ -300,9 +300,9 @@
     "semantic_hash": "029f4905006c1fffd96bc863e2d98d3e"
   },
   "Frontend/warehouse-client/package.json": {
-    "mtime": 1782925781.6290689,
-    "ast_hash": "c9813a3577131f5dd1d862710d78ffc4",
-    "semantic_hash": "c9813a3577131f5dd1d862710d78ffc4"
+    "mtime": 1786299007.910914,
+    "ast_hash": "1a58db2262852e9e5078f86ff8a259ab",
+    "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/App.tsx": {
     "mtime": 1785835665.582839,
@@ -315,9 +315,9 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/main.tsx": {
-    "mtime": 1782620068.6779175,
-    "ast_hash": "787e5a07efeb2bf6209d5937195f2f68",
-    "semantic_hash": "787e5a07efeb2bf6209d5937195f2f68"
+    "mtime": 1786299038.4855943,
+    "ast_hash": "65195a8a4f664aa5d5563b6b2c0e1025",
+    "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Login/Login.tsx": {
     "mtime": 1785526410.4485292,
@@ -335,8 +335,8 @@
     "semantic_hash": "cb3851bc11c1545d8d1a6856e5a8b2c5"
   },
   "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx": {
-    "mtime": 1786279212.4952629,
-    "ast_hash": "18befca741d8b3b956aeeef3cd2246c2",
+    "mtime": 1786299096.3128388,
+    "ast_hash": "d7503a9496e9062b3f6d122786061ba3",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/types/task.ts": {
@@ -535,8 +535,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx": {
-    "mtime": 1785835824.2678173,
-    "ast_hash": "a2032c9f50cfb9775fc2bc1af8635710",
+    "mtime": 1786299121.9805317,
+    "ast_hash": "af2881bffc23ad774b463eea46406d0e",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Terminal/MainMenu.tsx": {
@@ -957,6 +957,21 @@
   "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs": {
     "mtime": 1786297592.8204052,
     "ast_hash": "6044b9b702efc60cda0800165a923bdc",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/api/pickTaskApi.ts": {
+    "mtime": 1786299055.1839201,
+    "ast_hash": "915ad7ca4616c5ee51c544fb3f181b16",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/api/putawayApi.ts": {
+    "mtime": 1786299064.6969888,
+    "ast_hash": "d3b2b1c5a3cf57a5eb2e3c5e706570f5",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/queryClient.ts": {
+    "mtime": 1786299027.9713025,
+    "ast_hash": "20136b6d263ec05cb7c5a47040c797c9",
     "semantic_hash": ""
   }
 }

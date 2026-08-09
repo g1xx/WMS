@@ -115,8 +115,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "authcontroller"
     },
     {
@@ -137,8 +137,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "usermanager",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "usermanager"
     },
     {
@@ -148,8 +148,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "rolemanager",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "rolemanager"
     },
     {
@@ -159,8 +159,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_iconfiguration",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "iconfiguration"
     },
     {
@@ -176,8 +176,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_register",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".register()"
     },
     {
@@ -187,8 +187,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_task",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "task"
     },
     {
@@ -198,8 +198,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_iactionresult",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "iactionresult"
     },
     {
@@ -209,8 +209,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_httppost",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "httppost"
     },
     {
@@ -226,8 +226,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_registerbrigadier",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".registerbrigadier()"
     },
     {
@@ -243,8 +243,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_registeruserwithrole",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".registeruserwithrole()"
     },
     {
@@ -260,8 +260,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_login",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".login()"
     },
     {
@@ -271,8 +271,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_actionresult",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "actionresult"
     },
     {
@@ -288,8 +288,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_supervisoroverride",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".supervisoroverride()"
     },
     {
@@ -305,8 +305,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_warehouse_api_controllers_authcontroller_generatejwttoken",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".generatejwttoken()"
     },
     {
@@ -316,8 +316,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_identityuser",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "identityuser"
     },
     {
@@ -327,8 +327,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_authcontroller_cs_guid",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "guid"
     },
     {
@@ -338,8 +338,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "timespan",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "timespan"
     },
     {
@@ -562,8 +562,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_warehouse_api_controllers_inventorycontroller",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "inventorycontroller"
     },
     {
@@ -579,8 +579,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_warehouse_api_controllers_inventorycontroller_adjuststock",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".adjuststock()"
     },
     {
@@ -590,8 +590,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_cs_task",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "task"
     },
     {
@@ -601,8 +601,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_cs_actionresult",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "actionresult"
     },
     {
@@ -612,8 +612,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_cs_httppost",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httppost"
     },
     {
@@ -629,8 +629,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_warehouse_api_controllers_inventorycontroller_createproduct",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".createproduct()"
     },
     {
@@ -646,8 +646,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_inventorycontroller_warehouse_api_controllers_inventorycontroller_getuserid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".getuserid()"
     },
     {
@@ -674,8 +674,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "locationscontroller"
     },
     {
@@ -691,8 +691,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_getlocations",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": ".getlocations()"
     },
     {
@@ -702,8 +702,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_task",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "task"
     },
     {
@@ -713,8 +713,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_actionresult",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "actionresult"
     },
     {
@@ -724,8 +724,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_ienumerable",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "ienumerable"
     },
     {
@@ -735,8 +735,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_httpget",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "httpget"
     },
     {
@@ -752,8 +752,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_getlocation",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": ".getlocation()"
     },
     {
@@ -763,8 +763,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_guid",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "guid"
     },
     {
@@ -780,8 +780,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_createlocation",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": ".createlocation()"
     },
     {
@@ -791,8 +791,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_httppost",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "httppost"
     },
     {
@@ -808,8 +808,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_createlocations",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": ".createlocations()"
     },
     {
@@ -825,8 +825,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_seedmasslocations",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": ".seedmasslocations()"
     },
     {
@@ -836,8 +836,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_iactionresult",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "iactionresult"
     },
     {
@@ -853,8 +853,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_generatezone",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": ".generatezone()"
     },
     {
@@ -864,8 +864,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_list",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "list"
     },
     {
@@ -2945,8 +2945,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_adjuststockdto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "adjuststockdto.cs"
     },
     {
@@ -2978,8 +2978,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_adjuststockdto_warehouse_application_dtos_adjuststockdto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "adjuststockdto"
     },
     {
@@ -2989,8 +2989,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_adjuststockdto_cs_guid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -3095,8 +3095,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_createproductwithlocationdto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "createproductwithlocationdto.cs"
     },
     {
@@ -3112,8 +3112,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_createproductwithlocationdto_warehouse_application_dtos_createproductwithlocationdto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "createproductwithlocationdto"
     },
     {
@@ -3246,8 +3246,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationcreatedto",
-      "community": 53,
-      "community_name": "Warehouse.Api.Common",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "locationcreatedto.cs"
     },
     {
@@ -3263,8 +3263,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationcreatedto_warehouse_application_dtos_locationcreatedto",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "locationcreatedto"
     },
     {
@@ -3274,8 +3274,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationresponsedto",
-      "community": 53,
-      "community_name": "Warehouse.Api.Common",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "locationresponsedto.cs"
     },
     {
@@ -3291,8 +3291,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationresponsedto_warehouse_application_dtos_locationresponsedto",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "locationresponsedto"
     },
     {
@@ -3302,8 +3302,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationresponsedto_cs_guid",
-      "community": 64,
-      "community_name": "RegisterDto.cs",
+      "community": 11,
+      "community_name": "LocationsController",
       "norm_label": "guid"
     },
     {
@@ -3313,8 +3313,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_logindto",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "logindto.cs"
     },
     {
@@ -3330,8 +3330,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_logindto_warehouse_application_dtos_logindto",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "logindto"
     },
     {
@@ -3503,8 +3503,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskresponsedto",
-      "community": 0,
-      "community_name": "PickTask API & Service",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "picktaskresponsedto.cs"
     },
     {
@@ -3698,8 +3698,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_registerdto",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "registerdto.cs"
     },
     {
@@ -3715,8 +3715,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_registerdto_warehouse_application_dtos_registerdto",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "registerdto"
     },
     {
@@ -3916,8 +3916,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_stockadjustmentresultdto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "stockadjustmentresultdto.cs"
     },
     {
@@ -3933,8 +3933,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_stockadjustmentresultdto_warehouse_application_dtos_stockadjustmentresultdto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "stockadjustmentresultdto"
     },
     {
@@ -3944,8 +3944,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_stockadjustmentresultdto_cs_guid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -3994,8 +3994,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_supervisoroverridedto",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "supervisoroverridedto.cs"
     },
     {
@@ -4011,8 +4011,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_supervisoroverridedto_warehouse_application_dtos_supervisoroverridedto",
-      "community": 10,
-      "community_name": "Locations Controller API",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "supervisoroverridedto"
     },
     {
@@ -4611,8 +4611,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": "ipicktaskrepository"
     },
     {
@@ -4628,8 +4628,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getallwithdetailsasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getallwithdetailsasync()"
     },
     {
@@ -4639,8 +4639,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_cs_task",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": "task"
     },
     {
@@ -4650,8 +4650,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_cs_list",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": "list"
     },
     {
@@ -4667,8 +4667,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getactiveforuserasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getactiveforuserasync()"
     },
     {
@@ -4684,8 +4684,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getnextforsectorasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getnextforsectorasync()"
     },
     {
@@ -4701,8 +4701,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getbyidasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getbyidasync()"
     },
     {
@@ -4712,8 +4712,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_cs_guid",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": "guid"
     },
     {
@@ -4729,8 +4729,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getbyidwithitemsandproductlocationasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getbyidwithitemsandproductlocationasync()"
     },
     {
@@ -4746,8 +4746,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getbyidwithitemsasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getbyidwithitemsasync()"
     },
     {
@@ -4763,8 +4763,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_getbyorderidwithcontainerlocationasync",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".getbyorderidwithcontainerlocationasync()"
     },
     {
@@ -4780,8 +4780,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_ipicktaskrepository_warehouse_application_interfaces_ipicktaskrepository_add",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 14,
+      "community_name": "IEntityTypeConfiguration",
       "norm_label": ".add()"
     },
     {
@@ -5470,8 +5470,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_iinventoryservice_warehouse_application_services_iinventoryservice",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "iinventoryservice"
     },
     {
@@ -5487,8 +5487,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_iinventoryservice_warehouse_application_services_iinventoryservice_adjustphysicalstockasync",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".adjustphysicalstockasync()"
     },
     {
@@ -5498,8 +5498,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_iinventoryservice_cs_guid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -5509,8 +5509,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_iinventoryservice_cs_task",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "task"
     },
     {
@@ -5526,8 +5526,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_iinventoryservice_warehouse_application_services_iinventoryservice_createproductwithlocationasync",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".createproductwithlocationasync()"
     },
     {
@@ -7718,8 +7718,8 @@
       },
       "_origin": "ast",
       "id": "csharp_namespace:6d804dae53990bbd",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "warehouse.infrastructure.configurations"
     },
     {
@@ -7746,8 +7746,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ientitytypeconfiguration",
-      "community": 60,
-      "community_name": "PutawayTaskItem",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "ientitytypeconfiguration"
     },
     {
@@ -7897,8 +7897,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderitem",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "configurations/orderitem.cs"
     },
     {
@@ -7953,8 +7953,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "picktaskconfiguration.cs"
     },
     {
@@ -7970,8 +7970,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_warehouse_infrastructure_configurations_picktaskconfiguration",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "picktaskconfiguration"
     },
     {
@@ -7987,8 +7987,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_warehouse_infrastructure_configurations_picktaskconfiguration_configure",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": ".configure()"
     },
     {
@@ -7998,8 +7998,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_cs_entitytypebuilder",
-      "community": 15,
-      "community_name": "PickTask Entity Mapping",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -8009,8 +8009,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskitemconfiguration",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "picktaskitemconfiguration.cs"
     },
     {
@@ -8289,8 +8289,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_xminconcurrencyextensions",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "xminconcurrencyextensions.cs"
     },
     {
@@ -8306,8 +8306,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_xminconcurrencyextensions_warehouse_infrastructure_configurations_xminconcurrencyextensions",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "xminconcurrencyextensions"
     },
     {
@@ -8323,8 +8323,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_xminconcurrencyextensions_warehouse_infrastructure_configurations_xminconcurrencyextensions_usexminasconcurrencytoken",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": ".usexminasconcurrencytoken()"
     },
     {
@@ -8334,8 +8334,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_xminconcurrencyextensions_cs_entitytypebuilder",
-      "community": 39,
-      "community_name": "XminConcurrencyExtensions.cs",
+      "community": 55,
+      "community_name": "PickTaskItem",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -8412,8 +8412,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 24,
+      "community_name": "PutawayTaskConfiguration",
       "norm_label": "20260611180526_initialcreate.designer.cs"
     },
     {
@@ -8445,8 +8445,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_warehouse_infrastructure_migrations_initialcreate",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 24,
+      "community_name": "PutawayTaskConfiguration",
       "norm_label": "initialcreate"
     },
     {
@@ -8462,8 +8462,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_warehouse_infrastructure_migrations_initialcreate_buildtargetmodel",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 24,
+      "community_name": "PutawayTaskConfiguration",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -8473,8 +8473,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_cs_modelbuilder",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 24,
+      "community_name": "PutawayTaskConfiguration",
       "norm_label": "modelbuilder"
     },
     {
@@ -10245,8 +10245,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer",
-      "community": 85,
-      "community_name": "20260801201234_Add1.Designer.cs",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "20260801201234_add1.designer.cs"
     },
     {
@@ -10262,8 +10262,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer_warehouse_infrastructure_migrations_add1",
-      "community": 85,
-      "community_name": "20260801201234_Add1.Designer.cs",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "add1"
     },
     {
@@ -10279,8 +10279,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer_warehouse_infrastructure_migrations_add1_buildtargetmodel",
-      "community": 85,
-      "community_name": "20260801201234_Add1.Designer.cs",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -10290,8 +10290,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer_cs_modelbuilder",
-      "community": 85,
-      "community_name": "20260801201234_Add1.Designer.cs",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "modelbuilder"
     },
     {
@@ -11759,8 +11759,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_warehouse_infrastructure_repositories_productrepository",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "productrepository"
     },
     {
@@ -11770,8 +11770,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_cs_appdbcontext",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "appdbcontext"
     },
     {
@@ -11787,8 +11787,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_warehouse_infrastructure_repositories_productrepository_getbyidasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".getbyidasync()"
     },
     {
@@ -11798,8 +11798,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_cs_guid",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "guid"
     },
     {
@@ -11809,8 +11809,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_cs_task",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "task"
     },
     {
@@ -11826,8 +11826,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_warehouse_infrastructure_repositories_productrepository_skuexistsasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".skuexistsasync()"
     },
     {
@@ -11843,8 +11843,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_warehouse_infrastructure_repositories_productrepository_getbyskusasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".getbyskusasync()"
     },
     {
@@ -11854,8 +11854,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_cs_list",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "list"
     },
     {
@@ -11865,8 +11865,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_cs_dictionary",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "dictionary"
     },
     {
@@ -11882,8 +11882,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_warehouse_infrastructure_repositories_productrepository_getallwithstocksasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".getallwithstocksasync()"
     },
     {
@@ -11893,8 +11893,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_cs_datetime",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "datetime"
     },
     {
@@ -11910,8 +11910,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_productrepository_warehouse_infrastructure_repositories_productrepository_add",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".add()"
     },
     {
@@ -12370,8 +12370,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "unitofwork"
     },
     {
@@ -12381,8 +12381,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_cs_appdbcontext",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "appdbcontext"
     },
     {
@@ -12392,8 +12392,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "idbcontexttransaction",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "idbcontexttransaction"
     },
     {
@@ -12409,8 +12409,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_savechangesasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".savechangesasync()"
     },
     {
@@ -12420,8 +12420,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "task"
     },
     {
@@ -12437,8 +12437,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_begintransactionasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".begintransactionasync()"
     },
     {
@@ -12454,8 +12454,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_committransactionasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".committransactionasync()"
     },
     {
@@ -12471,8 +12471,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_rollbacktransactionasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": ".rollbacktransactionasync()"
     },
     {
@@ -13961,10 +13961,32 @@
       "norm_label": "dependencies"
     },
     {
-      "label": "axios",
+      "label": "@tanstack/react-query",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
       "source_location": "L13",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_package_dependencies_tanstack_react_query",
+      "community": 1,
+      "community_name": "Frontend NPM Dependencies",
+      "norm_label": "@tanstack/react-query"
+    },
+    {
+      "label": "@tanstack/react-query",
+      "file_type": "concept",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "tanstack_react_query",
+      "community": 1,
+      "community_name": "Frontend NPM Dependencies",
+      "norm_label": "@tanstack/react-query"
+    },
+    {
+      "label": "axios",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_axios",
       "community": 1,
@@ -13975,7 +13997,7 @@
       "label": "axios",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L13",
+      "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_axios",
       "community": 1,
@@ -13986,7 +14008,7 @@
       "label": "react",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_react",
       "community": 1,
@@ -13997,7 +14019,7 @@
       "label": "react",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_react",
       "community": 1,
@@ -14008,7 +14030,7 @@
       "label": "react-dom",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_react_dom",
       "community": 1,
@@ -14019,7 +14041,7 @@
       "label": "react-dom",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_react_dom",
       "community": 1,
@@ -14030,7 +14052,7 @@
       "label": "react-router-dom",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_dependencies_react_router_dom",
       "community": 1,
@@ -14041,7 +14063,7 @@
       "label": "react-router-dom",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "react_router_dom",
       "community": 1,
@@ -14052,7 +14074,7 @@
       "label": "devDependencies",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L18",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies",
       "community": 1,
@@ -14060,10 +14082,32 @@
       "norm_label": "devdependencies"
     },
     {
+      "label": "@tanstack/react-query-devtools",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_package_devdependencies_tanstack_react_query_devtools",
+      "community": 1,
+      "community_name": "Frontend NPM Dependencies",
+      "norm_label": "@tanstack/react-query-devtools"
+    },
+    {
+      "label": "@tanstack/react-query-devtools",
+      "file_type": "concept",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "tanstack_react_query_devtools",
+      "community": 1,
+      "community_name": "Frontend NPM Dependencies",
+      "norm_label": "@tanstack/react-query-devtools"
+    },
+    {
       "label": "@types/node",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L19",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_types_node",
       "community": 1,
@@ -14074,7 +14118,7 @@
       "label": "@types/node",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L19",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_types_node",
       "community": 1,
@@ -14085,7 +14129,7 @@
       "label": "@types/react",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L20",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_types_react",
       "community": 1,
@@ -14096,7 +14140,7 @@
       "label": "@types/react",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L20",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_types_react",
       "community": 1,
@@ -14107,7 +14151,7 @@
       "label": "@types/react-dom",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L21",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_types_react_dom",
       "community": 1,
@@ -14118,7 +14162,7 @@
       "label": "@types/react-dom",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L21",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_types_react_dom",
       "community": 1,
@@ -14129,7 +14173,7 @@
       "label": "@vitejs/plugin-react",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L22",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_vitejs_plugin_react",
       "community": 1,
@@ -14140,7 +14184,7 @@
       "label": "@vitejs/plugin-react",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L22",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_vitejs_plugin_react",
       "community": 1,
@@ -14151,7 +14195,7 @@
       "label": "oxlint",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_oxlint",
       "community": 1,
@@ -14162,7 +14206,7 @@
       "label": "oxlint",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "oxlint",
       "community": 1,
@@ -14173,7 +14217,7 @@
       "label": "typescript",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L24",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_typescript",
       "community": 1,
@@ -14184,7 +14228,7 @@
       "label": "typescript",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L24",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_typescript",
       "community": 1,
@@ -14195,7 +14239,7 @@
       "label": "vite",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L25",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_devdependencies_vite",
       "community": 1,
@@ -14206,7 +14250,7 @@
       "label": "vite",
       "file_type": "concept",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L25",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "frontend_warehouse_client_package_json_vite",
       "community": 1,
@@ -14286,8 +14330,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
-      "community": 78,
-      "community_name": "AdjustStockDto.cs",
+      "community": 76,
+      "community_name": "PickTaskItemResponseDto",
       "norm_label": "axiosclient"
     },
     {
@@ -14308,8 +14352,8 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_api_axiosclient_fetchsupervisorauthheader",
-      "community": 42,
-      "community_name": "PickTask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "fetchsupervisorauthheader()"
     },
     {
@@ -14319,9 +14363,185 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_api_axiosclient_issupervisorautherror",
-      "community": 42,
-      "community_name": "PickTask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "issupervisorautherror()"
+    },
+    {
+      "label": "pickTaskApi.ts",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "picktaskapi.ts"
+    },
+    {
+      "label": "ActionResultMessage",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_actionresultmessage",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "actionresultmessage"
+    },
+    {
+      "label": "fetchCurrentPickTask()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_fetchcurrentpicktask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "fetchcurrentpicktask()"
+    },
+    {
+      "label": "startPickTask()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_startpicktask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "startpicktask()"
+    },
+    {
+      "label": "pickItem()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_pickitem",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "pickitem()"
+    },
+    {
+      "label": "dispatchContainer()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_dispatchcontainer",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "dispatchcontainer()"
+    },
+    {
+      "label": "cancelPickTask()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_cancelpicktask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "cancelpicktask()"
+    },
+    {
+      "label": "reportMissingItem()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_reportmissingitem",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "reportmissingitem()"
+    },
+    {
+      "label": "reportDefect()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L58",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_picktaskapi_reportdefect",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "reportdefect()"
+    },
+    {
+      "label": "putawayApi.ts",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "putawayapi.ts"
+    },
+    {
+      "label": "ContainerValidation",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi_containervalidation",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "containervalidation"
+    },
+    {
+      "label": "fetchActivePutawayTask()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi_fetchactiveputawaytask",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "fetchactiveputawaytask()"
+    },
+    {
+      "label": "validateContainer()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi_validatecontainer",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "validatecontainer()"
+    },
+    {
+      "label": "startPutaway()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi_startputaway",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "startputaway()"
+    },
+    {
+      "label": "confirmPutawayItem()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L24",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi_confirmputawayitem",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "confirmputawayitem()"
+    },
+    {
+      "label": "reportPutawayMissing()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L29",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_api_putawayapi_reportputawaymissing",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "reportputawaymissing()"
     },
     {
       "label": "warehouse-client/src/main.tsx",
@@ -14517,30 +14737,41 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_picktasks",
-      "community": 42,
-      "community_name": "PickTask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "picktasks.tsx"
     },
     {
       "label": "Props",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L7",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_picktasks_props",
-      "community": 42,
-      "community_name": "PickTask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "props"
+    },
+    {
+      "label": "pickTaskQueryKey()",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktaskquerykey",
+      "community": 2,
+      "community_name": "Products & Stocks API",
+      "norm_label": "picktaskquerykey()"
     },
     {
       "label": "PickTasks()",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L12",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
-      "community": 42,
-      "community_name": "PickTask",
+      "community": 2,
+      "community_name": "Products & Stocks API",
       "norm_label": "picktasks()"
     },
     {
@@ -14624,7 +14855,7 @@
       "label": "Phase",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L7",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_putaway_putawayflow_phase",
       "community": 47,
@@ -14635,7 +14866,7 @@
       "label": "Props",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L9",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_putaway_putawayflow_props",
       "community": 47,
@@ -14643,10 +14874,21 @@
       "norm_label": "props"
     },
     {
+      "label": "putawayActiveTaskKey",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L23",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayactivetaskkey",
+      "community": 47,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "putawayactivetaskkey"
+    },
+    {
       "label": "PutawayFlow()",
       "file_type": "code",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L15",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
       "community": 47,
@@ -14762,6 +15004,28 @@
       "community": 25,
       "community_name": "Migration: ProductUpdatedAt",
       "norm_label": "terminal()"
+    },
+    {
+      "label": "queryClient.ts",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/queryClient.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_queryclient",
+      "community": 78,
+      "community_name": "AdjustStockDto.cs",
+      "norm_label": "queryclient.ts"
+    },
+    {
+      "label": "queryClient",
+      "file_type": "code",
+      "source_file": "Frontend/warehouse-client/src/queryClient.ts",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "frontend_warehouse_client_src_queryclient_queryclient",
+      "community": 78,
+      "community_name": "AdjustStockDto.cs",
+      "norm_label": "queryclient"
     },
     {
       "label": "warehouse-client/src/types/putaway.ts",
@@ -41360,7 +41624,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package",
@@ -41470,7 +41734,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_dependencies",
@@ -41481,7 +41745,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_dependencies",
@@ -41492,7 +41756,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_dependencies",
@@ -41503,7 +41767,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_dependencies",
@@ -41511,10 +41775,33 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_dependencies",
+      "target": "frontend_warehouse_client_package_dependencies_tanstack_react_query",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
       "source_location": "L13",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_dependencies_tanstack_react_query",
+      "target": "tanstack_react_query",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L14",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41526,7 +41813,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41538,7 +41825,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L15",
+      "source_location": "L16",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41550,7 +41837,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41562,7 +41849,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_devdependencies",
@@ -41573,22 +41860,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L19",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_package_devdependencies",
-      "target": "frontend_warehouse_client_package_devdependencies_types_node",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/package.json",
       "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_devdependencies",
-      "target": "frontend_warehouse_client_package_devdependencies_types_react",
+      "target": "frontend_warehouse_client_package_devdependencies_tanstack_react_query_devtools",
       "confidence_score": 1.0
     },
     {
@@ -41599,29 +41875,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_devdependencies",
-      "target": "frontend_warehouse_client_package_devdependencies_types_react_dom",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L24",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_package_devdependencies",
-      "target": "frontend_warehouse_client_package_devdependencies_typescript",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L25",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_package_devdependencies",
-      "target": "frontend_warehouse_client_package_devdependencies_vite",
+      "target": "frontend_warehouse_client_package_devdependencies_types_node",
       "confidence_score": 1.0
     },
     {
@@ -41632,6 +41886,50 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_package_devdependencies",
+      "target": "frontend_warehouse_client_package_devdependencies_types_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_devdependencies",
+      "target": "frontend_warehouse_client_package_devdependencies_types_react_dom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_devdependencies",
+      "target": "frontend_warehouse_client_package_devdependencies_typescript",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_devdependencies",
+      "target": "frontend_warehouse_client_package_devdependencies_vite",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_devdependencies",
       "target": "frontend_warehouse_client_package_devdependencies_vitejs_plugin_react",
       "confidence_score": 1.0
     },
@@ -41639,7 +41937,19 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L19",
+      "source_location": "L20",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_package_devdependencies_tanstack_react_query_devtools",
+      "target": "tanstack_react_query_devtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/package.json",
+      "source_location": "L21",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41651,7 +41961,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L20",
+      "source_location": "L22",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41663,7 +41973,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41675,7 +41985,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L22",
+      "source_location": "L24",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41687,7 +41997,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41699,7 +42009,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L24",
+      "source_location": "L26",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41711,7 +42021,7 @@
       "relation": "imports",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/package.json",
-      "source_location": "L25",
+      "source_location": "L27",
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
@@ -41794,7 +42104,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/main.tsx",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_main",
@@ -41806,7 +42116,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/main.tsx",
-      "source_location": "L4",
+      "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_main",
@@ -41883,6 +42193,30 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_axiosclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_axiosclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Admin/InventoryAdmin.tsx",
       "source_location": "L3",
       "weight": 1.0,
@@ -41908,7 +42242,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
@@ -41920,7 +42254,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -41967,6 +42301,30 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Admin/InventoryAdmin.tsx",
       "source_location": "L3",
       "weight": 1.0,
@@ -41984,30 +42342,6 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_login_login",
-      "target": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
-      "target": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
       "target": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
       "confidence_score": 1.0
     },
@@ -42039,11 +42373,11 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L2",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
       "target": "frontend_warehouse_client_src_api_axiosclient_fetchsupervisorauthheader",
       "confidence_score": 1.0
     },
@@ -42052,11 +42386,23 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L144",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "source": "frontend_warehouse_client_src_api_picktaskapi_reportdefect",
+      "target": "frontend_warehouse_client_src_api_axiosclient_fetchsupervisorauthheader"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi_reportmissingitem",
       "target": "frontend_warehouse_client_src_api_axiosclient_fetchsupervisorauthheader"
     },
     {
@@ -42064,7 +42410,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L2",
+      "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
@@ -42077,11 +42423,549 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L166",
+      "source_location": "L155",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
       "target": "frontend_warehouse_client_src_api_axiosclient_issupervisorautherror"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_actionresultmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_cancelpicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_dispatchcontainer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_fetchcurrentpicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_pickitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_reportdefect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_reportmissingitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_startpicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_types_task",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/pickTaskApi.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_picktaskapi",
+      "target": "frontend_warehouse_client_src_types_task_picktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_fetchcurrentpicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_fetchcurrentpicktask"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_startpicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_startpicktask"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_pickitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_pickitem"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_dispatchcontainer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_dispatchcontainer"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_cancelpicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_cancelpicktask"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_reportmissingitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L138",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_reportmissingitem"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_reportdefect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L169",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_api_picktaskapi_reportdefect"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_putawayapi_confirmputawayitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_putawayapi_containervalidation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_putawayapi_fetchactiveputawaytask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_putawayapi_reportputawaymissing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_putawayapi_startputaway",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_api_putawayapi_validatecontainer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_types_putaway",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/api/putawayApi.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_api_putawayapi",
+      "target": "frontend_warehouse_client_src_types_putaway_putawaytask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_fetchactiveputawaytask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "context": "collection",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_fetchactiveputawaytask"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_validatecontainer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_validatecontainer"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_startputaway",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_startputaway"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_confirmputawayitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L114",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_confirmputawayitem"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_reportputawaymissing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L126",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
+      "target": "frontend_warehouse_client_src_api_putawayapi_reportputawaymissing"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/main.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_main",
+      "target": "frontend_warehouse_client_src_queryclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/main.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_main",
+      "target": "frontend_warehouse_client_src_queryclient_queryclient",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -42246,7 +43130,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L5",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
@@ -42316,7 +43200,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L4",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
@@ -42339,7 +43223,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L12",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktaskquerykey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
@@ -42350,35 +43245,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L7",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
       "target": "frontend_warehouse_client_src_pages_picktasks_picktasks_props",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
-      "target": "frontend_warehouse_client_src_types_task",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks",
-      "target": "frontend_warehouse_client_src_types_task_picktask",
       "confidence_score": 1.0
     },
     {
@@ -42391,6 +43262,18 @@
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_terminal_terminal",
       "target": "frontend_warehouse_client_src_pages_picktasks_picktasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktasks",
+      "target": "frontend_warehouse_client_src_pages_picktasks_picktasks_picktaskquerykey",
       "confidence_score": 1.0
     },
     {
@@ -42444,7 +43327,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L5",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42490,7 +43373,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L4",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42501,7 +43384,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L7",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42512,7 +43395,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L9",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42523,7 +43406,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L15",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "target": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayactivetaskkey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
+      "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42535,7 +43429,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L3",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42547,7 +43441,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx",
-      "source_location": "L3",
+      "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_putaway_putawayflow",
@@ -42564,6 +43458,18 @@
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_terminal_terminal",
       "target": "frontend_warehouse_client_src_pages_putaway_putawayflow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/pages/Terminal/Terminal.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_pages_terminal_terminal",
+      "target": "frontend_warehouse_client_src_pages_putaway_putawayflow_putawayflow",
       "confidence_score": 1.0
     },
     {
@@ -42665,6 +43571,17 @@
       "_origin": "ast",
       "source": "frontend_warehouse_client_src_pages_terminal_terminal",
       "target": "frontend_warehouse_client_src_pages_terminal_terminal_terminal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Frontend/warehouse-client/src/queryClient.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "frontend_warehouse_client_src_queryclient",
+      "target": "frontend_warehouse_client_src_queryclient_queryclient",
       "confidence_score": 1.0
     },
     {
@@ -43237,5 +44154,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "70f6d13ddc0b6fc8a8ba1b6336a4ba37dffa8d34"
+  "built_at_commit": "1e53224b935037bff93f68a409df2c4829027532"
 }
