@@ -79,7 +79,20 @@ namespace Warehouse.Application.Services
                 order.Status = OrderStatus.Picking;
             }
 
-            await _unitOfWork.SaveChangesAsync();
+            try
+            {
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (ConcurrencyConflictException)
+            {
+                // Another worker (or the dispatch/cancel flow) claimed this task or its
+                // container in the moment between our read and this write — the xmin
+                // token caught it. Let the caller re-request a task rather than surfacing
+                // a raw persistence error.
+                return Result<string>.Failure(
+                    "This task was just claimed by another worker. Please request a new task.",
+                    ResultErrorType.Conflict);
+            }
 
             return Result<string>.Success("Picking successfully started. Container linked, task locked to you.");
         }
@@ -274,6 +287,18 @@ namespace Warehouse.Application.Services
             // that stock in an unassigned container — reject instead of silently resetting progress.
             if (task.Items.Any(i => i.PickedQuantity > 0))
                 return Result<MessageResponseDto>.Failure("Cannot cancel: some items have already been picked. Report missing items or dispatch the container instead.");
+
+            // Nothing was physically picked into it, so the container is still empty —
+            // release it back to the free pool instead of leaving it stuck InProgress.
+            if (task.ContainerId.HasValue)
+            {
+                var container = await _unitOfWork.Containers.GetByIdAsync(task.ContainerId.Value);
+                if (container != null)
+                {
+                    container.Status = ContainerStatus.Available;
+                    container.AssignedSector = null;
+                }
+            }
 
             // Return the task to its initial state: drop the worker and container
             task.Status = PickTaskStatus.New;

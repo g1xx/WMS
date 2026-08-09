@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Warehouse.Domain;
-using Warehouse.Infrastructure;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
+using Warehouse.Application.Interfaces;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
@@ -11,21 +9,17 @@ namespace Warehouse.Api.Controllers
     [Route("api/[controller]")]
     public class StocksController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public StocksController(AppDbContext context)
+        public StocksController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Stock>>> GetStocks()
         {
-            var stocks = await _context.Stocks
-                .AsNoTracking()
-                .Include(s => s.Product)
-                .Include(s => s.Location)
-                .ToListAsync();
+            var stocks = await _unitOfWork.Stocks.GetAllWithDetailsAsync();
 
             return Ok(stocks);
         }
@@ -33,16 +27,14 @@ namespace Warehouse.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> AddStock(StockCreateDto dto)
         {
-            var location = await _context.Locations
-                .FirstOrDefaultAsync(l => l.AddressBarcode == dto.LocationBarcode);
+            var location = await _unitOfWork.Locations.GetByBarcodeAsync(dto.LocationBarcode);
 
             if (location == null)
             {
                 return BadRequest($"Location with barcode '{dto.LocationBarcode}' was not found in the system.");
             }
 
-            var existingStock = await _context.Stocks
-                .FirstOrDefaultAsync(s => s.ProductId == dto.ProductId && s.LocationId == location.Id);
+            var existingStock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(dto.ProductId, location.Id);
 
             if (existingStock != null)
             {
@@ -55,12 +47,12 @@ namespace Warehouse.Api.Controllers
                     ProductId = dto.ProductId,
                     LocationId = location.Id,
                     PhysicalQuantity = dto.Quantity,
-                    ReservedQuantity = 0 
+                    ReservedQuantity = 0
                 };
-                _context.Stocks.Add(newStock);
+                _unitOfWork.Stocks.Add(newStock);
             }
 
-            await _context.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return Ok("Product successfully received and placed in stock.");
         }
     }

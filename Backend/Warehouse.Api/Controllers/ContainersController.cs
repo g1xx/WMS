@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
+using Warehouse.Application.Interfaces;
 using Warehouse.Domain;
-using Warehouse.Infrastructure;
 
 namespace Warehouse.Api.Controllers;
 
@@ -10,20 +9,17 @@ namespace Warehouse.Api.Controllers;
 [Route("api/[controller]")]
 public class ContainersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ContainersController(AppDbContext context)
+    public ContainersController(IUnitOfWork unitOfWork)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Container>>> GetContainers()
     {
-        var containers = await _context.Containers
-            .Include(c => c.Location)
-            .AsNoTracking() 
-            .ToListAsync();
+        var containers = await _unitOfWork.Containers.GetAllWithLocationAsync();
 
         return Ok(containers);
     }
@@ -31,11 +27,7 @@ public class ContainersController : ControllerBase
     [HttpGet("free")]
     public async Task<ActionResult<IEnumerable<Container>>> GetFreeContainers()
     {
-        var containers = await _context.Containers
-            .Where(c => c.Status == ContainerStatus.New || c.Status == ContainerStatus.Available)
-            .Include(c => c.Location)
-            .AsNoTracking()
-            .ToListAsync();
+        var containers = await _unitOfWork.Containers.GetFreeWithLocationAsync();
 
         return Ok(containers);
     }
@@ -43,13 +35,11 @@ public class ContainersController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Container>> GetContainer(Guid id)
     {
-        var container = await _context.Containers
-            .Include(c => c.Location)
-            .FirstOrDefaultAsync(c => c.Id == id);
+        var container = await _unitOfWork.Containers.GetByIdWithLocationAsync(id);
 
         if (container == null)
         {
-            return NotFound($"Container with {id} not found"); 
+            return NotFound($"Container with {id} not found");
         }
 
         return Ok(container);
@@ -58,9 +48,7 @@ public class ContainersController : ControllerBase
     [HttpGet("by-barcode/{barcode}")]
     public async Task<ActionResult<Container>> GetContainerByBarcode(string barcode)
     {
-        var container = await _context.Containers
-            .Include(c => c.Location)
-            .FirstOrDefaultAsync(c => c.Barcode == barcode);
+        var container = await _unitOfWork.Containers.GetByBarcodeWithLocationAsync(barcode);
 
         if (container == null)
         {
@@ -73,8 +61,8 @@ public class ContainersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Container>> CreateContainer(Container container)
     {
-        _context.Containers.Add(container);
-        await _context.SaveChangesAsync();
+        _unitOfWork.Containers.Add(container);
+        await _unitOfWork.SaveChangesAsync();
         return CreatedAtAction(nameof(GetContainers), new { id = container.Id }, container);
     }
 
@@ -82,8 +70,7 @@ public class ContainersController : ControllerBase
     public async Task<ActionResult> MoveContainer(ContainerMoveDto dto)
     {
         // 1. Look up the container
-        var container = await _context.Containers
-            .FirstOrDefaultAsync(c => c.Barcode == dto.ContainerBarcode);
+        var container = await _unitOfWork.Containers.GetByBarcodeAsync(dto.ContainerBarcode);
 
         if (container == null)
         {
@@ -91,8 +78,7 @@ public class ContainersController : ControllerBase
         }
 
         // 2. Look up the destination location
-        var destination = await _context.Locations
-            .FirstOrDefaultAsync(l => l.AddressBarcode == dto.DestinationLocationBarcode);
+        var destination = await _unitOfWork.Locations.GetByBarcodeAsync(dto.DestinationLocationBarcode);
 
         if (destination == null)
         {
@@ -102,7 +88,7 @@ public class ContainersController : ControllerBase
         // 3. Physically move the container in the database
         container.LocationId = destination.Id;
 
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Ok($"Container {dto.ContainerBarcode} successfully moved to {dto.DestinationLocationBarcode}.");
     }

@@ -24,4 +24,17 @@ public class OrderRepository : IOrderRepository
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == id);
     }
+
+    public async Task<List<Order>> GetAllWithItemsAsync()
+    {
+        return await _context.Orders
+            .Include(o => o.Items)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public void Add(Order order)
+    {
+        _context.Orders.Add(order);
+    }
 }

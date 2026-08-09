@@ -39,6 +39,15 @@ public class StockRepository : IStockRepository
             .ToListAsync();
     }
 
+    public async Task<List<Stock>> GetAllWithDetailsAsync()
+    {
+        return await _context.Stocks
+            .AsNoTracking()
+            .Include(s => s.Product)
+            .Include(s => s.Location)
+            .ToListAsync();
+    }
+
     public void Add(Stock stock)
     {
         _context.Stocks.Add(stock);

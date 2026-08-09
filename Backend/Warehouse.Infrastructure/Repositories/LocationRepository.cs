@@ -13,6 +13,11 @@ public class LocationRepository : ILocationRepository
         _context = context;
     }
 
+    public async Task<Location?> GetByIdAsync(Guid id)
+    {
+        return await _context.Locations.FindAsync(id);
+    }
+
     public async Task<Location?> GetByBarcodeAsync(string barcode)
     {
         return await _context.Locations.FirstOrDefaultAsync(l => l.AddressBarcode == barcode);
@@ -25,8 +30,22 @@ public class LocationRepository : ILocationRepository
             .ToDictionaryAsync(l => l.AddressBarcode);
     }
 
+    public async Task<List<Location>> GetAllOrderedAsync()
+    {
+        return await _context.Locations
+            .AsNoTracking()
+            .OrderBy(l => l.Aisle)
+            .ThenBy(l => l.Rack)
+            .ToListAsync();
+    }
+
     public void Add(Location location)
     {
         _context.Locations.Add(location);
+    }
+
+    public void AddRange(IEnumerable<Location> locations)
+    {
+        _context.Locations.AddRange(locations);
     }
 }

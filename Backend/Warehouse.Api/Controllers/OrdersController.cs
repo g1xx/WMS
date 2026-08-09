@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Warehouse.Domain;
-using Warehouse.Infrastructure;
-using Warehouse.Application.Services;
+using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
+using Warehouse.Application.Interfaces;
+using Warehouse.Application.Services;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers;
 
@@ -11,22 +10,19 @@ namespace Warehouse.Api.Controllers;
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IOrderAllocationService _orderAllocationService;
 
-    public OrdersController(AppDbContext context, IOrderAllocationService orderAllocationService)
+    public OrdersController(IUnitOfWork unitOfWork, IOrderAllocationService orderAllocationService)
     {
-        _context = context;
+        _unitOfWork = unitOfWork;
         _orderAllocationService = orderAllocationService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
     {
-        var orders = await _context.Orders
-            .Include(o => o.Items)
-            .AsNoTracking()
-            .ToListAsync();
+        var orders = await _unitOfWork.Orders.GetAllWithItemsAsync();
 
         return Ok(orders);
     }
@@ -34,9 +30,7 @@ public class OrdersController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Order>> GetOrder(Guid id)
     {
-        var order = await _context.Orders
-            .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.Id == id);
+        var order = await _unitOfWork.Orders.GetByIdWithItemsAsync(id);
 
         if (order == null)
         {
@@ -65,8 +59,8 @@ public class OrdersController : ControllerBase
             }).ToList()
         };
 
-        _context.Orders.Add(newOrder);
-        await _context.SaveChangesAsync();
+        _unitOfWork.Orders.Add(newOrder);
+        await _unitOfWork.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, newOrder);
     }
@@ -90,7 +84,7 @@ public class OrdersController : ControllerBase
     [HttpPost("{id}/pack")]
     public async Task<ActionResult> PackOrder(Guid id)
     {
-        var order = await _context.Orders.FindAsync(id);
+        var order = await _unitOfWork.Orders.GetByIdAsync(id);
 
         if (order == null)
         {
@@ -102,11 +96,7 @@ public class OrdersController : ControllerBase
             return BadRequest("Packing not possible. Order is not in the Picking status.");
         }
 
-        var pickTasks = await _context.PickTasks
-            .Include(pt => pt.Container)
-                .ThenInclude(c => c!.Location)
-            .Where(pt => pt.OrderId == id)
-            .ToListAsync();
+        var pickTasks = await _unitOfWork.PickTasks.GetByOrderIdWithContainerLocationAsync(id);
 
         if (!pickTasks.Any())
         {
@@ -139,7 +129,7 @@ public class OrdersController : ControllerBase
         }
 
         order.Status = OrderStatus.Packed;
-        await _context.SaveChangesAsync();
+        await _unitOfWork.SaveChangesAsync();
 
         return Ok($"Order {order.OrderNumber} successfully consolidated, packed, and ready for shipment!");
     }

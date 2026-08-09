@@ -30,6 +30,21 @@ public class ProductRepository : IProductRepository
             .ToDictionaryAsync(p => p.Sku);
     }
 
+    public async Task<List<Product>> GetAllWithStocksAsync(DateTime? updatedSince = null)
+    {
+        var query = _context.Products
+            .AsNoTracking()
+            .Include(p => p.Stocks).ThenInclude(s => s.Location)
+            .AsQueryable();
+
+        if (updatedSince.HasValue)
+        {
+            query = query.Where(p => p.UpdatedAt > updatedSince.Value);
+        }
+
+        return await query.ToListAsync();
+    }
+
     public void Add(Product product)
     {
         _context.Products.Add(product);

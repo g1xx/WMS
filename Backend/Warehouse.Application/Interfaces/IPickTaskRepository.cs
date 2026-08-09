@@ -18,5 +18,8 @@ public interface IPickTaskRepository
     // Items only — used by DispatchContainerAsync, CancelPickTaskAsync.
     Task<PickTask?> GetByIdWithItemsAsync(Guid id);
 
+    // Container.Location included — feeds OrdersController.PackOrder's readiness check.
+    Task<List<PickTask>> GetByOrderIdWithContainerLocationAsync(Guid orderId);
+
     void Add(PickTask task);
 }
