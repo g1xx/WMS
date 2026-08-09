@@ -43,8 +43,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_common_resultextensions_warehouse_api_common_resultextensions",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "resultextensions"
     },
     {
@@ -60,8 +60,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_common_resultextensions_warehouse_api_common_resultextensions_toactionresult",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": ".toactionresult()"
     },
     {
@@ -71,8 +71,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_common_resultextensions_cs_actionresult",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "actionresult"
     },
     {
@@ -126,8 +126,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "controllerbase",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "controllerbase"
     },
     {
@@ -674,8 +674,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "locationscontroller"
     },
     {
@@ -691,8 +691,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_getlocations",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": ".getlocations()"
     },
     {
@@ -702,8 +702,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_task",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "task"
     },
     {
@@ -713,8 +713,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_actionresult",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "actionresult"
     },
     {
@@ -724,8 +724,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_ienumerable",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "ienumerable"
     },
     {
@@ -735,8 +735,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_httpget",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "httpget"
     },
     {
@@ -752,8 +752,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_getlocation",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": ".getlocation()"
     },
     {
@@ -763,8 +763,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_guid",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "guid"
     },
     {
@@ -780,8 +780,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_createlocation",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": ".createlocation()"
     },
     {
@@ -791,8 +791,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_httppost",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "httppost"
     },
     {
@@ -808,8 +808,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_createlocations",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": ".createlocations()"
     },
     {
@@ -825,8 +825,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_seedmasslocations",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": ".seedmasslocations()"
     },
     {
@@ -836,8 +836,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_iactionresult",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "iactionresult"
     },
     {
@@ -853,8 +853,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_warehouse_api_controllers_locationscontroller_generatezone",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": ".generatezone()"
     },
     {
@@ -864,8 +864,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_locationscontroller_cs_list",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "list"
     },
     {
@@ -1357,8 +1357,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "productscontroller"
     },
     {
@@ -1374,8 +1374,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller_getproduct",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".getproduct()"
     },
     {
@@ -1385,8 +1385,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_guid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -1396,8 +1396,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_task",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "task"
     },
     {
@@ -1407,8 +1407,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_actionresult",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "actionresult"
     },
     {
@@ -1418,8 +1418,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_httpget",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httpget"
     },
     {
@@ -1435,8 +1435,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller_getproducts",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".getproducts()"
     },
     {
@@ -1446,8 +1446,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_datetime",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "datetime"
     },
     {
@@ -1457,8 +1457,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_ienumerable",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "ienumerable"
     },
     {
@@ -1474,8 +1474,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_warehouse_api_controllers_productscontroller_createproduct",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".createproduct()"
     },
     {
@@ -1485,8 +1485,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_productscontroller_cs_httppost",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httppost"
     },
     {
@@ -1748,8 +1748,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_warehouse_api_controllers_stockscontroller",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "stockscontroller"
     },
     {
@@ -1765,8 +1765,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_warehouse_api_controllers_stockscontroller_getstocks",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".getstocks()"
     },
     {
@@ -1776,8 +1776,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_task",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "task"
     },
     {
@@ -1787,8 +1787,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_actionresult",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "actionresult"
     },
     {
@@ -1798,8 +1798,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_ienumerable",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "ienumerable"
     },
     {
@@ -1809,8 +1809,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_httpget",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httpget"
     },
     {
@@ -1826,8 +1826,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_warehouse_api_controllers_stockscontroller_addstock",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": ".addstock()"
     },
     {
@@ -1837,8 +1837,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_api_controllers_stockscontroller_cs_httppost",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "httppost"
     },
     {
@@ -2128,21 +2128,21 @@
       "norm_label": "microsoft.net.sdk.web"
     },
     {
-      "label": "PickTaskServiceTests.cs",
+      "label": "OrderAllocationServiceTests.cs",
       "file_type": "code",
-      "source_file": "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "backend_warehouse_application_tests_picktaskservicetests",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests",
       "community": 53,
       "community_name": "Warehouse.Api.Common",
-      "norm_label": "picktaskservicetests.cs"
+      "norm_label": "orderallocationservicetests.cs"
     },
     {
       "label": "Warehouse.Application.Tests",
       "file_type": "code",
-      "source_file": "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs",
-      "source_location": "L9",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L7",
       "type": "namespace",
       "metadata": {
         "kind": "csharp_namespace",
@@ -2153,6 +2153,197 @@
       "community": 53,
       "community_name": "Warehouse.Api.Common",
       "norm_label": "warehouse.application.tests"
+    },
+    {
+      "label": "OrderAllocationServiceTests",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L9",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "orderallocationservicetests"
+    },
+    {
+      "label": "Mock",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_cs_mock",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "mock"
+    },
+    {
+      "label": ".BuildLocation()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L33",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildlocation",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".buildlocation()"
+    },
+    {
+      "label": ".BuildStock()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L42",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".buildstock()"
+    },
+    {
+      "label": "Guid",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_cs_guid",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "guid"
+    },
+    {
+      "label": ".BuildOrderWithItems()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L52",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderwithitems",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".buildorderwithitems()"
+    },
+    {
+      "label": ".BuildOrderItem()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L60",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".buildorderitem()"
+    },
+    {
+      "label": ".AllocateOrderAsync_SingleLocationHasEnoughStock_AllocatesFullyAndCreatesPickTask()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L68",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask()"
+    },
+    {
+      "label": "Task",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_cs_task",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "task"
+    },
+    {
+      "label": "Fact",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_cs_fact",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": "fact"
+    },
+    {
+      "label": ".AllocateOrderAsync_NoSingleLocationHasEnough_SplitsAcrossLocations()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L103",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".allocateorderasync_nosinglelocationhasenough_splitsacrosslocations()"
+    },
+    {
+      "label": ".AllocateOrderAsync_InsufficientStockForALine_ParksWholeOrderWithoutCreatingAnyPickTask()",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L141",
+      "metadata": {
+        "namespace": "Warehouse.Application.Tests",
+        "scope_chain": [
+          "s138"
+        ]
+      },
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
+      "norm_label": ".allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask()"
+    },
+    {
+      "label": "PickTaskServiceTests.cs",
+      "file_type": "code",
+      "source_file": "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "backend_warehouse_application_tests_picktaskservicetests",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
+      "norm_label": "picktaskservicetests.cs"
     },
     {
       "label": "PickTaskServiceTests",
@@ -2167,8 +2358,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskservicetests"
     },
     {
@@ -2178,8 +2369,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_cs_mock",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "mock"
     },
     {
@@ -2195,8 +2386,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_buildtaskwithoneitem",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".buildtaskwithoneitem()"
     },
     {
@@ -2212,8 +2403,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_buildmissingitemdto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".buildmissingitemdto()"
     },
     {
@@ -2229,8 +2420,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_reportmissingitemasync_callerisnotassignedworker_stillsucceeds",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitemasync_callerisnotassignedworker_stillsucceeds()"
     },
     {
@@ -2240,8 +2431,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -2251,8 +2442,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_cs_fact",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "fact"
     },
     {
@@ -2268,8 +2459,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_reportmissingitemasync_validreport_adjustsstockandlogstransaction",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitemasync_validreport_adjustsstockandlogstransaction()"
     },
     {
@@ -2285,8 +2476,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_reportmissingitemasync_allitemsfullyaccountedfor_completestask",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitemasync_allitemsfullyaccountedfor_completestask()"
     },
     {
@@ -2302,8 +2493,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_reportmissingitemasync_otheritemsstillunresolved_doesnotcompletetask",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitemasync_otheritemsstillunresolved_doesnotcompletetask()"
     },
     {
@@ -2319,8 +2510,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_cancelpicktaskasync_itemalreadypicked_rejectscancellation",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".cancelpicktaskasync_itemalreadypicked_rejectscancellation()"
     },
     {
@@ -2336,8 +2527,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_cancelpicktaskasync_nothingpicked_releasescontainerandresetstask",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".cancelpicktaskasync_nothingpicked_releasescontainerandresetstask()"
     },
     {
@@ -2353,8 +2544,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_tests_picktaskservicetests_warehouse_application_tests_picktaskservicetests_startpicktaskasync_concurrentclaimdetected_returnsconflictfailure",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".startpicktaskasync_concurrentclaimdetected_returnsconflictfailure()"
     },
     {
@@ -2675,8 +2866,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_common_result",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "result.cs"
     },
     {
@@ -2692,8 +2883,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_common_result_warehouse_application_common_resulterrortype",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "resulterrortype"
     },
     {
@@ -2709,8 +2900,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_common_result_warehouse_application_common_result",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "result"
     },
     {
@@ -2726,8 +2917,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_common_result_warehouse_application_common_result_success",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".success()"
     },
     {
@@ -2743,8 +2934,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_common_result_warehouse_application_common_result_failure",
-      "community": 20,
-      "community_name": "TestOrderGenerator/src/App.tsx",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".failure()"
     },
     {
@@ -3055,8 +3246,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationcreatedto",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "locationcreatedto.cs"
     },
     {
@@ -3072,8 +3263,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationcreatedto_warehouse_application_dtos_locationcreatedto",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "locationcreatedto"
     },
     {
@@ -3083,8 +3274,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationresponsedto",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "locationresponsedto.cs"
     },
     {
@@ -3100,8 +3291,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationresponsedto_warehouse_application_dtos_locationresponsedto",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "locationresponsedto"
     },
     {
@@ -3111,8 +3302,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_locationresponsedto_cs_guid",
-      "community": 24,
-      "community_name": "Migration: InitialCreate",
+      "community": 64,
+      "community_name": "RegisterDto.cs",
       "norm_label": "guid"
     },
     {
@@ -3273,8 +3464,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskitemresponsedto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "picktaskitemresponsedto.cs"
     },
     {
@@ -3290,8 +3481,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskitemresponsedto_warehouse_application_dtos_picktaskitemresponsedto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "picktaskitemresponsedto"
     },
     {
@@ -3301,8 +3492,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskitemresponsedto_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 53,
+      "community_name": "Warehouse.Api.Common",
       "norm_label": "guid"
     },
     {
@@ -3312,8 +3503,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskresponsedto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskresponsedto.cs"
     },
     {
@@ -3329,8 +3520,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskresponsedto_warehouse_application_dtos_picktaskresponsedto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskresponsedto"
     },
     {
@@ -3340,8 +3531,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskresponsedto_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -3351,8 +3542,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_picktaskresponsedto_cs_list",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "list"
     },
     {
@@ -3362,8 +3553,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_productcreatedto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "productcreatedto.cs"
     },
     {
@@ -3379,8 +3570,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_productcreatedto_warehouse_application_dtos_productcreatedto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "productcreatedto"
     },
     {
@@ -3390,8 +3581,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_productresponsedto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "productresponsedto.cs"
     },
     {
@@ -3407,8 +3598,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_productresponsedto_warehouse_application_dtos_productresponsedto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "productresponsedto"
     },
     {
@@ -3418,8 +3609,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_productresponsedto_cs_guid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -3429,8 +3620,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_productresponsedto_cs_list",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "list"
     },
     {
@@ -3563,8 +3754,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_reportdefectresultdto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "reportdefectresultdto.cs"
     },
     {
@@ -3580,8 +3771,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_reportdefectresultdto_warehouse_application_dtos_reportdefectresultdto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "reportdefectresultdto"
     },
     {
@@ -3591,8 +3782,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_reportdefectresultdto_cs_list",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "list"
     },
     {
@@ -3602,8 +3793,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_reportdefectresultdto_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -3613,8 +3804,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_reportmissingitemdto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "reportmissingitemdto.cs"
     },
     {
@@ -3630,8 +3821,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_reportmissingitemdto_warehouse_application_dtos_reportmissingitemdto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "reportmissingitemdto"
     },
     {
@@ -3764,8 +3955,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_stockcreatedto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "stockcreatedto.cs"
     },
     {
@@ -3781,8 +3972,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_stockcreatedto_warehouse_application_dtos_stockcreatedto",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "stockcreatedto"
     },
     {
@@ -3792,8 +3983,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_dtos_stockcreatedto_cs_guid",
-      "community": 2,
-      "community_name": "Products & Stocks API",
+      "community": 10,
+      "community_name": "Locations Controller API",
       "norm_label": "guid"
     },
     {
@@ -4617,8 +4808,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_warehouse_application_interfaces_iproductrepository",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "iproductrepository"
     },
     {
@@ -4634,8 +4825,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_warehouse_application_interfaces_iproductrepository_getbyidasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".getbyidasync()"
     },
     {
@@ -4645,8 +4836,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_cs_guid",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "guid"
     },
     {
@@ -4656,8 +4847,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_cs_task",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "task"
     },
     {
@@ -4673,8 +4864,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_warehouse_application_interfaces_iproductrepository_skuexistsasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".skuexistsasync()"
     },
     {
@@ -4690,8 +4881,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_warehouse_application_interfaces_iproductrepository_getbyskusasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".getbyskusasync()"
     },
     {
@@ -4701,8 +4892,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_cs_list",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "list"
     },
     {
@@ -4712,8 +4903,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_cs_dictionary",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "dictionary"
     },
     {
@@ -4729,8 +4920,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_warehouse_application_interfaces_iproductrepository_getallwithstocksasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".getallwithstocksasync()"
     },
     {
@@ -4740,8 +4931,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_cs_datetime",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "datetime"
     },
     {
@@ -4757,8 +4948,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iproductrepository_warehouse_application_interfaces_iproductrepository_add",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": ".add()"
     },
     {
@@ -5111,8 +5302,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_istocktransactionrepository_warehouse_application_interfaces_istocktransactionrepository",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "istocktransactionrepository"
     },
     {
@@ -5128,8 +5319,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_istocktransactionrepository_warehouse_application_interfaces_istocktransactionrepository_add",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": ".add()"
     },
     {
@@ -5139,8 +5330,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "iunitofwork.cs"
     },
     {
@@ -5156,8 +5347,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork_warehouse_application_interfaces_iunitofwork",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "iunitofwork"
     },
     {
@@ -5173,8 +5364,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork_warehouse_application_interfaces_iunitofwork_savechangesasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".savechangesasync()"
     },
     {
@@ -5184,8 +5375,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -5201,8 +5392,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork_warehouse_application_interfaces_iunitofwork_begintransactionasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".begintransactionasync()"
     },
     {
@@ -5218,8 +5409,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork_warehouse_application_interfaces_iunitofwork_committransactionasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".committransactionasync()"
     },
     {
@@ -5235,8 +5426,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_interfaces_iunitofwork_warehouse_application_interfaces_iunitofwork_rollbacktransactionasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".rollbacktransactionasync()"
     },
     {
@@ -5919,8 +6110,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_inventoryservice_warehouse_application_services_inventoryservice",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "inventoryservice"
     },
     {
@@ -5936,8 +6127,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_inventoryservice_warehouse_application_services_inventoryservice_adjustphysicalstockasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".adjustphysicalstockasync()"
     },
     {
@@ -5947,8 +6138,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_inventoryservice_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -5958,8 +6149,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_inventoryservice_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -5975,8 +6166,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_inventoryservice_warehouse_application_services_inventoryservice_createproductwithlocationasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".createproductwithlocationasync()"
     },
     {
@@ -6003,8 +6194,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderallocationservice_warehouse_application_services_orderallocationservice",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
       "norm_label": "orderallocationservice"
     },
     {
@@ -6020,8 +6211,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderallocationservice_warehouse_application_services_orderallocationservice_allocateorderasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
       "norm_label": ".allocateorderasync()"
     },
     {
@@ -6031,8 +6222,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderallocationservice_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
       "norm_label": "guid"
     },
     {
@@ -6042,8 +6233,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderallocationservice_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
       "norm_label": "task"
     },
     {
@@ -6053,8 +6244,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderallocationservice_cs_isallocated",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
       "norm_label": "isallocated"
     },
     {
@@ -6064,8 +6255,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderallocationservice_cs_message",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 57,
+      "community_name": ".AllocateOrderAsync",
       "norm_label": "message"
     },
     {
@@ -6092,8 +6283,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderservice_warehouse_application_services_orderservice",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 77,
+      "community_name": "20260618193047_AddProductVolumetrics.Designer.cs",
       "norm_label": "orderservice"
     },
     {
@@ -6109,8 +6300,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderservice_warehouse_application_services_orderservice_markaspickingasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 77,
+      "community_name": "20260618193047_AddProductVolumetrics.Designer.cs",
       "norm_label": ".markaspickingasync()"
     },
     {
@@ -6120,8 +6311,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderservice_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 77,
+      "community_name": "20260618193047_AddProductVolumetrics.Designer.cs",
       "norm_label": "guid"
     },
     {
@@ -6131,8 +6322,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderservice_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 77,
+      "community_name": "20260618193047_AddProductVolumetrics.Designer.cs",
       "norm_label": "task"
     },
     {
@@ -6148,8 +6339,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderservice_warehouse_application_services_orderservice_updateitemprogressasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 77,
+      "community_name": "20260618193047_AddProductVolumetrics.Designer.cs",
       "norm_label": ".updateitemprogressasync()"
     },
     {
@@ -6165,8 +6356,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_orderservice_warehouse_application_services_orderservice_checkandcloseorderasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 77,
+      "community_name": "20260618193047_AddProductVolumetrics.Designer.cs",
       "norm_label": ".checkandcloseorderasync()"
     },
     {
@@ -6193,8 +6384,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "picktaskservice"
     },
     {
@@ -6210,8 +6401,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_getpicktasksasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getpicktasksasync()"
     },
     {
@@ -6221,8 +6412,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_cs_task",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "task"
     },
     {
@@ -6232,8 +6423,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_cs_ienumerable",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "ienumerable"
     },
     {
@@ -6249,8 +6440,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_getactivetaskforuserasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getactivetaskforuserasync()"
     },
     {
@@ -6266,8 +6457,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_getnexttaskasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".getnexttaskasync()"
     },
     {
@@ -6283,8 +6474,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_startpicktaskasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".startpicktaskasync()"
     },
     {
@@ -6294,8 +6485,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_cs_guid",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "guid"
     },
     {
@@ -6311,8 +6502,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_pickitemasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".pickitemasync()"
     },
     {
@@ -6328,8 +6519,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_dispatchcontainerasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".dispatchcontainerasync()"
     },
     {
@@ -6345,8 +6536,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_cancelpicktaskasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".cancelpicktaskasync()"
     },
     {
@@ -6362,8 +6553,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_reportmissingitemasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportmissingitemasync()"
     },
     {
@@ -6373,8 +6564,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "string",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": "string"
     },
     {
@@ -6390,8 +6581,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_reportdefectasync",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".reportdefectasync()"
     },
     {
@@ -6407,8 +6598,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_builddefectmessage",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".builddefectmessage()"
     },
     {
@@ -6424,8 +6615,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_application_services_picktaskservice_warehouse_application_services_picktaskservice_maptodto",
-      "community": 8,
-      "community_name": "Controller Namespace Hub",
+      "community": 0,
+      "community_name": "PickTask API & Service",
       "norm_label": ".maptodto()"
     },
     {
@@ -7044,8 +7235,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_domain_product",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "product.cs"
     },
     {
@@ -7061,8 +7252,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_warehouse_domain_productsize",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "productsize"
     },
     {
@@ -7078,8 +7269,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_warehouse_domain_unittype",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "unittype"
     },
     {
@@ -7095,8 +7286,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_warehouse_domain_product",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "product"
     },
     {
@@ -7106,8 +7297,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_cs_guid",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "guid"
     },
     {
@@ -7117,8 +7308,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_cs_datetime",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "datetime"
     },
     {
@@ -7128,8 +7319,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_product_cs_icollection",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 81,
+      "community_name": "Product",
       "norm_label": "icollection"
     },
     {
@@ -7295,8 +7486,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_domain_stocktransaction",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "stocktransaction.cs"
     },
     {
@@ -7312,8 +7503,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_stocktransaction_warehouse_domain_stocktransactiontype",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "stocktransactiontype"
     },
     {
@@ -7329,8 +7520,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_domain_stocktransaction_warehouse_domain_stocktransaction",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "stocktransaction"
     },
     {
@@ -7340,8 +7531,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_stocktransaction_cs_guid",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "guid"
     },
     {
@@ -7351,8 +7542,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_domain_stocktransaction_cs_datetime",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "datetime"
     },
     {
@@ -7511,8 +7702,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containerconfiguration.cs"
     },
     {
@@ -7527,8 +7718,8 @@
       },
       "_origin": "ast",
       "id": "csharp_namespace:6d804dae53990bbd",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 39,
+      "community_name": "XminConcurrencyExtensions.cs",
       "norm_label": "warehouse.infrastructure.configurations"
     },
     {
@@ -7544,8 +7735,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration_warehouse_infrastructure_configurations_containerconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "containerconfiguration"
     },
     {
@@ -7555,8 +7746,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "ientitytypeconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 60,
+      "community_name": "PutawayTaskItem",
       "norm_label": "ientitytypeconfiguration"
     },
     {
@@ -7572,8 +7763,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration_warehouse_infrastructure_configurations_containerconfiguration_configure",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -7583,8 +7774,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_containerconfiguration_cs_entitytypebuilder",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 5,
+      "community_name": "Containers API & Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -7650,8 +7841,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "orderconfiguration.cs"
     },
     {
@@ -7667,8 +7858,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderconfiguration_warehouse_infrastructure_configurations_orderconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 4,
+      "community_name": "Orders API & Allocation",
       "norm_label": "orderconfiguration"
     },
     {
@@ -7706,8 +7897,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_orderitem",
-      "community": 70,
-      "community_name": "Stock",
+      "community": 39,
+      "community_name": "XminConcurrencyExtensions.cs",
       "norm_label": "configurations/orderitem.cs"
     },
     {
@@ -7762,8 +7953,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktaskconfiguration.cs"
     },
     {
@@ -7779,8 +7970,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_warehouse_infrastructure_configurations_picktaskconfiguration",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "picktaskconfiguration"
     },
     {
@@ -7796,8 +7987,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_warehouse_infrastructure_configurations_picktaskconfiguration_configure",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": ".configure()"
     },
     {
@@ -7807,8 +7998,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskconfiguration_cs_entitytypebuilder",
-      "community": 14,
-      "community_name": "IEntityTypeConfiguration",
+      "community": 15,
+      "community_name": "PickTask Entity Mapping",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -7818,8 +8009,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_picktaskitemconfiguration",
-      "community": 55,
-      "community_name": "PickTaskItem",
+      "community": 39,
+      "community_name": "XminConcurrencyExtensions.cs",
       "norm_label": "picktaskitemconfiguration.cs"
     },
     {
@@ -7874,8 +8065,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_putawaytaskconfiguration",
-      "community": 40,
-      "community_name": "Snapshot: ProductVolumetrics1",
+      "community": 43,
+      "community_name": "PutawayTask",
       "norm_label": "putawaytaskconfiguration.cs"
     },
     {
@@ -7891,8 +8082,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_putawaytaskconfiguration_warehouse_infrastructure_configurations_putawaytaskconfiguration",
-      "community": 40,
-      "community_name": "Snapshot: ProductVolumetrics1",
+      "community": 43,
+      "community_name": "PutawayTask",
       "norm_label": "putawaytaskconfiguration"
     },
     {
@@ -7908,8 +8099,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_putawaytaskconfiguration_warehouse_infrastructure_configurations_putawaytaskconfiguration_configure",
-      "community": 40,
-      "community_name": "Snapshot: ProductVolumetrics1",
+      "community": 43,
+      "community_name": "PutawayTask",
       "norm_label": ".configure()"
     },
     {
@@ -7919,8 +8110,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_putawaytaskconfiguration_cs_entitytypebuilder",
-      "community": 40,
-      "community_name": "Snapshot: ProductVolumetrics1",
+      "community": 43,
+      "community_name": "PutawayTask",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -7986,8 +8177,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stockconfiguration",
-      "community": 34,
-      "community_name": "StockConfiguration",
+      "community": 61,
+      "community_name": "Stock",
       "norm_label": "stockconfiguration.cs"
     },
     {
@@ -8003,8 +8194,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stockconfiguration_warehouse_infrastructure_configurations_stockconfiguration",
-      "community": 34,
-      "community_name": "StockConfiguration",
+      "community": 61,
+      "community_name": "Stock",
       "norm_label": "stockconfiguration"
     },
     {
@@ -8020,8 +8211,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stockconfiguration_warehouse_infrastructure_configurations_stockconfiguration_configure",
-      "community": 34,
-      "community_name": "StockConfiguration",
+      "community": 61,
+      "community_name": "Stock",
       "norm_label": ".configure()"
     },
     {
@@ -8031,8 +8222,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stockconfiguration_cs_entitytypebuilder",
-      "community": 34,
-      "community_name": "StockConfiguration",
+      "community": 61,
+      "community_name": "Stock",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -8042,8 +8233,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stocktransactionconfiguration",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "stocktransactionconfiguration.cs"
     },
     {
@@ -8059,8 +8250,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stocktransactionconfiguration_warehouse_infrastructure_configurations_stocktransactionconfiguration",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "stocktransactionconfiguration"
     },
     {
@@ -8076,8 +8267,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stocktransactionconfiguration_warehouse_infrastructure_configurations_stocktransactionconfiguration_configure",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": ".configure()"
     },
     {
@@ -8087,8 +8278,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_configurations_stocktransactionconfiguration_cs_entitytypebuilder",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "entitytypebuilder"
     },
     {
@@ -8221,8 +8412,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer",
-      "community": 11,
-      "community_name": "Project Build Targets",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "20260611180526_initialcreate.designer.cs"
     },
     {
@@ -8254,8 +8445,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_warehouse_infrastructure_migrations_initialcreate",
-      "community": 11,
-      "community_name": "Project Build Targets",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "initialcreate"
     },
     {
@@ -8271,8 +8462,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_warehouse_infrastructure_migrations_initialcreate_buildtargetmodel",
-      "community": 11,
-      "community_name": "Project Build Targets",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -8282,8 +8473,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_designer_cs_modelbuilder",
-      "community": 11,
-      "community_name": "Project Build Targets",
+      "community": 46,
+      "community_name": "Snapshot: Reserved/Available Qty",
       "norm_label": "modelbuilder"
     },
     {
@@ -8293,8 +8484,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate",
-      "community": 28,
-      "community_name": "Migration: Locations & Containers",
+      "community": 84,
+      "community_name": "InitialCreate",
       "norm_label": "20260611180526_initialcreate.cs"
     },
     {
@@ -8310,8 +8501,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_warehouse_infrastructure_migrations_initialcreate",
-      "community": 28,
-      "community_name": "Migration: Locations & Containers",
+      "community": 84,
+      "community_name": "InitialCreate",
       "norm_label": "initialcreate"
     },
     {
@@ -8338,8 +8529,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_warehouse_infrastructure_migrations_initialcreate_up",
-      "community": 28,
-      "community_name": "Migration: Locations & Containers",
+      "community": 84,
+      "community_name": "InitialCreate",
       "norm_label": ".up()"
     },
     {
@@ -8349,8 +8540,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_cs_migrationbuilder",
-      "community": 28,
-      "community_name": "Migration: Locations & Containers",
+      "community": 84,
+      "community_name": "InitialCreate",
       "norm_label": "migrationbuilder"
     },
     {
@@ -8366,8 +8557,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260611180526_initialcreate_warehouse_infrastructure_migrations_initialcreate_down",
-      "community": 28,
-      "community_name": "Migration: Locations & Containers",
+      "community": 84,
+      "community_name": "InitialCreate",
       "norm_label": ".down()"
     },
     {
@@ -9723,8 +9914,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock",
-      "community": 37,
-      "community_name": "AddContainersStock",
+      "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": "20260703175827_addcontainersstock.cs"
     },
     {
@@ -9740,8 +9931,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_warehouse_infrastructure_migrations_addcontainersstock",
-      "community": 37,
-      "community_name": "AddContainersStock",
+      "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": "addcontainersstock"
     },
     {
@@ -9757,8 +9948,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_warehouse_infrastructure_migrations_addcontainersstock_up",
-      "community": 37,
-      "community_name": "AddContainersStock",
+      "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": ".up()"
     },
     {
@@ -9768,8 +9959,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_cs_migrationbuilder",
-      "community": 37,
-      "community_name": "AddContainersStock",
+      "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": "migrationbuilder"
     },
     {
@@ -9785,8 +9976,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260703175827_addcontainersstock_warehouse_infrastructure_migrations_addcontainersstock_down",
-      "community": 37,
-      "community_name": "AddContainersStock",
+      "community": 28,
+      "community_name": "Migration: Locations & Containers",
       "norm_label": ".down()"
     },
     {
@@ -10054,8 +10245,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 85,
+      "community_name": "20260801201234_Add1.Designer.cs",
       "norm_label": "20260801201234_add1.designer.cs"
     },
     {
@@ -10071,8 +10262,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer_warehouse_infrastructure_migrations_add1",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 85,
+      "community_name": "20260801201234_Add1.Designer.cs",
       "norm_label": "add1"
     },
     {
@@ -10088,8 +10279,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer_warehouse_infrastructure_migrations_add1_buildtargetmodel",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 85,
+      "community_name": "20260801201234_Add1.Designer.cs",
       "norm_label": ".buildtargetmodel()"
     },
     {
@@ -10099,8 +10290,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_migrations_20260801201234_add1_designer_cs_modelbuilder",
-      "community": 46,
-      "community_name": "Snapshot: Reserved/Available Qty",
+      "community": 85,
+      "community_name": "20260801201234_Add1.Designer.cs",
       "norm_label": "modelbuilder"
     },
     {
@@ -12123,8 +12314,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_stocktransactionrepository_warehouse_infrastructure_repositories_stocktransactionrepository",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "stocktransactionrepository"
     },
     {
@@ -12134,8 +12325,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_stocktransactionrepository_cs_appdbcontext",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": "appdbcontext"
     },
     {
@@ -12151,8 +12342,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_stocktransactionrepository_warehouse_infrastructure_repositories_stocktransactionrepository_add",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 41,
+      "community_name": "StockTransaction",
       "norm_label": ".add()"
     },
     {
@@ -12179,8 +12370,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "unitofwork"
     },
     {
@@ -12190,8 +12381,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_cs_appdbcontext",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "appdbcontext"
     },
     {
@@ -12201,8 +12392,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "idbcontexttransaction",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "idbcontexttransaction"
     },
     {
@@ -12218,8 +12409,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_savechangesasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".savechangesasync()"
     },
     {
@@ -12229,8 +12420,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_cs_task",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": "task"
     },
     {
@@ -12246,8 +12437,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_begintransactionasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".begintransactionasync()"
     },
     {
@@ -12263,8 +12454,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_committransactionasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".committransactionasync()"
     },
     {
@@ -12280,8 +12471,8 @@
       },
       "_origin": "ast",
       "id": "backend_warehouse_infrastructure_repositories_unitofwork_warehouse_infrastructure_repositories_unitofwork_rollbacktransactionasync",
-      "community": 36,
-      "community_name": "Snapshot: InitialCreate",
+      "community": 8,
+      "community_name": "Controller Namespace Hub",
       "norm_label": ".rollbacktransactionasync()"
     },
     {
@@ -12665,8 +12856,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_testordergenerator_src_app",
-      "community": 3,
-      "community_name": "Frontend Lint & Axios Client",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "testordergenerator/src/app.tsx"
     },
     {
@@ -12676,8 +12867,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "frontend_testordergenerator_src_app_mode",
-      "community": 3,
-      "community_name": "Frontend Lint & Axios Client",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "mode"
     },
     {
@@ -12687,8 +12878,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "frontend_testordergenerator_src_app_app",
-      "community": 3,
-      "community_name": "Frontend Lint & Axios Client",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "app()"
     },
     {
@@ -12819,8 +13010,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_testordergenerator_src_main",
-      "community": 3,
-      "community_name": "Frontend Lint & Axios Client",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "testordergenerator/src/main.tsx"
     },
     {
@@ -13578,8 +13769,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "ref_react",
-      "community": 78,
-      "community_name": "AdjustStockDto.cs",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "react"
     },
     {
@@ -14095,8 +14286,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_api_axiosclient_axiosclient",
-      "community": 47,
-      "community_name": ".AllocateOrderAsync",
+      "community": 78,
+      "community_name": "AdjustStockDto.cs",
       "norm_label": "axiosclient"
     },
     {
@@ -14392,8 +14583,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_putaway_containerscanscreen",
-      "community": 78,
-      "community_name": "AdjustStockDto.cs",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "containerscanscreen.tsx"
     },
     {
@@ -14403,8 +14594,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_putaway_containerscanscreen_props",
-      "community": 78,
-      "community_name": "AdjustStockDto.cs",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "props"
     },
     {
@@ -14414,8 +14605,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "frontend_warehouse_client_src_pages_putaway_containerscanscreen_containerscanscreen",
-      "community": 78,
-      "community_name": "AdjustStockDto.cs",
+      "community": 79,
+      "community_name": "react",
       "norm_label": "containerscanscreen()"
     },
     {
@@ -20767,6 +20958,583 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L5",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "Warehouse.Domain",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests",
+      "target": "csharp_namespace:5b271472b1d3c446",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests",
+      "target": "csharp_namespace:7a8a9a966edc9989",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L4",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "Warehouse.Application.Services",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests",
+      "target": "csharp_namespace:b65f71fb24ba607c",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L3",
+      "weight": 1.0,
+      "metadata": {
+        "using_kind": "namespace",
+        "target_fqn": "Warehouse.Application.Interfaces",
+        "scope_kind": "file"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests",
+      "target": "csharp_namespace:fd87192a4855ea51",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_picktaskservicetests",
+      "target": "csharp_namespace:7a8a9a966edc9989",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/PutawayServiceTests.cs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_putawayservicetests",
+      "target": "csharp_namespace:7a8a9a966edc9989",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L15",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "OrderAllocationService"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_services_orderallocationservice_warehouse_application_services_orderallocationservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "field",
+      "metadata": {
+        "ref_token": "Mock"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_mock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L141",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L103",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildlocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderwithitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L153",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildlocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildlocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildlocation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L33",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Location"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildlocation",
+      "target": "backend_warehouse_domain_location_warehouse_domain_location",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L156",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "Guid"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_guid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "Location"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "target": "backend_warehouse_domain_location_warehouse_domain_location",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L42",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Stock"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildstock",
+      "target": "backend_warehouse_domain_stock_warehouse_domain_stock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L60",
+      "weight": 1.0,
+      "context": "parameter_type",
+      "metadata": {
+        "ref_token": "Guid"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_guid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L161",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderwithitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L114",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderwithitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderwithitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L52",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Order"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderwithitems",
+      "target": "backend_warehouse_domain_order_warehouse_domain_order",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L113",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L60",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "OrderItem"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_buildorderitem",
+      "target": "backend_warehouse_domain_orderitem_warehouse_domain_orderitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_services_orderallocationservice_warehouse_application_services_orderallocationservice_allocateorderasync"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L68",
+      "weight": 1.0,
+      "context": "attribute",
+      "metadata": {
+        "ref_token": "Fact"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_fact",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L68",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Task"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_singlelocationhasenoughstock_allocatesfullyandcreatespicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_task",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L141",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Task"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_task",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L103",
+      "weight": 1.0,
+      "context": "return_type",
+      "metadata": {
+        "ref_token": "Task"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_task",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L141",
+      "weight": 1.0,
+      "context": "attribute",
+      "metadata": {
+        "ref_token": "Fact"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_fact",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L103",
+      "weight": 1.0,
+      "context": "attribute",
+      "metadata": {
+        "ref_token": "Fact"
+      },
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_tests_orderallocationservicetests_cs_fact",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_nosinglelocationhasenough_splitsacrosslocations",
+      "target": "backend_warehouse_application_services_orderallocationservice_warehouse_application_services_orderallocationservice_allocateorderasync"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs",
+      "source_location": "L168",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "backend_warehouse_application_tests_orderallocationservicetests_warehouse_application_tests_orderallocationservicetests_allocateorderasync_insufficientstockforaline_parkswholeorderwithoutcreatinganypicktask",
+      "target": "backend_warehouse_application_services_orderallocationservice_warehouse_application_services_orderallocationservice_allocateorderasync"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs",
       "source_location": "L11",
       "weight": 1.0,
@@ -20807,17 +21575,6 @@
       "_origin": "ast",
       "source": "backend_warehouse_application_tests_picktaskservicetests",
       "target": "csharp_namespace:5b271472b1d3c446",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "backend_warehouse_application_tests_picktaskservicetests",
-      "target": "csharp_namespace:7a8a9a966edc9989",
       "confidence_score": 1.0
     },
     {
@@ -20869,17 +21626,6 @@
       "_origin": "ast",
       "source": "backend_warehouse_application_tests_picktaskservicetests",
       "target": "csharp_namespace:fd87192a4855ea51",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Backend/Warehouse.Application.Tests/PutawayServiceTests.cs",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "backend_warehouse_application_tests_putawayservicetests",
-      "target": "csharp_namespace:7a8a9a966edc9989",
       "confidence_score": 1.0
     },
     {
@@ -42491,5 +43237,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0a5e5248677c8e532df9ef584e2c546f5314ce29"
+  "built_at_commit": "70f6d13ddc0b6fc8a8ba1b6336a4ba37dffa8d34"
 }

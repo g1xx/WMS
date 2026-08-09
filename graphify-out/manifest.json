@@ -953,5 +953,10 @@
     "mtime": 1786295476.3790421,
     "ast_hash": "0c67627c0b833b9446b3aa966b45d262",
     "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs": {
+    "mtime": 1786297592.8204052,
+    "ast_hash": "6044b9b702efc60cda0800165a923bdc",
+    "semantic_hash": ""
   }
 }
