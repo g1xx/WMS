@@ -1,0 +1,58 @@
+using Microsoft.EntityFrameworkCore.Storage;
+using Warehouse.Application.Interfaces;
+
+namespace Warehouse.Infrastructure.Repositories;
+
+public class UnitOfWork : IUnitOfWork
+{
+    private readonly AppDbContext _context;
+    private IDbContextTransaction? _transaction;
+
+    public IPickTaskRepository PickTasks { get; }
+    public IPutawayTaskRepository PutawayTasks { get; }
+    public IStockRepository Stocks { get; }
+    public IOrderRepository Orders { get; }
+    public IContainerRepository Containers { get; }
+    public IProductRepository Products { get; }
+    public ILocationRepository Locations { get; }
+    public IStockTransactionRepository StockTransactions { get; }
+
+    public UnitOfWork(AppDbContext context)
+    {
+        _context = context;
+
+        PickTasks = new PickTaskRepository(context);
+        PutawayTasks = new PutawayTaskRepository(context);
+        Stocks = new StockRepository(context);
+        Orders = new OrderRepository(context);
+        Containers = new ContainerRepository(context);
+        Products = new ProductRepository(context);
+        Locations = new LocationRepository(context);
+        StockTransactions = new StockTransactionRepository(context);
+    }
+
+    public Task<int> SaveChangesAsync() => _context.SaveChangesAsync();
+
+    public async Task BeginTransactionAsync()
+    {
+        _transaction = await _context.Database.BeginTransactionAsync();
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        if (_transaction == null) return;
+
+        await _transaction.CommitAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
+    }
+
+    public async Task RollbackTransactionAsync()
+    {
+        if (_transaction == null) return;
+
+        await _transaction.RollbackAsync();
+        await _transaction.DisposeAsync();
+        _transaction = null;
+    }
+}

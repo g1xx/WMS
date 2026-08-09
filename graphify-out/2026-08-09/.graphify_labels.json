@@ -76,5 +76,15 @@
   "74": "20260615013749_AddPiecePackageProduct.Designer.cs",
   "75": "20260805012255_AddStockTransactionJournal.Designer.cs",
   "76": "PickTaskItemResponseDto",
-  "77": "SplitAndCloseDto.cs"
+  "77": "20260618193047_AddProductVolumetrics.Designer.cs",
+  "78": "AdjustStockDto.cs",
+  "79": "StockAdjustmentResultDto.cs",
+  "80": "ContainerMoveDto.cs",
+  "81": "CreateProductWithLocationDto.cs",
+  "82": "LoginDto.cs",
+  "83": "RegisterDto.cs",
+  "84": "SplitAndCloseDto.cs",
+  "85": "StartPickTaskDto.cs",
+  "86": "IsAllocated",
+  "87": "Message"
 }

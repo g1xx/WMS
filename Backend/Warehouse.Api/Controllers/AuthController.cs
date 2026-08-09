@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Warehouse.Api.DTOs;
+using Warehouse.Application.DTOs;
 
 namespace Warehouse.Api.Controllers
 {

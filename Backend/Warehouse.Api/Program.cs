@@ -5,9 +5,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
-using Warehouse.Api.Services;
+using Warehouse.Application.Interfaces;
 using Warehouse.Application.Services;
 using Warehouse.Infrastructure;
+using Warehouse.Infrastructure.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,16 @@ builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IPickTaskRepository, PickTaskRepository>();
+builder.Services.AddScoped<IPutawayTaskRepository, PutawayTaskRepository>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IContainerRepository, ContainerRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<IStockTransactionRepository, StockTransactionRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

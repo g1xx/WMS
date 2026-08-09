@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Warehouse.Api.Common;
-using Warehouse.Api.DTOs;
-using Warehouse.Api.Services;
+using Warehouse.Application.DTOs;
+using Warehouse.Application.Services;
 
 namespace Warehouse.Api.Controllers;
 

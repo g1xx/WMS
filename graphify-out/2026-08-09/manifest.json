@@ -5,13 +5,13 @@
     "semantic_hash": "d581d8be28f89060c4e257bf1bfb9134"
   },
   ".claude/settings.local.json": {
-    "mtime": 1785892962.852963,
-    "ast_hash": "a6081bc9480f3a02f853823ebba79433",
+    "mtime": 1786279159.806062,
+    "ast_hash": "f074d33667cb7cfa3a986f505cfe2ae4",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Controllers/AuthController.cs": {
-    "mtime": 1785526279.3796115,
-    "ast_hash": "b58f0e63120666b176250175536d6a5d",
+    "mtime": 1786278931.7445564,
+    "ast_hash": "d5efdcb5e79cc8ff94ea2241c7c628e6",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Controllers/ContainersController.cs": {
@@ -420,8 +420,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/api/axiosClient.ts": {
-    "mtime": 1785745176.552121,
-    "ast_hash": "7b97412a9fd4421d99a5d66c0036d58d",
+    "mtime": 1786279185.4527018,
+    "ast_hash": "b699619fcec39fa8ad5ba62aea56bc1f",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/main.tsx": {
@@ -435,8 +435,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/PickTasks/ActiveTaskScreen.tsx": {
-    "mtime": 1785748338.4978192,
-    "ast_hash": "548f87c7849321f0ddcdf2efe95c2a8b",
+    "mtime": 1786279275.195797,
+    "ast_hash": "7615245970d1ae134baf2e8ba2e06de9",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/PickTasks/NewTaskScreen.tsx": {
@@ -445,8 +445,8 @@
     "semantic_hash": "cb3851bc11c1545d8d1a6856e5a8b2c5"
   },
   "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx": {
-    "mtime": 1785835657.7239058,
-    "ast_hash": "6c122a3ef621f3127707b48232ed233e",
+    "mtime": 1786279212.4952629,
+    "ast_hash": "18befca741d8b3b956aeeef3cd2246c2",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/types/task.ts": {
@@ -827,6 +827,11 @@
   "Backend/Warehouse.Infrastructure/Migrations/20260805012255_AddStockTransactionJournal.cs": {
     "mtime": 1785892975.7690609,
     "ast_hash": "8395b647abf7cd516735123bfbc0fe20",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/DTOs/SupervisorOverrideDto.cs": {
+    "mtime": 1786278913.7361133,
+    "ast_hash": "7f4a3894f50b8715366773e696ac51a8",
     "semantic_hash": ""
   }
 }
