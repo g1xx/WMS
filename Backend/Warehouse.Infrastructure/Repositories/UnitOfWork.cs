@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Warehouse.Application.Common;
 using Warehouse.Application.Interfaces;
 
 namespace Warehouse.Infrastructure.Repositories;
@@ -31,7 +33,18 @@ public class UnitOfWork : IUnitOfWork
         StockTransactions = new StockTransactionRepository(context);
     }
 
-    public Task<int> SaveChangesAsync() => _context.SaveChangesAsync();
+    public async Task<int> SaveChangesAsync()
+    {
+        try
+        {
+            return await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            throw new ConcurrencyConflictException(
+                "The record was modified by another process before this change could be saved.", ex);
+        }
+    }
 
     public async Task BeginTransactionAsync()
     {

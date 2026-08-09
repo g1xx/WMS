@@ -14,5 +14,8 @@ public interface IStockRepository
     // bulk sector, with spare available quantity — used by ReportDefectAsync.
     Task<List<Stock>> GetReplacementCandidatesAsync(Guid productId, Guid excludeLocationId, string excludeSector);
 
+    // Product+Location included — feeds StocksController's full stock listing.
+    Task<List<Stock>> GetAllWithDetailsAsync();
+
     void Add(Stock stock);
 }

@@ -61,6 +61,15 @@ public class PickTaskRepository : IPickTaskRepository
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
+    public async Task<List<PickTask>> GetByOrderIdWithContainerLocationAsync(Guid orderId)
+    {
+        return await _context.PickTasks
+            .Include(pt => pt.Container)
+                .ThenInclude(c => c!.Location)
+            .Where(pt => pt.OrderId == orderId)
+            .ToListAsync();
+    }
+
     public void Add(PickTask task)
     {
         _context.PickTasks.Add(task);

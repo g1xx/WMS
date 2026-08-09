@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Warehouse.Domain;
-using Warehouse.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
+using Warehouse.Application.Interfaces;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
@@ -10,42 +9,39 @@ namespace Warehouse.Api.Controllers
     [Route("api/[controller]")]
     public class LocationsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public LocationsController(AppDbContext context)
+        public LocationsController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LocationResponseDto>>> GetLocations()
         {
-            var locations = await _context.Locations
-                .AsNoTracking()
-                .OrderBy(l => l.Aisle)
-                .ThenBy(l => l.Rack)
-                .Select(l => new LocationResponseDto
-                {
-                    Id = l.Id,
-                    Type = l.Type.ToString(), 
-                    AddressBarcode = l.AddressBarcode,
-                    WarehouseCode = l.WarehouseCode,
-                    Sector = l.Sector,
-                    Floor = l.Floor,
-                    Aisle = l.Aisle,
-                    Rack = l.Rack,
-                    Level = l.Level,
-                    Position = l.Position
-                })
-                .ToListAsync();
+            var locations = await _unitOfWork.Locations.GetAllOrderedAsync();
 
-            return Ok(locations);
+            var responseDtos = locations.Select(l => new LocationResponseDto
+            {
+                Id = l.Id,
+                Type = l.Type.ToString(),
+                AddressBarcode = l.AddressBarcode,
+                WarehouseCode = l.WarehouseCode,
+                Sector = l.Sector,
+                Floor = l.Floor,
+                Aisle = l.Aisle,
+                Rack = l.Rack,
+                Level = l.Level,
+                Position = l.Position
+            }).ToList();
+
+            return Ok(responseDtos);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<LocationResponseDto>> GetLocation(Guid id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _unitOfWork.Locations.GetByIdAsync(id);
 
             if (location == null)
             {
@@ -86,8 +82,8 @@ namespace Warehouse.Api.Controllers
 
             location.AddressBarcode = $"{location.WarehouseCode}{location.Sector}{location.Floor}{location.Aisle}{location.Rack}{location.Level}{location.Position}".ToLower();
 
-            _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Locations.Add(location);
+            await _unitOfWork.SaveChangesAsync();
 
             var responseDto = new LocationResponseDto
             {
@@ -139,9 +135,9 @@ namespace Warehouse.Api.Controllers
                 locationsToSave.Add(location);
             }
 
-            // 2. Use AddRangeAsync for an efficient bulk insert in EF Core
-            await _context.Locations.AddRangeAsync(locationsToSave);
-            await _context.SaveChangesAsync();
+            // 2. Bulk insert
+            _unitOfWork.Locations.AddRange(locationsToSave);
+            await _unitOfWork.SaveChangesAsync();
 
             // 3. Build the list of DTOs for the client response
             var responseDtos = locationsToSave.Select(l => new LocationResponseDto
@@ -181,8 +177,8 @@ namespace Warehouse.Api.Controllers
             locations.AddRange(GenerateZone("m", "g", 3, 1, 43, 1, 8, 1, 3, new[] { "a", "b", "c" }));
 
             // Save all ~25,000 records to the database in a single transaction
-            await _context.Locations.AddRangeAsync(locations);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Locations.AddRange(locations);
+            await _unitOfWork.SaveChangesAsync();
 
             return Ok(new { Message = $"Successfully created {locations.Count} locations!" });
         }

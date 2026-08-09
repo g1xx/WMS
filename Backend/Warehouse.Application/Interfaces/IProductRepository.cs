@@ -11,5 +11,9 @@ public interface IProductRepository
     // lookup in the caller's loop (avoids the N+1 this replaced).
     Task<Dictionary<string, Product>> GetBySkusAsync(List<string> skus);
 
+    // Stocks.Location included — feeds ProductsController's catalog listing (with its
+    // per-location available-quantity breakdown), optionally filtered to recently updated.
+    Task<List<Product>> GetAllWithStocksAsync(DateTime? updatedSince = null);
+
     void Add(Product product);
 }

@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="Warehouse.Api/Warehouse.Api.csproj" />
+  <Project Path="Warehouse.Application.Tests/Warehouse.Application.Tests.csproj" />
   <Project Path="Warehouse.Application/Warehouse.Application.csproj" />
   <Project Path="Warehouse.Domain/Warehouse.Domain.csproj" />
   <Project Path="Warehouse.Infrastructure/Warehouse.Infrastructure.csproj" />
