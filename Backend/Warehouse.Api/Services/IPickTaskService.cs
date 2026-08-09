@@ -1,4 +1,5 @@
-﻿using Warehouse.Api.DTOs;
+﻿using Warehouse.Api.Common;
+using Warehouse.Api.DTOs;
 
 namespace Warehouse.Application.Services
 {
@@ -6,16 +7,23 @@ namespace Warehouse.Application.Services
     {
         Task<IEnumerable<PickTaskResponseDto>> GetPickTasksAsync();
 
-        Task<PickTaskResponseDto?> GetNextTaskAsync(string userId);
+        // The worker's own in-flight task, independent of sector — used to
+        // resume work after a re-login, before any sector has been chosen.
+        Task<PickTaskResponseDto?> GetActiveTaskForUserAsync(string userId);
 
-        Task<string> StartPickTaskAsync(Guid id, StartPickTaskDto dto, string userId);
+        // Next unassigned New task, strictly scoped to the given picking zone/sector.
+        Task<PickTaskResponseDto?> GetNextTaskAsync(string userId, string sector);
 
-        Task<string> PickItemAsync(Guid id, PickItemDto dto, string userId);
-      
-        Task<Guid?> DispatchContainerAsync(Guid id, DispatchContainerDto dto, string userId);
+        Task<Result<string>> StartPickTaskAsync(Guid id, StartPickTaskDto dto, string userId);
 
-        Task<string> CancelPickTaskAsync(Guid id, string userId);
+        Task<Result<string>> PickItemAsync(Guid id, PickItemDto dto, string userId);
 
-        Task<string> ReportMissingItemAsync(Guid taskId, ReportMissingItemDto dto, string workerId);
+        Task<Result<DispatchContainerResultDto>> DispatchContainerAsync(Guid id, DispatchContainerDto dto, string userId);
+
+        Task<Result<MessageResponseDto>> CancelPickTaskAsync(Guid id, string userId);
+
+        Task<Result<MessageResponseDto>> ReportMissingItemAsync(Guid taskId, ReportMissingItemDto dto, string workerId);
+
+        Task<Result<ReportDefectResultDto>> ReportDefectAsync(Guid taskId, ReportDefectDto dto, string workerId);
     }
 }

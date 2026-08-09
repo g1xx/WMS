@@ -15,4 +15,8 @@ public class OrderItem
     public int RequiredQuantity { get; set; }
 
     public int PickedQuantity { get; set; } = 0;
+
+    // Set when a defect write-off could only be covered by bulk/high-rack stock
+    // (never picked directly) and no standard-zone replacement was found.
+    public bool IsPendingReplenishment { get; set; } = false;
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections;
 
 namespace Warehouse.Domain
@@ -30,5 +31,11 @@ namespace Warehouse.Domain
         public string Level { get; set; } = string.Empty;
         public string Position { get; set; } = string.Empty;
         public ICollection<Stock> Stocks { get; set; } = new List<Stock>();
+
+        // Picking zone identity used to segregate PickTasks and route replacement
+        // stock (e.g. "mp1" = WarehouseCode "m" + Sector "p" + Floor 1). Computed,
+        // never persisted — always derived from the fields above.
+        [NotMapped]
+        public string ZoneCode => $"{WarehouseCode}{Sector}{Floor}";
     }
 }

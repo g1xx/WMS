@@ -20,5 +20,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
                .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(o => o.OrderNumber).IsUnique();
+
+        builder.UseXminAsConcurrencyToken();
     }
 }

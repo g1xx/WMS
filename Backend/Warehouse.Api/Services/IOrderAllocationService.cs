@@ -1,6 +1,6 @@
-﻿namespace Warehouse.Api.Services;
+namespace Warehouse.Api.Services;
 
 public interface IOrderAllocationService
 {
-    Task<bool> AllocateOrderAsync(Guid orderId);
+    Task<(bool IsAllocated, string? Message)> AllocateOrderAsync(Guid orderId);
 }

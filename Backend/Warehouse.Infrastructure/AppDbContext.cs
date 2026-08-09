@@ -22,6 +22,9 @@ namespace Warehouse.Infrastructure
         public DbSet<OrderItem> OrderItems{ get; set; }
         public DbSet<PickTask> PickTasks { get; set; }
         public DbSet<PickTaskItem> PickTaskItems { get; set; }
+        public DbSet<PutawayTask> PutawayTasks { get; set; }
+        public DbSet<PutawayTaskItem> PutawayTaskItems { get; set; }
+        public DbSet<StockTransaction> StockTransactions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

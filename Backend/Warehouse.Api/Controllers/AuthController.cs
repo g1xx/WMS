@@ -71,17 +71,42 @@ namespace Warehouse.Api.Controllers
         public async Task<ActionResult> Login(LoginDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.Username);
-            if (user == null) return Unauthorized("Неверный логин или пароль");
+            if (user == null) return Unauthorized("Invalid username or password.");
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
-            if (!isPasswordValid) return Unauthorized("Неверный логин или пароль");
+            if (!isPasswordValid) return Unauthorized("Invalid username or password.");
 
-            var token = await GenerateJwtToken(user); 
+            var token = await GenerateJwtToken(user, TimeSpan.FromHours(8));
 
             return Ok(new { Token = token });
         }
 
-        private async Task<string> GenerateJwtToken(IdentityUser<Guid> user)
+        // Lets a worker's terminal obtain a short-lived, elevated token for a single
+        // Brigadier/Admin-gated action (report-defect, report-missing) by having the
+        // supervisor scan their own badge on the device, without logging the worker out
+        // of their own session. The badge barcode is the supervisor's IdentityUser Id.
+        [HttpPost("supervisor-override")]
+        public async Task<ActionResult> SupervisorOverride(SupervisorOverrideDto dto)
+        {
+            if (!Guid.TryParse(dto.BadgeBarcode, out var badgeId))
+                return Unauthorized("Invalid badge or missing permissions.");
+
+            var user = await _userManager.FindByIdAsync(badgeId.ToString());
+            if (user == null)
+                return Unauthorized("Invalid badge or missing permissions.");
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (!roles.Contains("Brigadier") && !roles.Contains("Admin"))
+                return StatusCode(403, "Invalid badge or missing permissions.");
+
+            // Deliberately short-lived: this token exists only to authorize the one
+            // elevated call the caller is about to make.
+            var token = await GenerateJwtToken(user, TimeSpan.FromMinutes(2));
+
+            return Ok(new { Token = token });
+        }
+
+        private async Task<string> GenerateJwtToken(IdentityUser<Guid> user, TimeSpan lifetime)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
@@ -105,7 +130,7 @@ namespace Warehouse.Api.Controllers
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(8),
+                expires: DateTime.UtcNow.Add(lifetime),
                 signingCredentials: creds
             );
 

@@ -21,13 +21,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddScoped<IOrderAllocationService, OrderAllocationService>();
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IPutawayService, PutawayService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Введите JWT токен так: Bearer {ваш_токен}",
+        Description = "Enter the JWT token like this: Bearer {your_token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -80,12 +82,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//react app is running on http://localhost:5173, so we need to allow CORS for that origin
+// warehouse-client runs on http://localhost:5173, TestOrderGenerator on http://localhost:5175
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") 
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

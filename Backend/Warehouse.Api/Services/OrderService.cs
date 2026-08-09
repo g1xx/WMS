@@ -48,7 +48,7 @@ namespace Warehouse.Api.Services
 
             if (order != null)
             {
-                // Проверяем, все ли товары из заказа собраны
+                // Check whether every item in the order has been picked
                 bool isOrderFullyPicked = order.Items.All(i => i.PickedQuantity >= i.RequiredQuantity);
                 if (isOrderFullyPicked)
                 {

@@ -109,20 +109,20 @@ namespace Warehouse.Api.Controllers
         [HttpPost("bulk")]
         public async Task<ActionResult<IEnumerable<LocationResponseDto>>> CreateLocations([FromBody] IEnumerable<LocationCreateDto> createDtos)
         {
-            // Валидация: проверяем, что нам вообще что-то передали
+            // Validation: make sure something was actually passed in
             if (createDtos == null || !createDtos.Any())
             {
-                return BadRequest("Список локаций не может быть пустым.");
+                return BadRequest("The list of locations cannot be empty.");
             }
 
             var locationsToSave = new List<Location>();
 
-            // 1. Маппим и подготавливаем каждую локацию
+            // 1. Map and prepare every location
             foreach (var dto in createDtos)
             {
                 var location = new Location
                 {
-                    Id = Guid.NewGuid(), // Генерируем ID заранее, чтобы использовать его для ответа
+                    Id = Guid.NewGuid(), // Generate the ID up front so it can be used in the response
                     Type = dto.Type,
                     WarehouseCode = dto.WarehouseCode,
                     Sector = dto.Sector,
@@ -133,17 +133,17 @@ namespace Warehouse.Api.Controllers
                     Position = dto.Position
                 };
 
-                // Генерация штрихкода
+                // Barcode generation
                 location.AddressBarcode = $"{location.WarehouseCode}{location.Sector}{location.Floor}{location.Aisle}{location.Rack}{location.Level}{location.Position}".ToLower();
 
                 locationsToSave.Add(location);
             }
 
-            // 2. Используем AddRangeAsync для эффективной массовой вставки в EF Core
+            // 2. Use AddRangeAsync for an efficient bulk insert in EF Core
             await _context.Locations.AddRangeAsync(locationsToSave);
             await _context.SaveChangesAsync();
 
-            // 3. Формируем список DTO для ответа клиенту
+            // 3. Build the list of DTOs for the client response
             var responseDtos = locationsToSave.Select(l => new LocationResponseDto
             {
                 Id = l.Id,
@@ -158,8 +158,8 @@ namespace Warehouse.Api.Controllers
                 Position = l.Position
             }).ToList();
 
-            // Возвращаем статус 201 Created со списком созданных объектов
-            // Маршрут указывает на GetLocations (получение всех), так как для коллекции нет единого Id
+            // Return 201 Created with the list of created objects.
+            // The route points at GetLocations (fetch all), since a collection has no single Id.
             return CreatedAtAction(nameof(GetLocations), null, responseDtos);
         }
 
@@ -168,26 +168,26 @@ namespace Warehouse.Api.Controllers
         {
             var locations = new List<Location>();
 
-            // 1. Зона MP: от mp30100101a до mp38001107c
-            // Алли: 1-80, Стеллажи: 1-11, Полки: 1-7, Места: a,b,c
+            // 1. Zone MP: from mp30100101a to mp38001107c
+            // Aisles: 1-80, Racks: 1-11, Levels: 1-7, Positions: a,b,c
             locations.AddRange(GenerateZone("m", "p", 3, 1, 80, 1, 11, 1, 7, new[] { "a", "b", "c" }));
 
-            // 2. Зона MR: от mr30100101a до mr35400703c
-            // Алли: 1-54, Стеллажи: 1-7, Полки: 1-3, Места: a,b,c
+            // 2. Zone MR: from mr30100101a to mr35400703c
+            // Aisles: 1-54, Racks: 1-7, Levels: 1-3, Positions: a,b,c
             locations.AddRange(GenerateZone("m", "r", 3, 1, 54, 1, 7, 1, 3, new[] { "a", "b", "c" }));
 
-            // 3. Зона MG: от mg30100101a до mg34300803c
-            // Алли: 1-43, Стеллажи: 1-8, Полки: 1-3, Места: a,b,c
+            // 3. Zone MG: from mg30100101a to mg34300803c
+            // Aisles: 1-43, Racks: 1-8, Levels: 1-3, Positions: a,b,c
             locations.AddRange(GenerateZone("m", "g", 3, 1, 43, 1, 8, 1, 3, new[] { "a", "b", "c" }));
 
-            // Сохраняем все ~25 000 записей в базу за одну транзакцию
+            // Save all ~25,000 records to the database in a single transaction
             await _context.Locations.AddRangeAsync(locations);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = $"Успешно создано {locations.Count} локаций!" });
+            return Ok(new { Message = $"Successfully created {locations.Count} locations!" });
         }
 
-        // Вспомогательный метод для генерации
+        // Helper method for generation
         private List<Location> GenerateZone(string wh, string sector, int floor,
             int aisleStart, int aisleEnd, int rackStart, int rackEnd,
             int levelStart, int levelEnd, string[] positions)
@@ -202,12 +202,12 @@ namespace Warehouse.Api.Controllers
                     {
                         foreach (var pos in positions)
                         {
-                            // Форматируем числа с нулями (01, 001, 01)
+                            // Pad the numbers with zeros (01, 001, 01)
                             string aisleStr = a.ToString("D2");
                             string rackStr = r.ToString("D3");
                             string levelStr = l.ToString("D2");
 
-                            // Склеиваем штрихкод
+                            // Assemble the barcode
                             string barcode = $"{wh}{sector}{floor}{aisleStr}{rackStr}{levelStr}{pos}";
 
                             list.Add(new Location

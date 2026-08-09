@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Warehouse.Api.Common;
 using Warehouse.Api.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -14,7 +15,7 @@ namespace Warehouse.Api.Controllers
     {
         private readonly IPickTaskService _pickTaskService;
 
-        // Подключаем наш сервис вместо AppDbContext!
+        // Inject the service instead of AppDbContext
         public PickTaskController(IPickTaskService pickTaskService)
         {
             _pickTaskService = pickTaskService;
@@ -27,16 +28,29 @@ namespace Warehouse.Api.Controllers
             return Ok(tasks);
         }
 
-        // ВОССТАНОВИЛИ метод получения следующего задания
-        [HttpGet("next")]
-        public async Task<IActionResult> GetNextTask()
+        // The worker's own in-flight task, regardless of sector. Called before sector
+        // selection so a re-login can resume straight into an already-started task.
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveTask()
         {
             var userId = GetUserId();
-            if (string.IsNullOrEmpty(userId)) return Unauthorized("Не удалось определить пользователя.");
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            var task = await _pickTaskService.GetNextTaskAsync(userId);
+            var task = await _pickTaskService.GetActiveTaskForUserAsync(userId);
 
-            if (task == null) return Ok(null);
+            return Ok(task);
+        }
+
+        [HttpGet("next")]
+        public async Task<IActionResult> GetNextTask([FromQuery] string sector)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
+
+            if (string.IsNullOrWhiteSpace(sector))
+                return BadRequest("A sector is required to request the next task.");
+
+            var task = await _pickTaskService.GetNextTaskAsync(userId, sector.Trim());
 
             return Ok(task);
         }
@@ -47,19 +61,8 @@ namespace Warehouse.Api.Controllers
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            try
-            {
-                var message = await _pickTaskService.StartPickTaskAsync(id, dto, userId);
-                return Ok(message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _pickTaskService.StartPickTaskAsync(id, dto, userId);
+            return result.ToActionResult();
         }
 
         [HttpPost("{id}/pick")]
@@ -68,47 +71,19 @@ namespace Warehouse.Api.Controllers
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            try
-            {
-                var message = await _pickTaskService.PickItemAsync(id, dto, userId);
-                return Ok(message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _pickTaskService.PickItemAsync(id, dto, userId);
+            return result.ToActionResult();
         }
 
-        // ДОБАВИЛИ ТОТ САМЫЙ МЕТОД, ИЗ-ЗА КОТОРОГО БЫЛА ОШИБКА 404
         [HttpPost("{id}/dispatch")]
         public async Task<ActionResult> DispatchContainer(Guid id, [FromBody] DispatchContainerDto dto)
         {
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            try
-            {
-                // Вызываем метод из сервиса, который обрабатывает и штатное закрытие, и "Полный контейнер"
-                var newTaskId = await _pickTaskService.DispatchContainerAsync(id, dto, userId);
-
-                return Ok(new
-                {
-                    Message = "Контейнер успешно проверен и отправлен на конвейер.",
-                    NextTaskId = newTaskId
-                });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            // Handles both the normal close-out and the "Full container" case
+            var result = await _pickTaskService.DispatchContainerAsync(id, dto, userId);
+            return result.ToActionResult();
         }
 
         [HttpPost("{id}/cancel")]
@@ -117,40 +92,34 @@ namespace Warehouse.Api.Controllers
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            try
-            {
-                var message = await _pickTaskService.CancelPickTaskAsync(id, userId);
-                return Ok(new { Message = message });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _pickTaskService.CancelPickTaskAsync(id, userId);
+            return result.ToActionResult();
         }
 
+        // Supervisor-only: confirms a shortage on a task assigned to some worker,
+        // not necessarily the caller — see PickTaskService.ReportMissingItemAsync.
+        [Authorize(Roles = "Brigadier,Admin")]
         [HttpPost("{id}/report-missing")]
         public async Task<ActionResult> ReportMissingItem(Guid id, [FromBody] ReportMissingItemDto dto)
         {
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-            try
-            {
-                var message = await _pickTaskService.ReportMissingItemAsync(id, dto, userId);
-                return Ok(new { Message = message });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var result = await _pickTaskService.ReportMissingItemAsync(id, dto, userId);
+            return result.ToActionResult();
+        }
+
+        // Supervisor-only: confirms a defect on a task assigned to some worker,
+        // not necessarily the caller — see PickTaskService.ReportDefectAsync.
+        [Authorize(Roles = "Brigadier,Admin")]
+        [HttpPost("{id}/report-defect")]
+        public async Task<ActionResult> ReportDefect(Guid id, [FromBody] ReportDefectDto dto)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
+
+            var result = await _pickTaskService.ReportDefectAsync(id, dto, userId);
+            return result.ToActionResult();
         }
 
         private string? GetUserId()
