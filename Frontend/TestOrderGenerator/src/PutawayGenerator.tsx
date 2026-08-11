@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axiosClient from './api/axiosClient';
 import type { Product } from './types/product';
-import { type Location, getZoneCode, type PutawayItemRow, type CreatePutawayPayload, type CreatedPutawayTask } from './types/putaway';
+import { type PutawayItemRow, type CreatePutawayPayload, type CreatedPutawayTask } from './types/putaway';
 
 function randomContainerId(): string {
     const letters = Array.from({ length: 4 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
@@ -20,16 +20,17 @@ function extractErrorMessage(error: unknown, fallback: string): string {
 }
 
 function emptyRow(): PutawayItemRow {
-    return { id: crypto.randomUUID(), locationBarcode: '', productSku: '', expectedQuantity: 1 };
+    return { id: crypto.randomUUID(), productSku: '', expectedQuantity: 1 };
 }
 
 export default function PutawayGenerator() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loadingProducts, setLoadingProducts] = useState<boolean>(true);
-
-    const [locations, setLocations] = useState<Location[]>([]);
-    const [loadingLocations, setLoadingLocations] = useState<boolean>(true);
     const [dataError, setDataError] = useState<string>('');
+
+    // Filters the product picker in every item row by Name or SKU — purely a
+    // client-side convenience, not sent to the backend.
+    const [productSearch, setProductSearch] = useState<string>('');
 
     const [containerId, setContainerId] = useState<string>('');
     const [assignedSector, setAssignedSector] = useState<string>('');
@@ -44,31 +45,24 @@ export default function PutawayGenerator() {
 
     const loadReferenceData = async () => {
         setLoadingProducts(true);
-        setLoadingLocations(true);
         setDataError('');
         try {
-            const [productsResponse, locationsResponse] = await Promise.all([
-                axiosClient.get<Product[]>('/Products'),
-                axiosClient.get<Location[]>('/Locations'),
-            ]);
+            const productsResponse = await axiosClient.get<Product[]>('/Products');
             setProducts(productsResponse.data);
-            setLocations(locationsResponse.data);
         } catch (error) {
-            console.error('Failed to load products/locations:', error);
-            setDataError('Failed to load products or locations. Is the backend running on http://localhost:5124?');
+            console.error('Failed to load products:', error);
+            setDataError('Failed to load products. Is the backend running on http://localhost:5124?');
         } finally {
             setLoadingProducts(false);
-            setLoadingLocations(false);
         }
     };
 
-    // Locations filtered to the zone the admin typed, so they don't have to know
-    // the sector/warehouse/floor -> barcode mapping by heart. Unfiltered until a
-    // sector is entered, so the dropdown isn't empty before they've typed anything.
     const trimmedSector = assignedSector.trim();
-    const filteredLocations = trimmedSector
-        ? locations.filter(l => getZoneCode(l).toLowerCase() === trimmedSector.toLowerCase())
-        : locations;
+    const trimmedSearch = productSearch.trim().toLowerCase();
+    const filteredProducts = trimmedSearch
+        ? products.filter(p =>
+            p.name.toLowerCase().includes(trimmedSearch) || p.sku.toLowerCase().includes(trimmedSearch))
+        : products;
 
     const handleAddItem = () => {
         setItemRows(prev => [...prev, emptyRow()]);
@@ -86,7 +80,7 @@ export default function PutawayGenerator() {
         containerId.trim() !== '' &&
         trimmedSector !== '' &&
         itemRows.length > 0 &&
-        itemRows.every(row => row.locationBarcode !== '' && row.productSku !== '' && row.expectedQuantity >= 1);
+        itemRows.every(row => row.productSku !== '' && row.expectedQuantity >= 1);
 
     const resetForm = () => {
         setContainerId('');
@@ -102,9 +96,9 @@ export default function PutawayGenerator() {
         try {
             const payload: CreatePutawayPayload = {
                 containerBarcode: containerId.trim(),
+                sector: trimmedSector,
                 items: itemRows.map(row => ({
                     productSku: row.productSku,
-                    destinationLocationBarcode: row.locationBarcode,
                     expectedQuantity: row.expectedQuantity,
                 })),
             };
@@ -163,7 +157,7 @@ export default function PutawayGenerator() {
                 <button
                     className="primary-btn"
                     onClick={() => void handleSubmit()}
-                    disabled={!isValid || submitting || loadingProducts || loadingLocations}
+                    disabled={!isValid || submitting || loadingProducts}
                 >
                     {submitting ? 'Generating...' : 'Generate putaway container'}
                 </button>
@@ -175,7 +169,18 @@ export default function PutawayGenerator() {
                     <button className="secondary-btn" onClick={handleAddItem}>+ Add Item</button>
                 </div>
 
-                {(loadingProducts || loadingLocations) && <p className="muted">Loading products and locations...</p>}
+                {loadingProducts && <p className="muted">Loading products...</p>}
+
+                <div className="form-group">
+                    <label htmlFor="productSearch">Filter products</label>
+                    <input
+                        id="productSearch"
+                        type="text"
+                        value={productSearch}
+                        onChange={(e) => setProductSearch(e.target.value)}
+                        placeholder="Search by name or SKU..."
+                    />
+                </div>
 
                 <div className="putaway-item-list">
                     {itemRows.map((row, index) => (
@@ -194,36 +199,21 @@ export default function PutawayGenerator() {
                             </div>
 
                             <div className="form-group">
-                                <label>Target location</label>
-                                <select
-                                    value={row.locationBarcode}
-                                    onChange={(e) => updateRow(row.id, { locationBarcode: e.target.value })}
-                                >
-                                    <option value="">Select a location...</option>
-                                    {filteredLocations.map(loc => (
-                                        <option key={loc.id} value={loc.addressBarcode}>
-                                            {loc.addressBarcode} ({getZoneCode(loc)})
-                                        </option>
-                                    ))}
-                                </select>
-                                {trimmedSector && filteredLocations.length === 0 && (
-                                    <span className="field-error">No locations found in zone "{trimmedSector}".</span>
-                                )}
-                            </div>
-
-                            <div className="form-group">
                                 <label>Item SKU</label>
                                 <select
                                     value={row.productSku}
                                     onChange={(e) => updateRow(row.id, { productSku: e.target.value })}
                                 >
                                     <option value="">Select a product...</option>
-                                    {products.map(p => (
+                                    {filteredProducts.map(p => (
                                         <option key={p.id} value={p.sku}>
                                             {p.name} ({p.sku})
                                         </option>
                                     ))}
                                 </select>
+                                {trimmedSearch && filteredProducts.length === 0 && (
+                                    <span className="field-error">No products match "{productSearch}".</span>
+                                )}
                             </div>
 
                             <div className="form-group">

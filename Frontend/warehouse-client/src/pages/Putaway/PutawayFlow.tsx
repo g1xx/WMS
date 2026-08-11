@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { SECTOR_STORAGE_KEY } from '../../api/axiosClient';
+import { SECTOR_STORAGE_KEY, isSupervisorAuthError } from '../../api/axiosClient';
 import {
     fetchActivePutawayTask,
     validateContainer,
@@ -121,12 +121,16 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
     });
 
     const reportMissingMutation = useMutation({
-        mutationFn: ({ locationBarcode, productSku, missingQuantity }: { locationBarcode: string; productSku: string; missingQuantity: number }) => {
+        mutationFn: ({ productSku, missingQuantity, supervisorBadge }: { productSku: string; missingQuantity: number; supervisorBadge: string }) => {
             if (!task) throw new Error('No active putaway task.');
-            return reportPutawayMissing(task.id, locationBarcode, productSku, missingQuantity);
+            return reportPutawayMissing(task.id, productSku, missingQuantity, supervisorBadge);
         },
         onSuccess: applyTaskUpdate,
         onError: (error: any) => {
+            if (isSupervisorAuthError(error)) {
+                alert('Supervisor authorization failed: Invalid badge or missing permissions.');
+                return;
+            }
             console.error('Error reporting missing item:', error);
             alert(error.response?.data || 'Failed to report the missing item.');
         },
@@ -154,8 +158,10 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
                 onConfirmItem={async (locationBarcode, productSku, quantity) => {
                     await confirmItemMutation.mutateAsync({ locationBarcode, productSku, quantity }).catch(() => {});
                 }}
-                onReportMissing={async (locationBarcode, productSku, missingQuantity) => {
-                    await reportMissingMutation.mutateAsync({ locationBarcode, productSku, missingQuantity }).catch(() => {});
+                onReportMissing={async (missingQuantity, supervisorBadge) => {
+                    const currentItem = task.items.find(i => i.putAwayQuantity + i.missingQuantity < i.expectedQuantity);
+                    if (!currentItem) return;
+                    await reportMissingMutation.mutateAsync({ productSku: currentItem.productSku, missingQuantity, supervisorBadge }).catch(() => {});
                 }}
             />
         );

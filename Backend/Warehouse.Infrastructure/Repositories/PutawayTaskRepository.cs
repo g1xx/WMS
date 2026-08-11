@@ -16,8 +16,7 @@ public class PutawayTaskRepository : IPutawayTaskRepository
     private IQueryable<PutawayTask> WithDetails() =>
         _context.PutawayTasks
             .Include(t => t.Container)
-            .Include(t => t.Items).ThenInclude(i => i.Product)
-            .Include(t => t.Items).ThenInclude(i => i.DestinationLocation);
+            .Include(t => t.Items).ThenInclude(i => i.Product);
 
     public async Task<PutawayTask?> GetByIdWithDetailsAsync(Guid id)
     {

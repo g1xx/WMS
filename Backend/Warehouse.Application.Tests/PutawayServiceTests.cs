@@ -13,6 +13,7 @@ public class PutawayServiceTests
     private readonly Mock<IPutawayTaskRepository> _putawayTaskRepositoryMock;
     private readonly Mock<IStockRepository> _stockRepositoryMock;
     private readonly Mock<IContainerRepository> _containerRepositoryMock;
+    private readonly Mock<ILocationRepository> _locationRepositoryMock;
     private readonly Mock<IStockTransactionRepository> _stockTransactionRepositoryMock;
     private readonly PutawayService _sut;
 
@@ -22,19 +23,28 @@ public class PutawayServiceTests
         _putawayTaskRepositoryMock = new Mock<IPutawayTaskRepository>();
         _stockRepositoryMock = new Mock<IStockRepository>();
         _containerRepositoryMock = new Mock<IContainerRepository>();
+        _locationRepositoryMock = new Mock<ILocationRepository>();
         _stockTransactionRepositoryMock = new Mock<IStockTransactionRepository>();
 
         _unitOfWorkMock.Setup(u => u.PutawayTasks).Returns(_putawayTaskRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Stocks).Returns(_stockRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Containers).Returns(_containerRepositoryMock.Object);
+        _unitOfWorkMock.Setup(u => u.Locations).Returns(_locationRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.StockTransactions).Returns(_stockTransactionRepositoryMock.Object);
+
+        // MapToDtoWithSuggestionsAsync always calls this after every mutation — stub it to
+        // an empty result by default so tests that don't care about suggestions don't need
+        // to set it up individually.
+        _stockRepositoryMock.Setup(r => r.GetLocationBarcodesByProductAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync(new Dictionary<Guid, List<string>>());
 
         _sut = new PutawayService(_unitOfWorkMock.Object);
     }
 
-    // Single-item InProgress task: expected 10, put away 0, missing 0, located/skus
-    // matching the dtos used below. Container is attached so ReleaseContainerIfFullyProcessedAsync
-    // can resolve it via task.Container without an extra repository round-trip.
+    // Single-item InProgress task: expected 10, put away 0, missing 0, SKU matching
+    // the dtos used below. Container is attached so ReleaseContainerIfFullyProcessedAsync
+    // can resolve it via task.Container without an extra repository round-trip. The
+    // item itself no longer carries a location — the worker supplies one per scan.
     private static PutawayTask BuildTaskWithOneItem(
         string assignedWorkerId = "worker-1",
         int expectedQuantity = 10,
@@ -42,7 +52,6 @@ public class PutawayServiceTests
         int missingQuantity = 0,
         ContainerStatus containerStatus = ContainerStatus.InProgress)
     {
-        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1" };
         var product = new Product { Id = Guid.NewGuid(), Sku = "SKU-1" };
         var container = new Container
         {
@@ -64,8 +73,6 @@ public class PutawayServiceTests
                 {
                     ProductId = product.Id,
                     Product = product,
-                    DestinationLocationId = location.Id,
-                    DestinationLocation = location,
                     ExpectedQuantity = expectedQuantity,
                     PutAwayQuantity = putAwayQuantity,
                     MissingQuantity = missingQuantity
@@ -79,13 +86,16 @@ public class PutawayServiceTests
     [Fact]
     public async Task ConfirmItemAsync_ValidScan_IncreasesStockAndLogsTransaction()
     {
-        // Arrange: 4 of 10 expected still to go, scanning 4 more (not the last unit).
+        // Arrange: 4 of 10 expected still to go, scanning 4 more (not the last unit),
+        // put away at a location the worker chose (LOC-1).
         var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 6);
         var item = task.Items.First();
-        var stock = new Stock { ProductId = item.ProductId, LocationId = item.DestinationLocationId, PhysicalQuantity = 20, ReservedQuantity = 5 };
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1" };
+        var stock = new Stock { ProductId = item.ProductId, LocationId = location.Id, PhysicalQuantity = 20, ReservedQuantity = 5 };
 
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
-        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, item.DestinationLocationId)).ReturnsAsync(stock);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync(stock);
 
         var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 4 };
 
@@ -99,11 +109,32 @@ public class PutawayServiceTests
 
         _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
             t.ProductId == item.ProductId &&
-            t.LocationId == item.DestinationLocationId &&
+            t.LocationId == location.Id &&
             t.QuantityChange == 4 &&
             t.TransactionType == StockTransactionType.Putaway)), Times.Once);
 
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task ConfirmItemAsync_LocationNotFound_ReturnsFailure()
+    {
+        // Arrange: the worker scanned a barcode that doesn't resolve to any known location.
+        var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 0);
+
+        _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("NOWHERE")).ReturnsAsync((Location?)null);
+
+        var dto = new ConfirmPutawayItemDto { LocationBarcode = "NOWHERE", ProductSku = "SKU-1", Quantity = 1 };
+
+        // Act
+        var result = await _sut.ConfirmItemAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain("was not found");
+
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Never);
     }
 
     [Fact]
@@ -113,10 +144,12 @@ public class PutawayServiceTests
         // fills its full expected quantity — nothing else is holding the container.
         var task = BuildTaskWithOneItem(expectedQuantity: 5, putAwayQuantity: 0);
         var item = task.Items.First();
-        var stock = new Stock { ProductId = item.ProductId, LocationId = item.DestinationLocationId, PhysicalQuantity = 0, ReservedQuantity = 0 };
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1" };
+        var stock = new Stock { ProductId = item.ProductId, LocationId = location.Id, PhysicalQuantity = 0, ReservedQuantity = 0 };
 
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
-        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, item.DestinationLocationId)).ReturnsAsync(stock);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync(stock);
         _putawayTaskRepositoryMock.Setup(r => r.HasOtherActiveTasksForContainerAsync(task.ContainerId, task.Id)).ReturnsAsync(false);
 
         var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 5 };
@@ -140,7 +173,7 @@ public class PutawayServiceTests
         var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 6);
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
 
-        var dto = new ReportPutawayMissingDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", MissingQuantity = 5 };
+        var dto = new ReportPutawayMissingDto { ProductSku = "SKU-1", MissingQuantity = 5 };
 
         // Act
         var result = await _sut.ReportMissingAsync(task.Id, dto, "supervisor-1");
@@ -161,7 +194,7 @@ public class PutawayServiceTests
 
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
 
-        var dto = new ReportPutawayMissingDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", MissingQuantity = 4 };
+        var dto = new ReportPutawayMissingDto { ProductSku = "SKU-1", MissingQuantity = 4 };
 
         // Act
         var result = await _sut.ReportMissingAsync(task.Id, dto, "supervisor-1");
@@ -172,6 +205,7 @@ public class PutawayServiceTests
 
         // A putaway shortage means goods never physically arrived — there is nothing to
         // deduct from inbound stock, unlike a picking shortage.
+        _locationRepositoryMock.Verify(r => r.GetByBarcodeAsync(It.IsAny<string>()), Times.Never);
         _stockRepositoryMock.Verify(r => r.GetByProductAndLocationAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         _stockRepositoryMock.Verify(r => r.Add(It.IsAny<Stock>()), Times.Never);
         _stockTransactionRepositoryMock.Verify(r => r.Add(It.IsAny<StockTransaction>()), Times.Never);

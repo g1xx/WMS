@@ -1,4 +1,4 @@
-import axiosClient from './axiosClient';
+import axiosClient, { fetchSupervisorAuthHeader } from './axiosClient';
 import type { PutawayTask } from '../types/putaway';
 
 export interface ContainerValidation {
@@ -26,7 +26,14 @@ export async function confirmPutawayItem(taskId: string, locationBarcode: string
     return response.data;
 }
 
-export async function reportPutawayMissing(taskId: string, locationBarcode: string, productSku: string, missingQuantity: number): Promise<PutawayTask> {
-    const response = await axiosClient.post(`/PutawayTask/${taskId}/report-missing`, { locationBarcode, productSku, missingQuantity });
+// Supervisor-gated: exchanges the scanned badge for a short-lived elevated token
+// (see fetchSupervisorAuthHeader) and attaches it to this one call only.
+export async function reportPutawayMissing(taskId: string, productSku: string, missingQuantity: number, supervisorBadge: string): Promise<PutawayTask> {
+    const elevatedConfig = await fetchSupervisorAuthHeader(supervisorBadge);
+    const response = await axiosClient.post(
+        `/PutawayTask/${taskId}/report-missing`,
+        { productSku, missingQuantity },
+        elevatedConfig
+    );
     return response.data;
 }

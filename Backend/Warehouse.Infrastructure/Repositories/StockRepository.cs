@@ -48,6 +48,18 @@ public class StockRepository : IStockRepository
             .ToListAsync();
     }
 
+    public async Task<Dictionary<Guid, List<string>>> GetLocationBarcodesByProductAsync(List<Guid> productIds)
+    {
+        var rows = await _context.Stocks
+            .Include(s => s.Location)
+            .Where(s => productIds.Contains(s.ProductId) && s.PhysicalQuantity > 0)
+            .ToListAsync();
+
+        return rows
+            .GroupBy(s => s.ProductId)
+            .ToDictionary(g => g.Key, g => g.Select(s => s.Location!.AddressBarcode).Distinct().ToList());
+    }
+
     public void Add(Stock stock)
     {
         _context.Stocks.Add(stock);

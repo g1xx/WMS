@@ -1,0 +1,1017 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1785094407.1250308,
+    "ast_hash": "d581d8be28f89060c4e257bf1bfb9134",
+    "semantic_hash": "d581d8be28f89060c4e257bf1bfb9134"
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1786319734.5612395,
+    "ast_hash": "6161e6f7a212dd99b3e8ed5df73ba257",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/AuthController.cs": {
+    "mtime": 1786282090.649433,
+    "ast_hash": "87adc3fcdabc0a022243b75e9f9be7de",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/ContainersController.cs": {
+    "mtime": 1786319614.6259453,
+    "ast_hash": "88d28e8d9bf878af2ecbb84aa1be75e3",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/LocationsController.cs": {
+    "mtime": 1786286731.8540485,
+    "ast_hash": "bec3acfd26836652b8db49394cf701b2",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/OrdersController.cs": {
+    "mtime": 1786286776.0821917,
+    "ast_hash": "165b0a9294417bf9e4e7503fa40bbdc6",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/PickTaskController.cs": {
+    "mtime": 1786282090.7677398,
+    "ast_hash": "775e5b0a2c98aafe2b4ba7049ae1e0a9",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/ProductsController.cs": {
+    "mtime": 1786286704.1536353,
+    "ast_hash": "c2d24592563958dbe8acd0a748f0d54a",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/StocksController.cs": {
+    "mtime": 1786286740.6104686,
+    "ast_hash": "e18bad0fb1cc41b86c5a69dc6c20a14c",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Program.cs": {
+    "mtime": 1786286820.354624,
+    "ast_hash": "466ecb32278f73c75134e36cc4836bfc",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Properties/launchSettings.json": {
+    "mtime": 1780855605.207828,
+    "ast_hash": "f4ca7a5cfd9d4b2c9c818973009bd649",
+    "semantic_hash": "f4ca7a5cfd9d4b2c9c818973009bd649"
+  },
+  "Backend/Warehouse.Api/Warehouse.Api.csproj": {
+    "mtime": 1786287547.3745306,
+    "ast_hash": "d0c26a54f43426a596d080a4d42eca03",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/appsettings.Development.json": {
+    "mtime": 1780855605.207828,
+    "ast_hash": "804b473502a4c415cf75db61c56c32aa",
+    "semantic_hash": "804b473502a4c415cf75db61c56c32aa"
+  },
+  "Backend/Warehouse.Api/appsettings.json": {
+    "mtime": 1782591352.328876,
+    "ast_hash": "98a9873238ac27e31354babc48e6e38e",
+    "semantic_hash": "98a9873238ac27e31354babc48e6e38e"
+  },
+  "Backend/Warehouse.Domain/Container.cs": {
+    "mtime": 1785892054.9855728,
+    "ast_hash": "5c9cc7aeb25e719508881b33935a3218",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/Location.cs": {
+    "mtime": 1785611671.1536155,
+    "ast_hash": "577f360dfab99a2d68ad931a6d7de2af",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/Order.cs": {
+    "mtime": 1785526202.7594366,
+    "ast_hash": "c6cbe704830307e3efee57f4c7d29c4d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/OrderItem.cs": {
+    "mtime": 1785611678.1053383,
+    "ast_hash": "d3a79a1e04d6a144f47768edae22c9b6",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/PickTask.cs": {
+    "mtime": 1782748336.8234441,
+    "ast_hash": "1db41d675693fc60d2c24c7cb26022c8",
+    "semantic_hash": "1db41d675693fc60d2c24c7cb26022c8"
+  },
+  "Backend/Warehouse.Domain/PickTaskItem.cs": {
+    "mtime": 1785888745.5957396,
+    "ast_hash": "ae64a285818f2e44433269aa975c8e46",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/Product.cs": {
+    "mtime": 1781811347.3430476,
+    "ast_hash": "ecc8093488937fc1aa111e37334b1b1e",
+    "semantic_hash": "ecc8093488937fc1aa111e37334b1b1e"
+  },
+  "Backend/Warehouse.Domain/Stock.cs": {
+    "mtime": 1784393651.9608047,
+    "ast_hash": "eac412c656b322469d80abc7c137fe25",
+    "semantic_hash": "eac412c656b322469d80abc7c137fe25"
+  },
+  "Backend/Warehouse.Domain/Warehouse.Domain.csproj": {
+    "mtime": 1781820877.756158,
+    "ast_hash": "46b0780bd56312ea2d1bab391f179e89",
+    "semantic_hash": "46b0780bd56312ea2d1bab391f179e89"
+  },
+  "Backend/Warehouse.Infrastructure/AppDbContext.cs": {
+    "mtime": 1785892089.1845286,
+    "ast_hash": "42e006df776fdd5633bfd91ff11bfe26",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/ContainerConfiguration.cs": {
+    "mtime": 1786319573.4808302,
+    "ast_hash": "666ba899dfccfaa8e53e07d2caef77ea",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/LocationConfiguration.cs": {
+    "mtime": 1783012531.3897276,
+    "ast_hash": "3071d703556313a29fe9bbbcf1c079f7",
+    "semantic_hash": "3071d703556313a29fe9bbbcf1c079f7"
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/OrderConfiguration.cs": {
+    "mtime": 1785888761.2540326,
+    "ast_hash": "569a3876b5bfec0370db609e76e79357",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/OrderItem.cs": {
+    "mtime": 1782748416.4358277,
+    "ast_hash": "e92ab96982a2596e266344c67edcc46a",
+    "semantic_hash": "e92ab96982a2596e266344c67edcc46a"
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/PickTaskConfiguration.cs": {
+    "mtime": 1785888755.3893573,
+    "ast_hash": "2761c8a67cfb6d9bb986ddfe7bd25eac",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/PickTaskItemConfiguration.cs": {
+    "mtime": 1782748407.1005046,
+    "ast_hash": "ee9ac823739f4e695ed7a74d8def1ef0",
+    "semantic_hash": "ee9ac823739f4e695ed7a74d8def1ef0"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260611180526_InitialCreate.Designer.cs": {
+    "mtime": 1781201126.6973164,
+    "ast_hash": "cd9ec9be6ade1d42de3df50fb1e7ac60",
+    "semantic_hash": "cd9ec9be6ade1d42de3df50fb1e7ac60"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260611180526_InitialCreate.cs": {
+    "mtime": 1781201126.691121,
+    "ast_hash": "f1fe8f6c4c5105ff8b8ac6d8bd1ff21a",
+    "semantic_hash": "f1fe8f6c4c5105ff8b8ac6d8bd1ff21a"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260614131504_AddProductUpdatedAt.Designer.cs": {
+    "mtime": 1781442904.6631572,
+    "ast_hash": "8032d48fb65a64e3c43980997336482c",
+    "semantic_hash": "8032d48fb65a64e3c43980997336482c"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260614131504_AddProductUpdatedAt.cs": {
+    "mtime": 1781442904.6571116,
+    "ast_hash": "e554e371220a9aefb09814ec4742f6dc",
+    "semantic_hash": "e554e371220a9aefb09814ec4742f6dc"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260615013749_AddPiecePackageProduct.Designer.cs": {
+    "mtime": 1781487469.8617597,
+    "ast_hash": "53e8afe021f0a5ce527f275dd59966d7",
+    "semantic_hash": "53e8afe021f0a5ce527f275dd59966d7"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260615013749_AddPiecePackageProduct.cs": {
+    "mtime": 1781487469.8617597,
+    "ast_hash": "27724c897011469d8749937f610b0647",
+    "semantic_hash": "27724c897011469d8749937f610b0647"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618193047_AddProductVolumetrics.Designer.cs": {
+    "mtime": 1781811048.0163276,
+    "ast_hash": "23fb87ea2fbb856a023b1d030357b7c4",
+    "semantic_hash": "23fb87ea2fbb856a023b1d030357b7c4"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618193047_AddProductVolumetrics.cs": {
+    "mtime": 1781811048.0148053,
+    "ast_hash": "6f7ba4dffb82aae1c723e5b3b8ace0b2",
+    "semantic_hash": "6f7ba4dffb82aae1c723e5b3b8ace0b2"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618193642_AddProductVolumetrics1.Designer.cs": {
+    "mtime": 1781811402.5067115,
+    "ast_hash": "22eee18812ca4c092da8eb1f1933e427",
+    "semantic_hash": "22eee18812ca4c092da8eb1f1933e427"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618193642_AddProductVolumetrics1.cs": {
+    "mtime": 1781811402.5057075,
+    "ast_hash": "6fbdb74354d885fd23f396599a62de14",
+    "semantic_hash": "6fbdb74354d885fd23f396599a62de14"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618212045_RefactorLocationsAndAddContainers.Designer.cs": {
+    "mtime": 1781817645.1212773,
+    "ast_hash": "39e1ffdb2f2ad5caf97d27dd50eb0c4b",
+    "semantic_hash": "39e1ffdb2f2ad5caf97d27dd50eb0c4b"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618212045_RefactorLocationsAndAddContainers.cs": {
+    "mtime": 1781817645.1162064,
+    "ast_hash": "7223d85953a1d55a5f2b0f7e64c0ade0",
+    "semantic_hash": "7223d85953a1d55a5f2b0f7e64c0ade0"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618215939_AddOrdersAndOrderItems.Designer.cs": {
+    "mtime": 1781819979.4164581,
+    "ast_hash": "4192dbef43820af9b928f4922a72bdb1",
+    "semantic_hash": "4192dbef43820af9b928f4922a72bdb1"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618215939_AddOrdersAndOrderItems.cs": {
+    "mtime": 1781819979.4154427,
+    "ast_hash": "36cd4fbd7ef67fb1badf48c244748e8d",
+    "semantic_hash": "36cd4fbd7ef67fb1badf48c244748e8d"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618220034_ConfigureOrdersConstraints.Designer.cs": {
+    "mtime": 1781820034.3203857,
+    "ast_hash": "7b4a2b1320772afadfe7c04f5243c305",
+    "semantic_hash": "7b4a2b1320772afadfe7c04f5243c305"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260618220034_ConfigureOrdersConstraints.cs": {
+    "mtime": 1781820034.3203857,
+    "ast_hash": "d336a4d3f4873f1f0f3a56540512d2b4",
+    "semantic_hash": "d336a4d3f4873f1f0f3a56540512d2b4"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260622124211_AddPickTasksAndItems.Designer.cs": {
+    "mtime": 1782132131.3181157,
+    "ast_hash": "aa5562c0622b0e0b020a5bc36a7b1a65",
+    "semantic_hash": "aa5562c0622b0e0b020a5bc36a7b1a65"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260622124211_AddPickTasksAndItems.cs": {
+    "mtime": 1782132131.3166504,
+    "ast_hash": "400d0ab96b7e366fc52cac0b02b2f63c",
+    "semantic_hash": "400d0ab96b7e366fc52cac0b02b2f63c"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260622151115_AddPickTasksAndItems1.Designer.cs": {
+    "mtime": 1782141075.1821067,
+    "ast_hash": "751f5816ecc66666b962b6f627dcaaaf",
+    "semantic_hash": "751f5816ecc66666b962b6f627dcaaaf"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260622151115_AddPickTasksAndItems1.cs": {
+    "mtime": 1782141075.1761343,
+    "ast_hash": "819d3785b6680226d7d549f3f7da185d",
+    "semantic_hash": "819d3785b6680226d7d549f3f7da185d"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260624095509_AddIdentityTables.Designer.cs": {
+    "mtime": 1782294909.9148629,
+    "ast_hash": "79599b8a9297678ac65078b8d4791d98",
+    "semantic_hash": "79599b8a9297678ac65078b8d4791d98"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260624095509_AddIdentityTables.cs": {
+    "mtime": 1782294909.9148629,
+    "ast_hash": "50984a68f9fcebf9a831c095f8c854aa",
+    "semantic_hash": "50984a68f9fcebf9a831c095f8c854aa"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260703175827_AddContainersStock.Designer.cs": {
+    "mtime": 1783101507.2945483,
+    "ast_hash": "d56aa8bde061f4676261f79e40cea135",
+    "semantic_hash": "d56aa8bde061f4676261f79e40cea135"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260703175827_AddContainersStock.cs": {
+    "mtime": 1783101507.2945483,
+    "ast_hash": "dad4b64275771924dc6e9e345449b920",
+    "semantic_hash": "dad4b64275771924dc6e9e345449b920"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260719160713_AddReservedAvailableQuantity.Designer.cs": {
+    "mtime": 1784477233.931178,
+    "ast_hash": "d38e5c2ce5134dd13bd230ee9fd0415a",
+    "semantic_hash": "d38e5c2ce5134dd13bd230ee9fd0415a"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260719160713_AddReservedAvailableQuantity.cs": {
+    "mtime": 1784477233.931178,
+    "ast_hash": "8ba01d7922ba2c838a9c7fd664664f15",
+    "semantic_hash": "8ba01d7922ba2c838a9c7fd664664f15"
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/AppDbContextModelSnapshot.cs": {
+    "mtime": 1786319905.9762132,
+    "ast_hash": "8f79555162c568914d01535285b62be1",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Warehouse.Infrastructure.csproj": {
+    "mtime": 1786286884.1462538,
+    "ast_hash": "a165a2cff258e9bacb83cdf1683498de",
+    "semantic_hash": ""
+  },
+  "Backend/WarehouseSystem.slnx": {
+    "mtime": 1786293107.2182581,
+    "ast_hash": "1ecf09872ae877e7dc7687329e824ea5",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/.oxlintrc.json": {
+    "mtime": 1782620068.4188347,
+    "ast_hash": "029f4905006c1fffd96bc863e2d98d3e",
+    "semantic_hash": "029f4905006c1fffd96bc863e2d98d3e"
+  },
+  "Frontend/warehouse-client/package.json": {
+    "mtime": 1786299007.910914,
+    "ast_hash": "1a58db2262852e9e5078f86ff8a259ab",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/App.tsx": {
+    "mtime": 1785835665.582839,
+    "ast_hash": "01da6160c771d0f836f8e04ba6d28026",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/api/axiosClient.ts": {
+    "mtime": 1786279185.4527018,
+    "ast_hash": "b699619fcec39fa8ad5ba62aea56bc1f",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/main.tsx": {
+    "mtime": 1786299038.4855943,
+    "ast_hash": "65195a8a4f664aa5d5563b6b2c0e1025",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Login/Login.tsx": {
+    "mtime": 1785526410.4485292,
+    "ast_hash": "3e5d1a3b5d6633af1e15459fdb461acf",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/PickTasks/ActiveTaskScreen.tsx": {
+    "mtime": 1786279275.195797,
+    "ast_hash": "7615245970d1ae134baf2e8ba2e06de9",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/PickTasks/NewTaskScreen.tsx": {
+    "mtime": 1783101295.9137688,
+    "ast_hash": "cb3851bc11c1545d8d1a6856e5a8b2c5",
+    "semantic_hash": "cb3851bc11c1545d8d1a6856e5a8b2c5"
+  },
+  "Frontend/warehouse-client/src/pages/PickTasks/PickTasks.tsx": {
+    "mtime": 1786299096.3128388,
+    "ast_hash": "d7503a9496e9062b3f6d122786061ba3",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/types/task.ts": {
+    "mtime": 1784485794.7315533,
+    "ast_hash": "4dc4206ba6572df7420c523f7ac7fb79",
+    "semantic_hash": "4dc4206ba6572df7420c523f7ac7fb79"
+  },
+  "Frontend/warehouse-client/tsconfig.app.json": {
+    "mtime": 1782620068.4470592,
+    "ast_hash": "136630b5accce1ca50663df229534a26",
+    "semantic_hash": "136630b5accce1ca50663df229534a26"
+  },
+  "Frontend/warehouse-client/tsconfig.json": {
+    "mtime": 1782620068.4560196,
+    "ast_hash": "a3d39fa780ebff65444de257f291ce6c",
+    "semantic_hash": "a3d39fa780ebff65444de257f291ce6c"
+  },
+  "Frontend/warehouse-client/tsconfig.node.json": {
+    "mtime": 1782620068.4614117,
+    "ast_hash": "f9cb81ddcea69ffdab672fc8c48dca66",
+    "semantic_hash": "f9cb81ddcea69ffdab672fc8c48dca66"
+  },
+  "Frontend/warehouse-client/vite.config.ts": {
+    "mtime": 1782620068.6610966,
+    "ast_hash": "88439104b3c207f17d33ef3160e3b080",
+    "semantic_hash": "88439104b3c207f17d33ef3160e3b080"
+  },
+  "CLAUDE.md": {
+    "mtime": 1785094407.1078465,
+    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/README.md": {
+    "mtime": 1782620068.4842427,
+    "ast_hash": "10495bfcc6c568eca4dab6dd5df795d3",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/index.html": {
+    "mtime": 1782660701.1132216,
+    "ast_hash": "dfe271a288b915b719e8344d6dccc199",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/public/favicon.svg": {
+    "mtime": 1782620068.55095,
+    "ast_hash": "7e840862161341271697daa99a40d76b",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/public/icons.svg": {
+    "mtime": 1782620068.577659,
+    "ast_hash": "3b4fcfcf393eca4d264dca4a4663bc37",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/assets/hero.png": {
+    "mtime": 1782620068.5067332,
+    "ast_hash": "aead493361b27e7510691c5d7072dfc1",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/assets/react.svg": {
+    "mtime": 1782620068.6104429,
+    "ast_hash": "f0402b67b6ce880f65666bb49e841696",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/assets/vite.svg": {
+    "mtime": 1782620068.6342483,
+    "ast_hash": "9960a24288958394ac50e57ff638b036",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/package.json": {
+    "mtime": 1785532628.984703,
+    "ast_hash": "93ee74d1dc6ec7ef4afcfee2c76e4a56",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/App.tsx": {
+    "mtime": 1785837761.856828,
+    "ast_hash": "1e33f8c4b263c448d01d11e2fcafc823",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/api/axiosClient.ts": {
+    "mtime": 1785532639.9007518,
+    "ast_hash": "c9229959c64b22aea6ef6cb23ec803f6",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/main.tsx": {
+    "mtime": 1785532645.6483552,
+    "ast_hash": "787e5a07efeb2bf6209d5937195f2f68",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/types/order.ts": {
+    "mtime": 1785532643.8794484,
+    "ast_hash": "d98f4ec3ed67b4e9e4e0c86f4ecb6484",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/types/product.ts": {
+    "mtime": 1785532641.7178516,
+    "ast_hash": "fe05e68259d002d2781838f63956cba4",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/tsconfig.app.json": {
+    "mtime": 1785532632.2220397,
+    "ast_hash": "136630b5accce1ca50663df229534a26",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/tsconfig.json": {
+    "mtime": 1785532629.6565373,
+    "ast_hash": "a3d39fa780ebff65444de257f291ce6c",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/tsconfig.node.json": {
+    "mtime": 1785532634.6999526,
+    "ast_hash": "f9cb81ddcea69ffdab672fc8c48dca66",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/vite.config.ts": {
+    "mtime": 1785532635.514104,
+    "ast_hash": "d13a028b36c325c8be1658dd7bdcc5fa",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/index.html": {
+    "mtime": 1785532636.5840828,
+    "ast_hash": "cc45732d98b85bdbe94ae938ea18e830",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/InventoryController.cs": {
+    "mtime": 1786282090.707234,
+    "ast_hash": "c8f52e6ff6e7618f276bcee9d7ef1507",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260801193412_AddOrderItemPendingReplenishment.Designer.cs": {
+    "mtime": 1785612852.5500495,
+    "ast_hash": "180eace2a7b08b26fa9a9b5801cb2f41",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260801193412_AddOrderItemPendingReplenishment.cs": {
+    "mtime": 1785612852.5500495,
+    "ast_hash": "358d3c2726b55049c9504e33a41bc55c",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Admin/InventoryAdmin.tsx": {
+    "mtime": 1785614003.9744701,
+    "ast_hash": "4fc9301bca089028187f2dac0c069bbc",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260801201234_Add1.Designer.cs": {
+    "mtime": 1785615154.1132607,
+    "ast_hash": "7be739a325cc253c5c2e6544aac2cabd",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260801201234_Add1.cs": {
+    "mtime": 1785615154.108755,
+    "ast_hash": "feb656068b727bc0d444ddc09dc872e9",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Controllers/PutawayTaskController.cs": {
+    "mtime": 1786282090.8018703,
+    "ast_hash": "6a2ad476567e7db9a32e158a40dbfb81",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/PutawayTask.cs": {
+    "mtime": 1785835402.0804188,
+    "ast_hash": "555b11d6ba328634bac8dde4c3716f47",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/PutawayTaskItem.cs": {
+    "mtime": 1786309046.5301793,
+    "ast_hash": "e6179b5c8dca9b1bb5c5ed0675e68e1d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/PutawayTaskConfiguration.cs": {
+    "mtime": 1785888760.1270084,
+    "ast_hash": "f628a465a5e244c1491dca7ab003941e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/PutawayTaskItemConfiguration.cs": {
+    "mtime": 1786309054.996678,
+    "ast_hash": "013de96c19dca04ab67683a8b48a92fa",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260804092556_AddPutawayTables.Designer.cs": {
+    "mtime": 1785835556.6979158,
+    "ast_hash": "3353b15fad43c8da26bf9b9975f14f55",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260804092556_AddPutawayTables.cs": {
+    "mtime": 1785835556.6967885,
+    "ast_hash": "846a0eeaf784cee3eae3c857953b909a",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Putaway/ActivePutawayScreen.tsx": {
+    "mtime": 1786322373.4533787,
+    "ast_hash": "96485d3d7147d909cffe13c7311e8dd6",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Putaway/ContainerScanScreen.tsx": {
+    "mtime": 1785835738.4557638,
+    "ast_hash": "75153173e90fc16156d12f91d9e444b6",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx": {
+    "mtime": 1786310274.3391738,
+    "ast_hash": "d5c4c385fc8668b3b37f01a48db301c4",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Terminal/MainMenu.tsx": {
+    "mtime": 1785835608.0587728,
+    "ast_hash": "d892ff0898e60a037fd00cb9bf615365",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Terminal/SectorSelect.tsx": {
+    "mtime": 1785749751.0054584,
+    "ast_hash": "e1f5c44ab0439969f01dbc77fe27290d",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/pages/Terminal/Terminal.tsx": {
+    "mtime": 1785835831.7103932,
+    "ast_hash": "8c3a89f214c61fe069e51287720f8d71",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/types/putaway.ts": {
+    "mtime": 1786310205.740906,
+    "ast_hash": "f757e2a5e57131a9b42893f5c0940aba",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260804094056_AddPutaway.Designer.cs": {
+    "mtime": 1785836456.6513257,
+    "ast_hash": "57731caf48127d92dc1fad98a94b93e1",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260804094056_AddPutaway.cs": {
+    "mtime": 1785836456.650359,
+    "ast_hash": "0b350a122d36c7c5878f99aa61adcedb",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/PickingGenerator.tsx": {
+    "mtime": 1785837721.7835999,
+    "ast_hash": "768e454cc2c7c07a9a6b36ae47aebd7d",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/PutawayGenerator.tsx": {
+    "mtime": 1786310160.1588745,
+    "ast_hash": "976b3cbad2b1d39b2dec3b4d48deae68",
+    "semantic_hash": ""
+  },
+  "Frontend/TestOrderGenerator/src/types/putaway.ts": {
+    "mtime": 1786310136.120945,
+    "ast_hash": "495307ef5971ceadea49818e1cd64b3b",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/StockConfiguration.cs": {
+    "mtime": 1785888769.383896,
+    "ast_hash": "593f84cb9f244320a9997e5b06a90fbd",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/XminConcurrencyExtensions.cs": {
+    "mtime": 1785890039.8311992,
+    "ast_hash": "7f4231820f49267285b36c251b2cd77f",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260805004024_AddConcurrencyAndStockConstraints.Designer.cs": {
+    "mtime": 1785890424.1730442,
+    "ast_hash": "f93f49ede4ea7700df2e0443f0f64508",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260805004024_AddConcurrencyAndStockConstraints.cs": {
+    "mtime": 1785890468.6050687,
+    "ast_hash": "86a8b9ceba66da44bdd189ee4f19eb78",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Api/Common/ResultExtensions.cs": {
+    "mtime": 1786280818.4310884,
+    "ast_hash": "272010fc724e6be829465ecc0f7324a8",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Domain/StockTransaction.cs": {
+    "mtime": 1785892061.6998305,
+    "ast_hash": "af602226454fef324e07b0f4a3c29a3b",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Configurations/StockTransactionConfiguration.cs": {
+    "mtime": 1785892069.2167354,
+    "ast_hash": "e01368d4702cd354bdf7bd6c93814971",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260805012255_AddStockTransactionJournal.Designer.cs": {
+    "mtime": 1785892975.7690609,
+    "ast_hash": "b9843eb8e6713c1f50d1ec8e850f18c0",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260805012255_AddStockTransactionJournal.cs": {
+    "mtime": 1785892975.7690609,
+    "ast_hash": "8395b647abf7cd516735123bfbc0fe20",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Common/Result.cs": {
+    "mtime": 1786280813.126611,
+    "ast_hash": "ff1c5ff6d058a1141acf4fc78eeb2c23",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/AdjustStockDto.cs": {
+    "mtime": 1786281140.0702384,
+    "ast_hash": "3fd41eafa88d3a5ca35fe835db70c052",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ConfirmPutawayItemDto.cs": {
+    "mtime": 1786281140.0702384,
+    "ast_hash": "f7f99c95b638b8ced46a46e2625b202d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ContainerMoveDto.cs": {
+    "mtime": 1786281140.0702384,
+    "ast_hash": "da0419faad70476dee35e945c48dd601",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ContainerValidationDto.cs": {
+    "mtime": 1786281140.0702384,
+    "ast_hash": "97051c73de2b34eda9fb88020efc1419",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/CreateProductWithLocationDto.cs": {
+    "mtime": 1786281140.0798054,
+    "ast_hash": "bcad17f2a667ef45ee76dae9eeda0129",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/CreatePutawayTaskDto.cs": {
+    "mtime": 1786309084.2949805,
+    "ast_hash": "c88461495a199c335e200e8f5a477642",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/DispatchContainerDto.cs": {
+    "mtime": 1786281140.0808125,
+    "ast_hash": "c5d262b8ded10ac1fb990d7376a7df93",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/DispatchContainerResultDto.cs": {
+    "mtime": 1786281140.0808125,
+    "ast_hash": "b59799869c43ced101466169a3b5ac8e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/LocationCreateDto.cs": {
+    "mtime": 1786281140.0808125,
+    "ast_hash": "fdead86ff174c6177f9208d73c9e2136",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/LocationResponseDto.cs": {
+    "mtime": 1786281140.0965748,
+    "ast_hash": "7a9b09643aa38f28dd141639c226a3e7",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/LoginDto.cs": {
+    "mtime": 1786281140.0965748,
+    "ast_hash": "52ad58965202a9f152fd4580f62c86be",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/MessageResponseDto.cs": {
+    "mtime": 1786281140.0965748,
+    "ast_hash": "8ccd7605c330050bdd72efc112729388",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/OrderCreateDto.cs": {
+    "mtime": 1786281140.0965748,
+    "ast_hash": "77da07c02fec6e5b0a51ffbd8f23ed2a",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/PickItemDto.cs": {
+    "mtime": 1786281140.0965748,
+    "ast_hash": "cd9727e78f98bc27040f83bde5df1eca",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/PickTaskItemResponseDto.cs": {
+    "mtime": 1786281140.1067557,
+    "ast_hash": "0fd3d1e46b381f333af82424d25e4b98",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/PickTaskResponseDto.cs": {
+    "mtime": 1786281140.1122231,
+    "ast_hash": "88e814feb865856fece7bbddde043500",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ProductCreateDto.cs": {
+    "mtime": 1786281140.1122231,
+    "ast_hash": "deb7c23cef1d081fbc3c80ab99c6b7f0",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ProductResponseDto.cs": {
+    "mtime": 1786281140.1122231,
+    "ast_hash": "bcf0f584e3896dc68462759b2f54d0e6",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/PutawayTaskResponseDto.cs": {
+    "mtime": 1786309092.5996783,
+    "ast_hash": "f486bf380c8cc59b3a2ae5aa060b1567",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/RegisterDto.cs": {
+    "mtime": 1786281140.1216207,
+    "ast_hash": "ed545b93123a8424088f0d8864fd88dc",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ReportDefectDto.cs": {
+    "mtime": 1786281140.125638,
+    "ast_hash": "4600c1ff236eebeb49ce88e236975801",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ReportDefectResultDto.cs": {
+    "mtime": 1786281140.125638,
+    "ast_hash": "dabe0d755f6fb4fa679e9a12e64f91fa",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ReportMissingItemDto.cs": {
+    "mtime": 1786281140.1283512,
+    "ast_hash": "a4f8f25af917ab98ac31b0d6551cac95",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ReportPutawayMissingDto.cs": {
+    "mtime": 1786309100.0610888,
+    "ast_hash": "5ab4f3ed24597023a9d3f2b7b14688a7",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/SplitAndCloseDto.cs": {
+    "mtime": 1786281140.134182,
+    "ast_hash": "00fddc90cf9b473b14295993bcccc87d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/StartPickTaskDto.cs": {
+    "mtime": 1786281140.134182,
+    "ast_hash": "843717d98a90451a7736781a71b52998",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/StockAdjustmentResultDto.cs": {
+    "mtime": 1786281140.1388173,
+    "ast_hash": "7d51754f49ee016421f453048d12d277",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/StockCreateDto.cs": {
+    "mtime": 1786281140.1388173,
+    "ast_hash": "e2fbad8901317b087a300a72fb86adfe",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/SupervisorOverrideDto.cs": {
+    "mtime": 1786281140.1467948,
+    "ast_hash": "6b6b0b33c5dee46d327ecbc053b30c0e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/DTOs/ValidateContainerDto.cs": {
+    "mtime": 1786281140.1500072,
+    "ast_hash": "358516e990e8e6c61257476bf64a30d8",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IContainerRepository.cs": {
+    "mtime": 1786319583.611774,
+    "ast_hash": "0c1f5680c8928cfdaca373dacf2472b0",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/ILocationRepository.cs": {
+    "mtime": 1786286567.3570623,
+    "ast_hash": "a92c095e2d4de88984a191af83a62ee1",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IOrderRepository.cs": {
+    "mtime": 1786286593.4667337,
+    "ast_hash": "e11fded22c777f085562d62e3aa5cb27",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IPickTaskRepository.cs": {
+    "mtime": 1786286608.3395104,
+    "ast_hash": "d3e9f1cb6301053e895f143621d670a0",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IProductRepository.cs": {
+    "mtime": 1786286559.8709278,
+    "ast_hash": "25dd25ce5ce78d87a99b05bb92239f36",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IPutawayTaskRepository.cs": {
+    "mtime": 1786310354.7540443,
+    "ast_hash": "fe22e3994c5c9ed03c6fb0fc21ce6205",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IStockRepository.cs": {
+    "mtime": 1786309064.6158986,
+    "ast_hash": "a5545b2d445042010070eb9fcb4666f5",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IStockTransactionRepository.cs": {
+    "mtime": 1786281416.063249,
+    "ast_hash": "8a759fc7ae7e7b8df1591f80e7df65ea",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Interfaces/IUnitOfWork.cs": {
+    "mtime": 1786281422.9440618,
+    "ast_hash": "7a747e0262881115f58743870e6cc227",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/IInventoryService.cs": {
+    "mtime": 1786281139.9496658,
+    "ast_hash": "72a3eeb9457f66d7e7ca4c8c570e6508",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/IOrderAllocationService.cs": {
+    "mtime": 1786281139.9598563,
+    "ast_hash": "f04c92c906eeba9a09e2e3f9b0899ddf",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/IOrderService.cs": {
+    "mtime": 1786281139.9598563,
+    "ast_hash": "03c4bcf67854020ef3cbf42127af812f",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/IPickTaskService.cs": {
+    "mtime": 1786281139.9598563,
+    "ast_hash": "38178ba2f6bb3aabe1d5a6bfe3ee741f",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/IPutawayService.cs": {
+    "mtime": 1786281139.9857116,
+    "ast_hash": "5ffcfba9b43d1e2581ea23f304387236",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/InventoryService.cs": {
+    "mtime": 1786281764.3330865,
+    "ast_hash": "60127d074baf84eefb5010999e8e6961",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/OrderAllocationService.cs": {
+    "mtime": 1786281789.018132,
+    "ast_hash": "9020163e55492875ff136fba84edc5ef",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/OrderService.cs": {
+    "mtime": 1786281801.912854,
+    "ast_hash": "d5e13f65ecf3c332a8b4d849647c80f5",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/PickTaskService.cs": {
+    "mtime": 1786295518.9710176,
+    "ast_hash": "87614c3b8cecd52ef4afdce5bfdecf48",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Services/PutawayService.cs": {
+    "mtime": 1786309190.1513712,
+    "ast_hash": "139f134b25b8c169ed953cd280e1b831",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Warehouse.Application.csproj": {
+    "mtime": 1786280386.5960472,
+    "ast_hash": "4ce6e0fbb8476f6d84ce5678424b9f96",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/ContainerRepository.cs": {
+    "mtime": 1786319602.0765073,
+    "ast_hash": "e0bbd4ff0a6d9d5bdc65d835771c8dd5",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/LocationRepository.cs": {
+    "mtime": 1786286634.9959595,
+    "ast_hash": "ff31f8633ab0c9215b5191858c44a15e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/OrderRepository.cs": {
+    "mtime": 1786286659.728838,
+    "ast_hash": "812cda018810bd90a103c38369792385",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/PickTaskRepository.cs": {
+    "mtime": 1786286666.6720393,
+    "ast_hash": "ac1862470b1e9b4713b3815968722c38",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/ProductRepository.cs": {
+    "mtime": 1786286625.6244116,
+    "ast_hash": "26feabf096a12ce17adb22c8e9cfc885",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/PutawayTaskRepository.cs": {
+    "mtime": 1786309150.5680714,
+    "ast_hash": "8ec6ca617ef83abd6ae43c8c4fb42f99",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/StockRepository.cs": {
+    "mtime": 1786309072.7886686,
+    "ast_hash": "9ed42489c185a2a8351d239f02a09c0b",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/StockTransactionRepository.cs": {
+    "mtime": 1786281505.5571897,
+    "ast_hash": "3163fc78f319126fe3f83dd61fa8b2f6",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Repositories/UnitOfWork.cs": {
+    "mtime": 1786295489.2346468,
+    "ast_hash": "fff522e7957413e6238010364b67aa17",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/DependencyInjection.cs": {
+    "mtime": 1786286790.518358,
+    "ast_hash": "e5ed8b15c786bb843bae5285efcac50e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application.Tests/PickTaskServiceTests.cs": {
+    "mtime": 1786295583.4973044,
+    "ast_hash": "c3edf9a609e3d0cbe6eb9f3308c7805e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application.Tests/Warehouse.Application.Tests.csproj": {
+    "mtime": 1786293105.6005144,
+    "ast_hash": "08236ab247d715ebce80b261646c6267",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application.Tests/PutawayServiceTests.cs": {
+    "mtime": 1786310066.4294574,
+    "ast_hash": "a74e3b5406f0adcb20f32f0e983cfaf1",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application/Common/ConcurrencyConflictException.cs": {
+    "mtime": 1786295476.3790421,
+    "ast_hash": "0c67627c0b833b9446b3aa966b45d262",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Application.Tests/OrderAllocationServiceTests.cs": {
+    "mtime": 1786297592.8204052,
+    "ast_hash": "6044b9b702efc60cda0800165a923bdc",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/api/pickTaskApi.ts": {
+    "mtime": 1786299055.1839201,
+    "ast_hash": "915ad7ca4616c5ee51c544fb3f181b16",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/api/putawayApi.ts": {
+    "mtime": 1786310216.9028964,
+    "ast_hash": "2a26959946f8186814a3bc880b003318",
+    "semantic_hash": ""
+  },
+  "Frontend/warehouse-client/src/queryClient.ts": {
+    "mtime": 1786299027.9713025,
+    "ast_hash": "20136b6d263ec05cb7c5a47040c797c9",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809183404_Add2.Designer.cs": {
+    "mtime": 1786300444.517063,
+    "ast_hash": "991a76986701f2e6152dba5956b6af2b",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809183404_Add2.cs": {
+    "mtime": 1786300444.517063,
+    "ast_hash": "22fb44f5781043c409e99f255db45b6d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809211304_RemoveLocationFromPutawayItem.Designer.cs": {
+    "mtime": 1786309984.499354,
+    "ast_hash": "beb0e3e8e8fbc6150dfe59913a742c66",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809211304_RemoveLocationFromPutawayItem.cs": {
+    "mtime": 1786309984.4978225,
+    "ast_hash": "7a09ed7d9a2353cf4c08bf5ddb86cd0d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235604_AddContainerBarcodeUniqueIndex.Designer.cs": {
+    "mtime": 1786319764.2413688,
+    "ast_hash": "b134f2972b6238dcea1afaef7bb55b99",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235604_AddContainerBarcodeUniqueIndex.cs": {
+    "mtime": 1786319764.2413688,
+    "ast_hash": "b2f1be2201d61f52689f60b87c3b3d6e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235825_Add3.Designer.cs": {
+    "mtime": 1786319905.971583,
+    "ast_hash": "c134c27b22918335a5081a3857829252",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235825_Add3.cs": {
+    "mtime": 1786319905.9664576,
+    "ast_hash": "c54b23d11eef35ea4514ea9ff4673316",
+    "semantic_hash": ""
+  }
+}

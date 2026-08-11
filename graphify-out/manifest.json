@@ -5,8 +5,8 @@
     "semantic_hash": "d581d8be28f89060c4e257bf1bfb9134"
   },
   ".claude/settings.local.json": {
-    "mtime": 1786293269.9879658,
-    "ast_hash": "9315101eec1934d835f90258871f19ac",
+    "mtime": 1786319734.5612395,
+    "ast_hash": "6161e6f7a212dd99b3e8ed5df73ba257",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Controllers/AuthController.cs": {
@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Controllers/ContainersController.cs": {
-    "mtime": 1786286759.696549,
-    "ast_hash": "e8aae93895624e880041b725e2cbb76b",
+    "mtime": 1786319614.6259453,
+    "ast_hash": "88d28e8d9bf878af2ecbb84aa1be75e3",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Api/Controllers/LocationsController.cs": {
@@ -120,8 +120,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Configurations/ContainerConfiguration.cs": {
-    "mtime": 1785892079.2329116,
-    "ast_hash": "d974412c820285fbbbc568a2d3f9114b",
+    "mtime": 1786319573.4808302,
+    "ast_hash": "666ba899dfccfaa8e53e07d2caef77ea",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Configurations/LocationConfiguration.cs": {
@@ -280,8 +280,8 @@
     "semantic_hash": "8ba01d7922ba2c838a9c7fd664664f15"
   },
   "Backend/Warehouse.Infrastructure/Migrations/AppDbContextModelSnapshot.cs": {
-    "mtime": 1785892975.7690609,
-    "ast_hash": "a6136a0f48f93be97a32b1bc5b0c487f",
+    "mtime": 1786319905.9762132,
+    "ast_hash": "8f79555162c568914d01535285b62be1",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Warehouse.Infrastructure.csproj": {
@@ -500,8 +500,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Domain/PutawayTaskItem.cs": {
-    "mtime": 1785835403.815557,
-    "ast_hash": "affbcc4a90c6a353a925dc3f2835b5f3",
+    "mtime": 1786309046.5301793,
+    "ast_hash": "e6179b5c8dca9b1bb5c5ed0675e68e1d",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Configurations/PutawayTaskConfiguration.cs": {
@@ -510,8 +510,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Configurations/PutawayTaskItemConfiguration.cs": {
-    "mtime": 1785835414.7795808,
-    "ast_hash": "e6b6e3dcbadebf9eaef245622668224e",
+    "mtime": 1786309054.996678,
+    "ast_hash": "013de96c19dca04ab67683a8b48a92fa",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Migrations/20260804092556_AddPutawayTables.Designer.cs": {
@@ -525,8 +525,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Putaway/ActivePutawayScreen.tsx": {
-    "mtime": 1785835772.6491253,
-    "ast_hash": "2456a5ada1cc73871a3ea1c5a69f3719",
+    "mtime": 1786325346.371637,
+    "ast_hash": "92be251e0c438c575f5e08c16eeb254a",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Putaway/ContainerScanScreen.tsx": {
@@ -535,8 +535,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Putaway/PutawayFlow.tsx": {
-    "mtime": 1786299121.9805317,
-    "ast_hash": "af2881bffc23ad774b463eea46406d0e",
+    "mtime": 1786325366.7538664,
+    "ast_hash": "d9a19993d41638559a68d1347e5ad4d6",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/pages/Terminal/MainMenu.tsx": {
@@ -555,8 +555,8 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/types/putaway.ts": {
-    "mtime": 1785835584.8013644,
-    "ast_hash": "72e6d40b7b24e5d8d2db57bff023f478",
+    "mtime": 1786310205.740906,
+    "ast_hash": "f757e2a5e57131a9b42893f5c0940aba",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Migrations/20260804094056_AddPutaway.Designer.cs": {
@@ -575,13 +575,13 @@
     "semantic_hash": ""
   },
   "Frontend/TestOrderGenerator/src/PutawayGenerator.tsx": {
-    "mtime": 1785837750.467701,
-    "ast_hash": "cdab64ddb6ef6b69eaa872c22f969a81",
+    "mtime": 1786310160.1588745,
+    "ast_hash": "976b3cbad2b1d39b2dec3b4d48deae68",
     "semantic_hash": ""
   },
   "Frontend/TestOrderGenerator/src/types/putaway.ts": {
-    "mtime": 1785837624.7797663,
-    "ast_hash": "abcf9d1a926b5a20a4294be18434d062",
+    "mtime": 1786310136.120945,
+    "ast_hash": "495307ef5971ceadea49818e1cd64b3b",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Configurations/StockConfiguration.cs": {
@@ -660,8 +660,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/DTOs/CreatePutawayTaskDto.cs": {
-    "mtime": 1786281140.0808125,
-    "ast_hash": "9ab19716f588b50756ffd68d845e75fa",
+    "mtime": 1786309084.2949805,
+    "ast_hash": "c88461495a199c335e200e8f5a477642",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/DTOs/DispatchContainerDto.cs": {
@@ -725,8 +725,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/DTOs/PutawayTaskResponseDto.cs": {
-    "mtime": 1786281140.1122231,
-    "ast_hash": "03027beb12fc991f7dba70ef2a3d18b1",
+    "mtime": 1786309092.5996783,
+    "ast_hash": "f486bf380c8cc59b3a2ae5aa060b1567",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/DTOs/RegisterDto.cs": {
@@ -750,8 +750,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/DTOs/ReportPutawayMissingDto.cs": {
-    "mtime": 1786281140.1283512,
-    "ast_hash": "256ee5bbeabe7185d135b12f92ed51fe",
+    "mtime": 1786309100.0610888,
+    "ast_hash": "5ab4f3ed24597023a9d3f2b7b14688a7",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/DTOs/SplitAndCloseDto.cs": {
@@ -785,8 +785,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Interfaces/IContainerRepository.cs": {
-    "mtime": 1786286582.71838,
-    "ast_hash": "6a7c1eb6f06475447ebcb10f59a0268e",
+    "mtime": 1786319583.611774,
+    "ast_hash": "0c1f5680c8928cfdaca373dacf2472b0",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Interfaces/ILocationRepository.cs": {
@@ -810,13 +810,13 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Interfaces/IPutawayTaskRepository.cs": {
-    "mtime": 1786281231.5490901,
-    "ast_hash": "c740df5b1e107abdb797046745091231",
+    "mtime": 1786310354.7540443,
+    "ast_hash": "fe22e3994c5c9ed03c6fb0fc21ce6205",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Interfaces/IStockRepository.cs": {
-    "mtime": 1786286573.7619512,
-    "ast_hash": "89a8113831522cf80dd7e8690050ba5e",
+    "mtime": 1786309064.6158986,
+    "ast_hash": "a5545b2d445042010070eb9fcb4666f5",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Interfaces/IStockTransactionRepository.cs": {
@@ -875,8 +875,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Services/PutawayService.cs": {
-    "mtime": 1786281647.0236092,
-    "ast_hash": "418624368bc37c91466383ac2087e653",
+    "mtime": 1786309190.1513712,
+    "ast_hash": "139f134b25b8c169ed953cd280e1b831",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Warehouse.Application.csproj": {
@@ -885,8 +885,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Repositories/ContainerRepository.cs": {
-    "mtime": 1786286652.77503,
-    "ast_hash": "57f0978b7df75e618eb36b2c002b1c96",
+    "mtime": 1786319602.0765073,
+    "ast_hash": "e0bbd4ff0a6d9d5bdc65d835771c8dd5",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Repositories/LocationRepository.cs": {
@@ -910,13 +910,13 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Repositories/PutawayTaskRepository.cs": {
-    "mtime": 1786281466.4769459,
-    "ast_hash": "d228f2dbcde8b8f1c56962900d9794b7",
+    "mtime": 1786309150.5680714,
+    "ast_hash": "8ec6ca617ef83abd6ae43c8c4fb42f99",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Repositories/StockRepository.cs": {
-    "mtime": 1786286641.6481638,
-    "ast_hash": "d3a64b2df8a42058de5dbbccc463dd78",
+    "mtime": 1786309072.7886686,
+    "ast_hash": "9ed42489c185a2a8351d239f02a09c0b",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Infrastructure/Repositories/StockTransactionRepository.cs": {
@@ -945,8 +945,8 @@
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application.Tests/PutawayServiceTests.cs": {
-    "mtime": 1786295640.297326,
-    "ast_hash": "bd29421dc118ebe0671abc2787fc5acd",
+    "mtime": 1786310066.4294574,
+    "ast_hash": "a74e3b5406f0adcb20f32f0e983cfaf1",
     "semantic_hash": ""
   },
   "Backend/Warehouse.Application/Common/ConcurrencyConflictException.cs": {
@@ -965,13 +965,53 @@
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/api/putawayApi.ts": {
-    "mtime": 1786299064.6969888,
-    "ast_hash": "d3b2b1c5a3cf57a5eb2e3c5e706570f5",
+    "mtime": 1786325353.8452983,
+    "ast_hash": "f76178ab08739f2f57d5a29ea0ea399b",
     "semantic_hash": ""
   },
   "Frontend/warehouse-client/src/queryClient.ts": {
     "mtime": 1786299027.9713025,
     "ast_hash": "20136b6d263ec05cb7c5a47040c797c9",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809183404_Add2.Designer.cs": {
+    "mtime": 1786300444.517063,
+    "ast_hash": "991a76986701f2e6152dba5956b6af2b",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809183404_Add2.cs": {
+    "mtime": 1786300444.517063,
+    "ast_hash": "22fb44f5781043c409e99f255db45b6d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809211304_RemoveLocationFromPutawayItem.Designer.cs": {
+    "mtime": 1786309984.499354,
+    "ast_hash": "beb0e3e8e8fbc6150dfe59913a742c66",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809211304_RemoveLocationFromPutawayItem.cs": {
+    "mtime": 1786309984.4978225,
+    "ast_hash": "7a09ed7d9a2353cf4c08bf5ddb86cd0d",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235604_AddContainerBarcodeUniqueIndex.Designer.cs": {
+    "mtime": 1786319764.2413688,
+    "ast_hash": "b134f2972b6238dcea1afaef7bb55b99",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235604_AddContainerBarcodeUniqueIndex.cs": {
+    "mtime": 1786319764.2413688,
+    "ast_hash": "b2f1be2201d61f52689f60b87c3b3d6e",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235825_Add3.Designer.cs": {
+    "mtime": 1786319905.971583,
+    "ast_hash": "c134c27b22918335a5081a3857829252",
+    "semantic_hash": ""
+  },
+  "Backend/Warehouse.Infrastructure/Migrations/20260809235825_Add3.cs": {
+    "mtime": 1786319905.9664576,
+    "ast_hash": "c54b23d11eef35ea4514ea9ff4673316",
     "semantic_hash": ""
   }
 }
