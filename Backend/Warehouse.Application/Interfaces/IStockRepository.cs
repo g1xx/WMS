@@ -17,5 +17,10 @@ public interface IStockRepository
     // Product+Location included — feeds StocksController's full stock listing.
     Task<List<Stock>> GetAllWithDetailsAsync();
 
+    // Batched — every distinct product in a putaway task, mapped to the address
+    // barcodes of locations where it's currently physically stocked (PhysicalQuantity > 0).
+    // Powers the "suggested locations" a worker sees when choosing where to put an item away.
+    Task<Dictionary<Guid, List<string>>> GetLocationBarcodesByProductAsync(List<Guid> productIds);
+
     void Add(Stock stock);
 }

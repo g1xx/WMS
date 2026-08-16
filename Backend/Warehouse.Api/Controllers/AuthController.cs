@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Warehouse.Application.DTOs;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
@@ -29,13 +30,13 @@ namespace Warehouse.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            return await RegisterUserWithRole(registerDto, "Worker");
+            return await RegisterUserWithRole(registerDto, RoleNames.Worker);
         }
 
         [HttpPost("register-brigadier")]
         public async Task<IActionResult> RegisterBrigadier(RegisterDto registerDto)
         {
-            return await RegisterUserWithRole(registerDto, "Brigadier");
+            return await RegisterUserWithRole(registerDto, RoleNames.Brigadier);
         }
 
         private async Task<IActionResult> RegisterUserWithRole(RegisterDto dto, string roleName)
@@ -96,7 +97,7 @@ namespace Warehouse.Api.Controllers
                 return Unauthorized("Invalid badge or missing permissions.");
 
             var roles = await _userManager.GetRolesAsync(user);
-            if (!roles.Contains("Brigadier") && !roles.Contains("Admin"))
+            if (!roles.Contains(RoleNames.Brigadier) && !roles.Contains(RoleNames.Admin))
                 return StatusCode(403, "Invalid badge or missing permissions.");
 
             // Deliberately short-lived: this token exists only to authorize the one

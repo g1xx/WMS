@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Warehouse.Api.Middleware;
 using Warehouse.Application.Services;
 using Warehouse.Infrastructure;
 
@@ -15,11 +17,22 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+// UseExceptionHandler()'s parameterless overload validates at startup that either
+// ExceptionHandlingPath/ExceptionHandler is set OR an IProblemDetailsService is
+// registered — it does NOT check whether an IExceptionHandler is registered, so
+// AddProblemDetails() is required here even though GlobalExceptionHandler handles
+// every exception itself and this fallback is never actually reached.
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddScoped<IOrderAllocationService, OrderAllocationService>();
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();
+builder.Services.AddSingleton<IRouteOptimizerService, RouteOptimizerService>();
+builder.Services.AddSingleton<IDefectReplacementPlanner, DefectReplacementPlanner>();
+// Scoped, not Singleton: it depends on IUnitOfWork (tied to the per-request DbContext).
+builder.Services.AddScoped<IUnfulfillableUnitHandler, UnfulfillableUnitHandler>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -74,18 +87,35 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// warehouse-client runs on http://localhost:5173, TestOrderGenerator on http://localhost:5175
+// http://localhost:5173 / :5175 are the Vite dev servers (warehouse-client,
+// TestOrderGenerator); :80 / :3000 are the nginx-served Docker frontend (see
+// Frontend/warehouse-client/Dockerfile — port depends on the compose port mapping).
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5175")
+        policy.WithOrigins(
+                  "http://localhost:5173", "http://localhost:5175",
+                  "http://localhost", "http://localhost:80", "http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
+
+// Must wrap everything downstream, so it stays first in the pipeline.
+app.UseExceptionHandler();
+
+// Applies any pending migrations on startup so a fresh container (or a fresh
+// `docker compose up`) doesn't need a manual `dotnet ef database update` step —
+// the db service's healthcheck (see docker-compose.yml) ensures Postgres is
+// actually ready to accept connections before this runs.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 
 if (app.Environment.IsDevelopment())
 {

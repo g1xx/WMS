@@ -17,10 +17,5 @@ public class PutawayTaskItemConfiguration : IEntityTypeConfiguration<PutawayTask
                .WithMany()
                .HasForeignKey(i => i.ProductId)
                .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(i => i.DestinationLocation)
-               .WithMany()
-               .HasForeignKey(i => i.DestinationLocationId)
-               .OnDelete(DeleteBehavior.Restrict);
     }
 }

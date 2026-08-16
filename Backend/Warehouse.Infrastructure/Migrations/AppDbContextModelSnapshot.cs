@@ -251,6 +251,9 @@ namespace Warehouse.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Barcode")
+                        .IsUnique();
+
                     b.HasIndex("LocationId");
 
                     b.ToTable("Containers");
@@ -473,13 +476,19 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Property<int>("RequiredQuantity")
                         .HasColumnType("integer");
 
+                    b.Property<int>("ShortedQuantity")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", t =>
+                        {
+                            t.HasCheckConstraint("CK_OrderItem_ShortedQuantity_NonNegative", "\"ShortedQuantity\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Warehouse.Domain.PickTask", b =>
@@ -655,9 +664,6 @@ namespace Warehouse.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("DestinationLocationId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("ExpectedQuantity")
                         .HasColumnType("integer");
 
@@ -674,8 +680,6 @@ namespace Warehouse.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DestinationLocationId");
 
                     b.HasIndex("ProductId");
 
@@ -905,12 +909,6 @@ namespace Warehouse.Infrastructure.Migrations
 
             modelBuilder.Entity("Warehouse.Domain.PutawayTaskItem", b =>
                 {
-                    b.HasOne("Warehouse.Domain.Location", "DestinationLocation")
-                        .WithMany()
-                        .HasForeignKey("DestinationLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Warehouse.Domain.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
@@ -922,8 +920,6 @@ namespace Warehouse.Infrastructure.Migrations
                         .HasForeignKey("PutawayTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DestinationLocation");
 
                     b.Navigation("Product");
 

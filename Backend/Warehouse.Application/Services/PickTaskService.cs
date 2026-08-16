@@ -1,6 +1,7 @@
 using Warehouse.Application.Common;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
+using Warehouse.Application.Mapping;
 using Warehouse.Domain;
 
 namespace Warehouse.Application.Services
@@ -8,10 +9,14 @@ namespace Warehouse.Application.Services
     public class PickTaskService : IPickTaskService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRouteOptimizerService _routeOptimizer;
+        private readonly IUnfulfillableUnitHandler _unfulfillableUnitHandler;
 
-        public PickTaskService(IUnitOfWork unitOfWork)
+        public PickTaskService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer, IUnfulfillableUnitHandler unfulfillableUnitHandler)
         {
             _unitOfWork = unitOfWork;
+            _routeOptimizer = routeOptimizer;
+            _unfulfillableUnitHandler = unfulfillableUnitHandler;
         }
 
         public async Task<IEnumerable<PickTaskResponseDto>> GetPickTasksAsync()
@@ -117,28 +122,57 @@ namespace Warehouse.Application.Services
             if (taskItem == null)
                 return Result<string>.Failure("Scan error! You are at the wrong location or picked the wrong item.");
 
-            if (taskItem.PickedQuantity + dto.Quantity > taskItem.RequiredQuantity)
+            // Units already written off via ReportMissingItemAsync aren't pickable —
+            // they were confirmed absent, so they must not count as "still available"
+            // headroom for this scan.
+            var leftToPick = taskItem.RequiredQuantity - taskItem.PickedQuantity - taskItem.MissingQuantity;
+            if (dto.Quantity > leftToPick)
             {
-                var leftToPick = taskItem.RequiredQuantity - taskItem.PickedQuantity;
                 return Result<string>.Failure($"Over-pick! You only need to pick {leftToPick} more units of this item.");
             }
 
-            // 1. Update the counter on the pick task
-            taskItem.PickedQuantity += dto.Quantity;
+            var stock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId);
+            if (stock == null)
+                return Result<string>.Failure("No stock record found at this location for this product.");
 
-            // 2. Update the counter on the original order (OrderItem)
-            var order = await _unitOfWork.Orders.GetByIdWithItemsAsync(task.OrderId);
+            if (dto.Quantity > stock.PhysicalQuantity)
+                return Result<string>.Failure($"Only {stock.PhysicalQuantity} unit(s) are physically on the shelf here.");
 
-            if (order != null)
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                var orderItem = order.Items.FirstOrDefault(oi => oi.ProductId == taskItem.ProductId);
-                if (orderItem != null)
-                {
-                    orderItem.PickedQuantity += dto.Quantity;
-                }
-            }
+                // 1. Update the counter on the pick task
+                taskItem.PickedQuantity += dto.Quantity;
 
-            await _unitOfWork.SaveChangesAsync();
+                // 2. Take the units off this shelf location's stock the instant they're
+                //    picked, not at dispatch — a cycle count run while the worker is still
+                //    mid-route (routine in a live warehouse) must see what's actually on
+                //    the shelf, not stock that's already sitting in the tote.
+                stock.PhysicalQuantity -= dto.Quantity;
+                stock.ReservedQuantity -= dto.Quantity;
+
+                _unitOfWork.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = taskItem.ProductId,
+                    LocationId = taskItem.LocationId,
+                    QuantityChange = -dto.Quantity,
+                    TransactionType = StockTransactionType.Pick,
+                    UserId = userId
+                });
+
+                // 3. Update the counter on the original order (OrderItem)
+                var order = await _unitOfWork.Orders.GetByIdWithItemsAsync(task.OrderId);
+
+                if (order != null)
+                {
+                    var orderItem = order.Items.FirstOrDefault(oi => oi.ProductId == taskItem.ProductId);
+                    if (orderItem != null)
+                    {
+                        orderItem.PickedQuantity += dto.Quantity;
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+            });
 
             return Result<string>.Success($"Successfully picked: {dto.Quantity} units.");
         }
@@ -164,8 +198,7 @@ namespace Warehouse.Application.Services
             if (station == null)
                 return Result<DispatchContainerResultDto>.Failure($"Conveyor '{dto.ConveyorBarcode}' was not found.", ResultErrorType.NotFound);
 
-            await _unitOfWork.BeginTransactionAsync();
-            try
+            var newTaskId = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
                 container.LocationId = station.Id;
                 // Nothing downstream in this system models a separate "packing station
@@ -174,59 +207,48 @@ namespace Warehouse.Application.Services
                 container.Status = ContainerStatus.Available;
                 container.AssignedSector = null;
 
+                // Units already written off via ReportMissingItemAsync are accounted for,
+                // not outstanding — only what's neither picked nor reported missing should
+                // roll forward into a new task.
                 var leftoverItems = task.Items
-                    .Where(i => i.RequiredQuantity > i.PickedQuantity)
+                    .Where(i => i.RequiredQuantity > i.PickedQuantity + i.MissingQuantity)
                     .Select(i => new
                     {
                         i.ProductId,
                         i.LocationId,
-                        QuantityLeft = i.RequiredQuantity - i.PickedQuantity
+                        QuantityLeft = i.RequiredQuantity - i.PickedQuantity - i.MissingQuantity
                     })
                     .ToList();
 
                 foreach (var item in task.Items)
                 {
-                    item.RequiredQuantity = item.PickedQuantity;
+                    item.RequiredQuantity = item.PickedQuantity + item.MissingQuantity;
                 }
 
-                // Clear the reservation and remove the physically picked units from
-                // stock at their source location — the container now owns them.
-                foreach (var item in task.Items.Where(i => i.PickedQuantity > 0))
-                {
-                    var stock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(item.ProductId, item.LocationId);
-
-                    if (stock != null)
-                    {
-                        stock.PhysicalQuantity -= item.PickedQuantity;
-                        stock.ReservedQuantity -= item.PickedQuantity;
-
-                        _unitOfWork.StockTransactions.Add(new StockTransaction
-                        {
-                            ProductId = item.ProductId,
-                            LocationId = item.LocationId,
-                            QuantityChange = -item.PickedQuantity,
-                            TransactionType = StockTransactionType.Pick,
-                            UserId = userId
-                        });
-                    }
-                }
+                // Stock for picked units was already taken off the shelf at pick time (see
+                // PickItemAsync) — dispatch only finalizes the task/container/order, it no
+                // longer touches Stock itself.
 
                 task.Status = PickTaskStatus.Completed;
 
-                // Check whether the whole order has now been picked
+                // Check whether every line in the order is now resolved — either fully
+                // picked, or its outstanding balance permanently written off (ShortedQuantity,
+                // set by IUnfulfillableUnitHandler). A resolved order with any written-off
+                // line dispatches as ShortShipped, never silently as Packed — the two must
+                // stay distinguishable at the order level, not just in task-level history.
                 var order = await _unitOfWork.Orders.GetByIdWithItemsAsync(task.OrderId);
 
                 if (order != null)
                 {
-                    // If no unpicked lines remain anywhere in the order
-                    bool isOrderFullyPicked = order.Items.All(i => i.PickedQuantity >= i.RequiredQuantity);
-                    if (isOrderFullyPicked)
+                    bool isOrderResolved = order.Items.All(i => i.PickedQuantity + i.ShortedQuantity >= i.RequiredQuantity);
+                    if (isOrderResolved)
                     {
-                        order.Status = OrderStatus.Packed;
+                        bool isOrderFullyPicked = order.Items.All(i => i.PickedQuantity >= i.RequiredQuantity);
+                        order.Status = isOrderFullyPicked ? OrderStatus.Packed : OrderStatus.ShortShipped;
                     }
                 }
 
-                Guid? newTaskId = null;
+                Guid? nextTaskId = null;
 
                 if (leftoverItems.Any())
                 {
@@ -248,26 +270,21 @@ namespace Warehouse.Application.Services
 
                     _unitOfWork.PickTasks.Add(nextTask);
                     await _unitOfWork.SaveChangesAsync();
-                    newTaskId = nextTask.Id;
+                    nextTaskId = nextTask.Id;
                 }
                 else
                 {
                     await _unitOfWork.SaveChangesAsync();
                 }
 
-                await _unitOfWork.CommitTransactionAsync();
+                return nextTaskId;
+            });
 
-                return Result<DispatchContainerResultDto>.Success(new DispatchContainerResultDto
-                {
-                    Message = "Container successfully verified and sent to the conveyor.",
-                    NextTaskId = newTaskId
-                });
-            }
-            catch
+            return Result<DispatchContainerResultDto>.Success(new DispatchContainerResultDto
             {
-                await _unitOfWork.RollbackTransactionAsync();
-                throw;
-            }
+                Message = "Container successfully verified and sent to the conveyor.",
+                NextTaskId = newTaskId
+            });
         }
 
         public async Task<Result<MessageResponseDto>> CancelPickTaskAsync(Guid id, string userId)
@@ -315,6 +332,9 @@ namespace Warehouse.Application.Services
 
         public async Task<Result<MessageResponseDto>> ReportMissingItemAsync(Guid taskId, ReportMissingItemDto dto, string workerId)
         {
+            if (dto.MissingQuantity <= 0)
+                return Result<MessageResponseDto>.Failure("Missing quantity must be greater than zero.");
+
             var task = await _unitOfWork.PickTasks.GetByIdWithItemsAndProductLocationAsync(taskId);
 
             if (task == null)
@@ -331,7 +351,9 @@ namespace Warehouse.Application.Services
             if (taskItem == null)
                 return Result<MessageResponseDto>.Failure("Item not found in this task: wrong location or SKU.");
 
-            taskItem.MissingQuantity += dto.MissingQuantity;
+            var remaining = taskItem.RequiredQuantity - taskItem.PickedQuantity - taskItem.MissingQuantity;
+            if (dto.MissingQuantity > remaining)
+                return Result<MessageResponseDto>.Failure($"Over-report! Only {remaining} more unit(s) are outstanding on this item.");
 
             // The units reported missing were never physically there, so they must come off both
             // the physical count and the reservation this task item was holding at this location.
@@ -340,35 +362,38 @@ namespace Warehouse.Application.Services
             if (stock == null)
                 return Result<MessageResponseDto>.Failure("No stock record found at this location for this product.");
 
-            stock.PhysicalQuantity -= dto.MissingQuantity;
-            stock.ReservedQuantity -= dto.MissingQuantity;
-
-            _unitOfWork.StockTransactions.Add(new StockTransaction
+            // The task itself is NOT completed here: the worker still has to physically
+            // dispatch the container (see DispatchContainerAsync), which is the only place
+            // stock actually moves for this task's other picked items and the container
+            // gets released back to the free pool.
+            var message = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                ProductId = taskItem.ProductId,
-                LocationId = taskItem.LocationId,
-                QuantityChange = -dto.MissingQuantity,
-                TransactionType = StockTransactionType.Missing,
-                UserId = workerId
+                taskItem.MissingQuantity += dto.MissingQuantity;
+
+                stock.PhysicalQuantity -= dto.MissingQuantity;
+                stock.ReservedQuantity -= dto.MissingQuantity;
+
+                _unitOfWork.StockTransactions.Add(new StockTransaction
+                {
+                    ProductId = taskItem.ProductId,
+                    LocationId = taskItem.LocationId,
+                    QuantityChange = -dto.MissingQuantity,
+                    TransactionType = StockTransactionType.Missing,
+                    UserId = workerId
+                });
+
+                // A genuinely missing unit gets the same chance a defective one does: look
+                // for a replacement pick in an active picking zone before giving up on it.
+                var handlerResult = await _unfulfillableUnitHandler.HandleAsync(
+                    task, taskItem.ProductId, taskItem.LocationId, dto.MissingQuantity);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return BuildUnfulfillableMessage($"{taskItem.MissingQuantity} unit(s) marked missing for this item.", handlerResult);
             });
 
-            // Only close the task out once every line is fully accounted for (picked or missing).
-            if (task.Items.All(i => i.PickedQuantity + i.MissingQuantity == i.RequiredQuantity))
-            {
-                task.Status = PickTaskStatus.Completed;
-            }
-
-            await _unitOfWork.SaveChangesAsync();
-
-            return Result<MessageResponseDto>.Success(new MessageResponseDto
-            {
-                Message = $"Missing item reported. {taskItem.MissingQuantity} unit(s) marked missing for this item."
-            });
+            return Result<MessageResponseDto>.Success(new MessageResponseDto { Message = message });
         }
-
-        // Bulk/high-rack storage sector (e.g. the "w" in "mw1") — never a valid
-        // source for direct picking or defect-replacement reallocation.
-        private const string BulkSector = "w";
 
         public async Task<Result<ReportDefectResultDto>> ReportDefectAsync(Guid taskId, ReportDefectDto dto, string workerId)
         {
@@ -399,8 +424,7 @@ namespace Warehouse.Application.Services
             if (sourceStock == null)
                 return Result<ReportDefectResultDto>.Failure("No stock record found at this location for this product.");
 
-            await _unitOfWork.BeginTransactionAsync();
-            try
+            var defectResult = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
                 // 1. Deduct the defective units strictly from PhysicalQuantity. ReservedQuantity
                 //    is left untouched here — the reservation this order already holds only moves
@@ -426,98 +450,33 @@ namespace Warehouse.Application.Services
                 // double-reserved once a replacement location is reserved for them below.
                 sourceStock.ReservedQuantity = Math.Max(0, sourceStock.ReservedQuantity - replacementNeeded);
 
-                var result = new ReportDefectResultDto { DefectiveQuantityDeducted = defectiveQuantity };
+                // 2. Same "find a replacement in an active picking zone, else write off
+                //    against the order" logic ReportMissingItemAsync uses — the two paths
+                //    can no longer drift apart on what happens once a unit can't be sourced.
+                var handlerResult = replacementNeeded > 0
+                    ? await _unfulfillableUnitHandler.HandleAsync(task, taskItem.ProductId, taskItem.LocationId, replacementNeeded)
+                    : new UnfulfillableUnitResult();
 
-                if (replacementNeeded > 0)
+                var result = new ReportDefectResultDto
                 {
-                    // 2. Standard picking zones only — never the bulk sector, never the shelf we just wrote off.
-                    var candidateStocks = await _unitOfWork.Stocks.GetReplacementCandidatesAsync(
-                        taskItem.ProductId, taskItem.LocationId, BulkSector);
-
-                    var remaining = replacementNeeded;
-                    var picks = new List<(Stock Stock, string ZoneCode, int Quantity)>();
-
-                    foreach (var stock in candidateStocks)
-                    {
-                        if (remaining == 0) break;
-
-                        var take = Math.Min(remaining, stock.AvailableQuantity);
-                        picks.Add((stock, stock.Location!.ZoneCode, take));
-                        remaining -= take;
-                    }
-
-                    foreach (var pick in picks)
-                    {
-                        pick.Stock.ReservedQuantity += pick.Quantity;
-                    }
-
-                    // 2a. Same zone as the current task: append a new line to it.
-                    foreach (var pick in picks.Where(p => p.ZoneCode == task.Sector))
-                    {
-                        task.Items.Add(new PickTaskItem
-                        {
-                            PickTaskId = task.Id,
-                            ProductId = taskItem.ProductId,
-                            LocationId = pick.Stock.LocationId,
-                            RequiredQuantity = pick.Quantity,
-                            PickedQuantity = 0
-                        });
-                        result.AppendedToCurrentTaskQuantity += pick.Quantity;
-                    }
-
-                    // 2b. Different standard zone: a brand new PickTask targeted at that zone.
-                    foreach (var zoneGroup in picks.Where(p => p.ZoneCode != task.Sector).GroupBy(p => p.ZoneCode))
-                    {
-                        var newTask = new PickTask
-                        {
-                            OrderId = task.OrderId,
-                            Sector = zoneGroup.Key,
-                            Status = PickTaskStatus.New,
-                            Items = zoneGroup.Select(p => new PickTaskItem
-                            {
-                                ProductId = taskItem.ProductId,
-                                LocationId = p.Stock.LocationId,
-                                RequiredQuantity = p.Quantity,
-                                PickedQuantity = 0
-                            }).ToList()
-                        };
-
-                        _unitOfWork.PickTasks.Add(newTask);
-                        result.NewPickTaskIds.Add(newTask.Id);
-                    }
-
-                    // 2c. Whatever is still short only exists in bulk (or nowhere) — do not hand it
-                    //     to a picker. Flag the order line for replenishment instead.
-                    if (remaining > 0)
-                    {
-                        result.ShortageQuantity = remaining;
-
-                        var order = await _unitOfWork.Orders.GetByIdWithItemsAsync(task.OrderId);
-
-                        var orderItem = order?.Items.FirstOrDefault(oi => oi.ProductId == taskItem.ProductId);
-                        if (orderItem != null)
-                        {
-                            orderItem.IsPendingReplenishment = true;
-                        }
-                    }
-                }
+                    DefectiveQuantityDeducted = defectiveQuantity,
+                    AppendedToCurrentTaskQuantity = handlerResult.AppendedToCurrentTaskQuantity,
+                    NewPickTaskIds = handlerResult.NewPickTaskIds,
+                    ShortageQuantity = handlerResult.ShortageQuantity
+                };
 
                 await _unitOfWork.SaveChangesAsync();
-                await _unitOfWork.CommitTransactionAsync();
 
-                result.Message = BuildDefectMessage(result);
-                return Result<ReportDefectResultDto>.Success(result);
-            }
-            catch
-            {
-                await _unitOfWork.RollbackTransactionAsync();
-                throw;
-            }
+                result.Message = BuildUnfulfillableMessage($"{result.DefectiveQuantityDeducted} defective unit(s) written off.", handlerResult);
+                return result;
+            });
+
+            return Result<ReportDefectResultDto>.Success(defectResult);
         }
 
-        private static string BuildDefectMessage(ReportDefectResultDto result)
+        private static string BuildUnfulfillableMessage(string leadSentence, UnfulfillableUnitResult result)
         {
-            var parts = new List<string> { $"{result.DefectiveQuantityDeducted} defective unit(s) written off." };
+            var parts = new List<string> { leadSentence };
 
             if (result.AppendedToCurrentTaskQuantity > 0)
                 parts.Add($"{result.AppendedToCurrentTaskQuantity} unit(s) added to your current task from the same zone.");
@@ -526,33 +485,17 @@ namespace Warehouse.Application.Services
                 parts.Add($"{result.NewPickTaskIds.Count} new pick task(s) created in other zones.");
 
             if (result.ShortageQuantity > 0)
-                parts.Add($"{result.ShortageQuantity} unit(s) could not be sourced from standard zones and were marked pending replenishment.");
+                parts.Add($"{result.ShortageQuantity} unit(s) could not be sourced from active picking zones and were marked pending replenishment.");
 
             return string.Join(' ', parts);
         }
 
         private PickTaskResponseDto MapToDto(PickTask task)
         {
-            return new PickTaskResponseDto
-            {
-                Id = task.Id,
-                Sector = task.Sector,
-                Status = task.Status.ToString(),
-                AssignedWorkerId = task.AssignedWorkerId,
-                // The client shows this barcode as the container to scan on completion
-                ContainerBarcode = task.Container?.Barcode,
-                Items = task.Items.Select(i => new PickTaskItemResponseDto
-                {
-                    Id = i.Id,
-                    ProductName = i.Product!.Name,
-                    ProductSku = i.Product.Sku,
-                    LocationBarcode = i.Location!.AddressBarcode,
-                    RequiredQuantity = i.RequiredQuantity,
-                    PickedQuantity = i.PickedQuantity,
-                    AvailableStock = i.Location.Stocks
-                        .FirstOrDefault(s => s.ProductId == i.ProductId)?.AvailableQuantity ?? 0
-                }).ToList()
-            };
+            var dto = task.ToDto();
+            // Serpentine route: minimizes the worker's walking distance across aisles.
+            dto.Items = _routeOptimizer.OptimizeRoute(dto.Items, i => i.LocationBarcode);
+            return dto;
         }
     }
 }

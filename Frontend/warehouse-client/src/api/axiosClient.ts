@@ -46,31 +46,52 @@ axiosClient.interceptors.response.use(
     }
 );
 
+// Shape returned by both /Auth/login and /Auth/supervisor-override.
+export interface TokenResponse {
+    token: string;
+}
+
 // Exchanges a supervisor's badge for a short-lived, elevated JWT authorized for a single
 // Brigadier/Admin-gated action. Returns an axios request config carrying that token in its
 // Authorization header (and skipAuthRedirect, so a bad badge doesn't log the worker out) —
 // pass it as the `config` of the one call that needs it. Nothing is persisted, so the
 // elevated token is naturally discarded once that request completes.
 export async function fetchSupervisorAuthHeader(badgeBarcode: string) {
-    const response = await axiosClient.post(
+    const response = await axiosClient.post<TokenResponse>(
         '/Auth/supervisor-override',
         { badgeBarcode },
         { skipAuthRedirect: true }
     );
 
-    const supervisorToken = response.data.token as string;
-
     return {
-        headers: { Authorization: `Bearer ${supervisorToken}` },
+        headers: { Authorization: `Bearer ${response.data.token}` },
         skipAuthRedirect: true,
     };
 }
 
 // True when an error came back as 401/403 — used to tell "the supervisor
 // override was rejected" apart from an ordinary business-logic failure.
-export function isSupervisorAuthError(error: any): boolean {
-    const status = error?.response?.status;
+export function isSupervisorAuthError(error: unknown): boolean {
+    const status = (error as { response?: { status?: number } })?.response?.status;
     return status === 401 || status === 403;
+}
+
+// Shared by every supervisor-gated mutation's onError handler: shows the specific
+// override-failure message and reports whether it applied, so the caller knows
+// to skip its own generic fallback alert in that case.
+export function alertIfSupervisorAuthError(error: unknown): boolean {
+    if (!isSupervisorAuthError(error)) return false;
+    alert('Supervisor authorization failed: Invalid badge or missing permissions.');
+    return true;
+}
+
+// Shared by every mutation's onError handler: the backend returns the business error
+// message as a plain string response body (see Warehouse.Api.Common.ResultExtensions),
+// so this is the one place that knows how to safely pull it out of an unknown error.
+export function extractErrorMessage(error: unknown, fallback: string): string {
+    const data = (error as { response?: { data?: unknown } })?.response?.data;
+    if (typeof data === 'string' && data.trim()) return data;
+    return fallback;
 }
 
 export default axiosClient;

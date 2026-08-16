@@ -66,6 +66,47 @@ public class ContainersController : ControllerBase
         return CreatedAtAction(nameof(GetContainers), new { id = container.Id }, container);
     }
 
+    // Bulk-seeds fresh, empty totes with realistic warehouse barcodes (e.g.
+    // HSOD90001, HSOD90002, ...) — mirrors LocationsController.SeedMassLocations().
+    // Safe to re-run: any barcode in the requested range that already exists is
+    // skipped rather than re-inserted, so it never collides with the unique index.
+    [HttpPost("seed-mass-containers")]
+    public async Task<IActionResult> SeedMassContainers([FromQuery] int count = 100, [FromQuery] int startingNumber = 90001)
+    {
+        if (count <= 0)
+            return BadRequest("Count must be greater than zero.");
+
+        const string prefix = "HSOD";
+
+        var candidateBarcodes = Enumerable.Range(0, count)
+            .Select(offset => $"{prefix}{startingNumber + offset}")
+            .ToList();
+
+        var existingBarcodes = await _unitOfWork.Containers.GetExistingBarcodesAsync(candidateBarcodes);
+
+        var newContainers = candidateBarcodes
+            .Where(barcode => !existingBarcodes.Contains(barcode))
+            .Select(barcode => new Container
+            {
+                Barcode = barcode,
+                Type = ContainerType.Tote,
+                Status = ContainerStatus.New
+            })
+            .ToList();
+
+        if (newContainers.Count == 0)
+            return Ok(new { Message = "All requested container barcodes already exist. Nothing to seed." });
+
+        _unitOfWork.Containers.AddRange(newContainers);
+        await _unitOfWork.SaveChangesAsync();
+
+        return Ok(new
+        {
+            Message = $"Successfully created {newContainers.Count} container(s).",
+            Skipped = candidateBarcodes.Count - newContainers.Count
+        });
+    }
+
     [HttpPost("move")]
     public async Task<ActionResult> MoveContainer(ContainerMoveDto dto)
     {

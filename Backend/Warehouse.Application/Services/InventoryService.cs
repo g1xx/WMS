@@ -14,7 +14,7 @@ public class InventoryService : IInventoryService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<StockAdjustmentResultDto>> AdjustPhysicalStockAsync(Guid productId, string locationBarcode, int quantityDelta, string reason, string userId)
+    public async Task<Result<StockAdjustmentResultDto>> AdjustPhysicalStockAsync(Guid productId, string locationBarcode, int quantityDelta, string reason, bool confirmReservationImpact, string userId)
     {
         if (quantityDelta == 0)
             return Result<StockAdjustmentResultDto>.Failure("Quantity delta must not be zero.");
@@ -52,7 +52,31 @@ public class InventoryService : IInventoryService
             return Result<StockAdjustmentResultDto>.Failure(
                 $"Adjustment would take physical quantity negative (currently {stock.PhysicalQuantity}, delta {quantityDelta}).");
 
+        // A cycle count landing below what's already reserved is real ground truth, not
+        // an error — the correction must still be recordable, not rejected outright. But
+        // it also means some order(s) currently counting on this reservation are about to
+        // come up short, and a Stock row has no record of which ones (ReservedQuantity is
+        // a running total, not an itemized per-order ledger) — this can't be
+        // auto-resolved the way a picker's own missing/defect report can, where the
+        // specific task/order is right there. Surface it and require a conscious second
+        // confirmation instead of either crashing on the DB check constraint or silently
+        // shrinking someone's reservation.
+        var reservationImpact = Math.Max(0, stock.ReservedQuantity - newPhysicalQuantity);
+        if (reservationImpact > 0 && !confirmReservationImpact)
+        {
+            return Result<StockAdjustmentResultDto>.Failure(
+                $"This adjustment would take physical quantity to {newPhysicalQuantity}, below the {stock.ReservedQuantity} " +
+                $"unit(s) already reserved here for allocated orders — {reservationImpact} unit(s) of reservation would be " +
+                "lost, and the affected order(s) aren't tracked per stock row, so they can't be re-shortaged automatically. " +
+                "Investigate which order(s) this affects, then resubmit with confirmation if the correction should proceed.",
+                ResultErrorType.Conflict);
+        }
+
         stock.PhysicalQuantity = newPhysicalQuantity;
+        if (reservationImpact > 0)
+        {
+            stock.ReservedQuantity -= reservationImpact;
+        }
 
         _unitOfWork.StockTransactions.Add(new StockTransaction
         {
@@ -71,7 +95,8 @@ public class InventoryService : IInventoryService
             LocationBarcode = locationBarcode,
             QuantityDelta = quantityDelta,
             NewPhysicalQuantity = stock.PhysicalQuantity,
-            Reason = reason
+            Reason = reason,
+            ReservedQuantityReduced = reservationImpact
         });
     }
 
@@ -90,35 +115,35 @@ public class InventoryService : IInventoryService
         if (skuExists)
             return Result<ProductResponseDto>.Failure($"A product with SKU '{dto.Sku}' already exists.", ResultErrorType.Conflict);
 
-        await _unitOfWork.BeginTransactionAsync();
-        try
+        // Read-only + a possible early failure, nothing persisted yet — no transaction
+        // needed until we're actually about to mutate anything below.
+        var location = await _unitOfWork.Locations.GetByBarcodeAsync(dto.LocationBarcode);
+
+        if (location != null)
         {
-            var location = await _unitOfWork.Locations.GetByBarcodeAsync(dto.LocationBarcode);
-
-            if (location != null)
+            // Reuse the existing bin, but its real address must match what the admin entered
+            if (location.Sector != dto.Sector || location.WarehouseCode != dto.WarehouseCode || location.Floor != dto.Floor)
             {
-                // Reuse the existing bin, but its real address must match what the admin entered
-                if (location.Sector != dto.Sector || location.WarehouseCode != dto.WarehouseCode || location.Floor != dto.Floor)
-                {
-                    await _unitOfWork.RollbackTransactionAsync();
-                    return Result<ProductResponseDto>.Failure(
-                        $"Location '{dto.LocationBarcode}' already exists with sector '{location.Sector}', warehouse '{location.WarehouseCode}', floor {location.Floor} — that does not match what was entered.",
-                        ResultErrorType.Conflict);
-                }
+                return Result<ProductResponseDto>.Failure(
+                    $"Location '{dto.LocationBarcode}' already exists with sector '{location.Sector}', warehouse '{location.WarehouseCode}', floor {location.Floor} — that does not match what was entered.",
+                    ResultErrorType.Conflict);
             }
-            else
+        }
+        else
+        {
+            location = new Location
             {
-                location = new Location
-                {
-                    AddressBarcode = dto.LocationBarcode,
-                    Sector = dto.Sector,
-                    WarehouseCode = dto.WarehouseCode,
-                    Floor = dto.Floor,
-                    Type = LocationType.Shelf
-                };
-                _unitOfWork.Locations.Add(location);
-            }
+                AddressBarcode = dto.LocationBarcode,
+                Sector = dto.Sector,
+                WarehouseCode = dto.WarehouseCode,
+                Floor = dto.Floor,
+                Type = LocationType.Shelf
+            };
+            _unitOfWork.Locations.Add(location);
+        }
 
+        var (product, stock) = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
             var product = new Product
             {
                 Name = dto.Name,
@@ -143,29 +168,25 @@ public class InventoryService : IInventoryService
             _unitOfWork.Stocks.Add(stock);
 
             await _unitOfWork.SaveChangesAsync();
-            await _unitOfWork.CommitTransactionAsync();
 
-            return Result<ProductResponseDto>.Success(new ProductResponseDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Sku = product.Sku,
-                SizeCategory = product.SizeCategory.ToString(),
-                Stocks = new List<StockCreateDto>
-                {
-                    new()
-                    {
-                        ProductId = product.Id,
-                        LocationBarcode = location.AddressBarcode,
-                        Quantity = stock.PhysicalQuantity
-                    }
-                }
-            });
-        }
-        catch
+            return (product, stock);
+        });
+
+        return Result<ProductResponseDto>.Success(new ProductResponseDto
         {
-            await _unitOfWork.RollbackTransactionAsync();
-            throw;
-        }
+            Id = product.Id,
+            Name = product.Name,
+            Sku = product.Sku,
+            SizeCategory = product.SizeCategory.ToString(),
+            Stocks = new List<StockCreateDto>
+            {
+                new()
+                {
+                    ProductId = product.Id,
+                    LocationBarcode = location.AddressBarcode,
+                    Quantity = stock.PhysicalQuantity
+                }
+            }
+        });
     }
 }

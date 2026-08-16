@@ -15,6 +15,8 @@ public class ContainerConfiguration : IEntityTypeConfiguration<Container>
 
         builder.Property(c => c.AssignedSector).HasMaxLength(50);
 
+        builder.HasIndex(c => c.Barcode).IsUnique();
+
         builder.UseXminAsConcurrencyToken();
     }
 }

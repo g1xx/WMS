@@ -10,9 +10,6 @@ public class PutawayTaskItem
     public Guid ProductId { get; set; }
     public Product? Product { get; set; }
 
-    public Guid DestinationLocationId { get; set; }
-    public Location? DestinationLocation { get; set; }
-
     public int ExpectedQuantity { get; set; }
     public int PutAwayQuantity { get; set; } = 0;
     public int MissingQuantity { get; set; } = 0;

@@ -4,9 +4,9 @@ namespace Warehouse.Application.Interfaces;
 
 public interface IPutawayTaskRepository
 {
-    // Container, Items.Product, Items.DestinationLocation — the shape shared by
-    // CreatePutawayTaskAsync's re-fetch, GetActivePutawayTaskForUserAsync,
-    // StartPutawayForContainerAsync, ConfirmItemAsync and ReportMissingAsync.
+    // Container, Items.Product — the shape shared by CreatePutawayTaskAsync's
+    // re-fetch, GetActivePutawayTaskForUserAsync, StartPutawayForContainerAsync,
+    // ConfirmItemAsync and ReportMissingAsync.
     Task<PutawayTask?> GetByIdWithDetailsAsync(Guid id);
     Task<PutawayTask?> GetActiveForUserAsync(string workerId);
     Task<PutawayTask?> GetInProgressForContainerSectorWorkerAsync(Guid containerId, string sector, string workerId);

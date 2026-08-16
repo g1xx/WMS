@@ -16,7 +16,14 @@ public class OrderItem
 
     public int PickedQuantity { get; set; } = 0;
 
-    // Set when a defect write-off could only be covered by bulk/high-rack stock
-    // (never picked directly) and no standard-zone replacement was found.
+    // Units permanently written off this line (defective or genuinely missing) that
+    // no replacement pick from an active picking zone could cover. RequiredQuantity
+    // is never mutated for this — it always reflects what was actually ordered, so
+    // ShortedQuantity is the one place a short-shipment is recorded. Dispatch treats
+    // PickedQuantity + ShortedQuantity >= RequiredQuantity as "line resolved".
+    public int ShortedQuantity { get; set; } = 0;
+
+    // Set once any unit on this line could only be covered by stock outside the
+    // active picking zones (bulk/reserve storage) or nowhere at all.
     public bool IsPendingReplenishment { get; set; } = false;
 }

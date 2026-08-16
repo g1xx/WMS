@@ -15,5 +15,11 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 
         builder.Property(i => i.RequiredQuantity).IsRequired();
         builder.Property(i => i.PickedQuantity).IsRequired();
+        builder.Property(i => i.ShortedQuantity).IsRequired();
+
+        builder.ToTable(tb =>
+        {
+            tb.HasCheckConstraint("CK_OrderItem_ShortedQuantity_NonNegative", "\"ShortedQuantity\" >= 0");
+        });
     }
 }

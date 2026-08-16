@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { PickTask } from '../../types/task';
+import { useSupervisorOverride } from '../../hooks/useSupervisorOverride';
+import { usePickWizardSteps } from './usePickWizardSteps';
 
 interface Props {
     task: PickTask;
@@ -19,8 +21,6 @@ interface Props {
 export default function ActiveTaskScreen({
     task, scanLocation, setScanLocation, scanSku, setScanSku, scanQty, setScanQty, onPickItem, onDispatch, onCancel, onReportDefect, onReportMissing
 }: Props) {
-    const [step, setStep] = useState<number>(1);
-    const [localError, setLocalError] = useState<string>('');
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
     const [isDispatchMode, setIsDispatchMode] = useState<boolean>(false);
@@ -29,23 +29,34 @@ export default function ActiveTaskScreen({
 
     const [isOverviewOpen, setIsOverviewOpen] = useState<boolean>(false);
 
-    const [isMissingMode, setIsMissingMode] = useState<boolean>(false);
     const [missingQty, setMissingQty] = useState<number>(1);
-    // Shared between the "missing" and "defect" submenus: both are supervisor-gated
-    // actions authorized the same way, and only one submenu is ever open at a time.
-    const [supervisorBadge, setSupervisorBadge] = useState<string>('');
-    const [isReportingMissing, setIsReportingMissing] = useState<boolean>(false);
-
-    const [isDefectMode, setIsDefectMode] = useState<boolean>(false);
     const [defectiveQty, setDefectiveQty] = useState<number>(1);
-    const [isReportingDefect, setIsReportingDefect] = useState<boolean>(false);
 
-    const currentItem = task.items.find(item => item.pickedQuantity < item.requiredQuantity);
+    // An item that's been fully accounted for — picked, reported missing, or some
+    // combination that adds up to the requirement — is done, even if pickedQuantity
+    // alone never reaches requiredQuantity (e.g. entirely missing, or a partial pick
+    // topped off by a partial missing report).
+    const currentItem = task.items.find(item => item.pickedQuantity + item.missingQuantity < item.requiredQuantity);
     const hasPickedItems = task.items.some(item => item.pickedQuantity > 0);
 
     // The exact container the worker must scan to close this task out.
     // Trimmed defensively: scanner input and the backend value may carry a trailing space.
     const expectedContainer = task.containerBarcode?.trim();
+
+    const { step, localError, handleLocationNext, handleSkuNext, handleConfirm, goToLocation, goToSku } = usePickWizardSteps({
+        currentItem, scanLocation, scanSku, setScanQty, onPickItem,
+    });
+
+    // Shared by both submenus below: they're supervisor-gated actions authorized
+    // the same way, and only one is ever open at a time.
+    const missingOverride = useSupervisorOverride();
+    const defectOverride = useSupervisorOverride();
+    // Destructured so the effect below can depend on the specific (stable, useCallback'd)
+    // functions it actually calls instead of the whole override objects, which are new
+    // references every render and would make the effect re-run constantly if depended on
+    // directly.
+    const { close: closeMissingOverride } = missingOverride;
+    const { close: closeDefectOverride } = defectOverride;
 
     useEffect(() => {
         if (!currentItem && !isMenuOpen) {
@@ -57,37 +68,14 @@ export default function ActiveTaskScreen({
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape' && !isDispatchMode) {
                 // Esc always returns to the main menu, resetting any submenu
-                setIsMissingMode(false);
-                setIsDefectMode(false);
+                closeMissingOverride();
+                closeDefectOverride();
                 setIsMenuOpen(prev => !prev);
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isDispatchMode]);
-
-    const handleLocationNext = () => {
-        if (scanLocation.trim() === currentItem?.locationBarcode?.trim()) {
-            setStep(2); setLocalError('');
-        } else {
-            setLocalError(`Wrong location! Go to: ${currentItem?.locationBarcode}`);
-        }
-    };
-
-    const handleSkuNext = () => {
-        if (scanSku.trim() === currentItem?.productSku?.trim()) {
-            setStep(3); setLocalError('');
-            setScanQty(currentItem.requiredQuantity - currentItem.pickedQuantity);
-        } else {
-            setLocalError(`Wrong product! Expected: ${currentItem?.productSku}`);
-        }
-    };
-
-    const handleConfirm = async () => {
-        await onPickItem();
-        setStep(1);
-        setLocalError('');
-    };
+    }, [isDispatchMode, closeMissingOverride, closeDefectOverride]);
 
     const handleDispatchSubmit = () => {
         const trimmedContainer = dispatchContainer.trim();
@@ -108,48 +96,24 @@ export default function ActiveTaskScreen({
         onDispatch(trimmedContainer, trimmedConveyor);
     };
 
-    const handleMissingSubmit = async () => {
+    const handleMissingSubmit = () => missingOverride.submit(async (badge) => {
         if (!currentItem) return;
-        if (!supervisorBadge.trim()) {
-            alert("Scan the supervisor's badge!");
-            return;
-        }
+        await onReportMissing(currentItem.locationBarcode, currentItem.productSku, missingQty, badge);
 
-        setIsReportingMissing(true);
-        try {
-            await onReportMissing(currentItem.locationBarcode, currentItem.productSku, missingQty, supervisorBadge);
+        // The parent handles clearing the task and fetching the next one on
+        // success — this component only needs to close its own submenu (handled
+        // by missingOverride.submit) and the outer exceptions menu.
+        setIsMenuOpen(false);
+    });
 
-            // The parent handles clearing the task and fetching the next one on
-            // success — this component only needs to close its own submenu.
-            setIsMissingMode(false);
-            setIsMenuOpen(false);
-            setSupervisorBadge('');
-        } finally {
-            setIsReportingMissing(false);
-        }
-    };
-
-    const handleDefectSubmit = async () => {
+    const handleDefectSubmit = () => defectOverride.submit(async (badge) => {
         if (!currentItem) return;
-        if (!supervisorBadge.trim()) {
-            alert("Scan the supervisor's badge!");
-            return;
-        }
+        await onReportDefect(currentItem.locationBarcode, currentItem.productSku, defectiveQty, badge);
 
-        setIsReportingDefect(true);
-        try {
-            await onReportDefect(currentItem.locationBarcode, currentItem.productSku, defectiveQty, supervisorBadge);
-
-            // On success this line is closed out or rerouted server-side, so the
-            // refreshed task naturally advances to the next product — nothing else to do here.
-            setIsDefectMode(false);
-            setIsMenuOpen(false);
-            setDefectiveQty(1);
-            setSupervisorBadge('');
-        } finally {
-            setIsReportingDefect(false);
-        }
-    };
+        // On success this line is closed out or rerouted server-side, so the
+        // refreshed task naturally advances to the next product — nothing else to do here.
+        setIsMenuOpen(false);
+    });
 
     // ==========================================
     // SCREEN 1: CONTAINER DISPATCH
@@ -228,7 +192,7 @@ export default function ActiveTaskScreen({
                 <p style={{ margin: '5px 0', fontSize: '1.2rem' }}><strong>Product:</strong> {currentItem?.productName}</p>
                 <p style={{ margin: '5px 0', color: '#a0a0a0' }}>SKU: {currentItem?.productSku}</p>
                 <p style={{ margin: '10px 0 5px 0', fontSize: '1.3rem', color: '#ffeb3b' }}>
-                    <strong>Pick: {currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity : 0} pcs</strong>
+                    <strong>Pick: {currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity - currentItem.missingQuantity : 0} pcs</strong>
                 </p>
             </div>
 
@@ -239,31 +203,31 @@ export default function ActiveTaskScreen({
                     </div>
                 )}
 
-                {step === 1 && (
+                {step === 'LOCATION' && (
                     <>
                         <input type="text" placeholder="Location barcode..." value={scanLocation} onChange={(e) => setScanLocation(e.target.value.trim())} style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '15px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem' }} />
                         <button onClick={handleLocationNext} disabled={!scanLocation} style={{ width: '100%', padding: '15px', fontSize: '1.1rem', backgroundColor: scanLocation ? '#2196F3' : '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: scanLocation ? 'pointer' : 'not-allowed', fontWeight: 'bold' }}>Check location</button>
                     </>
                 )}
 
-                {step === 2 && (
+                {step === 'SKU' && (
                     <>
                         <input type="text" placeholder="Product SKU..." value={scanSku} onChange={(e) => setScanSku(e.target.value.trim())} style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '15px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem' }} />
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <button onClick={() => setStep(1)} style={{ flex: 1, padding: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Back</button>
+                            <button onClick={goToLocation} style={{ flex: 1, padding: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Back</button>
                             <button onClick={handleSkuNext} disabled={!scanSku} style={{ flex: 2, padding: '15px', backgroundColor: scanSku ? '#2196F3' : '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: scanSku ? 'pointer' : 'not-allowed', fontWeight: 'bold' }}>Check SKU</button>
                         </div>
                     </>
                 )}
 
-                {step === 3 && (
+                {step === 'QUANTITY' && (
                     <>
                         <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
                             <label style={{ alignSelf: 'center', fontWeight: 'bold', fontSize: '1.2rem' }}>Qty:</label>
-                            <input type="number" min="1" max={currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity : 1} value={scanQty} onChange={(e) => setScanQty(Number(e.target.value))} style={{ flex: 1, padding: '12px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.2rem', textAlign: 'center' }} />
+                            <input type="number" min="1" max={currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity - currentItem.missingQuantity : 1} value={scanQty} onChange={(e) => setScanQty(Number(e.target.value))} style={{ flex: 1, padding: '12px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.2rem', textAlign: 'center' }} />
                         </div>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <button onClick={() => setStep(2)} style={{ flex: 1, padding: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Back</button>
+                            <button onClick={goToSku} style={{ flex: 1, padding: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Back</button>
                             <button onClick={handleConfirm} style={{ flex: 2, padding: '15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Into container</button>
                         </div>
                     </>
@@ -276,7 +240,7 @@ export default function ActiveTaskScreen({
                     <h3 style={{ color: '#4CAF50', margin: '0 0 15px 0', textAlign: 'center' }}>Order overview</h3>
                     <div style={{ flex: 1, overflowY: 'auto', marginBottom: '15px', paddingRight: '5px' }}>
                         {task.items.map(item => {
-                            const isDone = item.pickedQuantity >= item.requiredQuantity;
+                            const isDone = item.pickedQuantity + item.missingQuantity >= item.requiredQuantity;
                             const isPartial = item.pickedQuantity > 0 && !isDone;
                             return (
                                 <div key={item.id} style={{ borderLeft: `5px solid ${isDone ? '#4CAF50' : isPartial ? '#ff9800' : '#555'}`, backgroundColor: '#2a2a2a', padding: '12px', marginBottom: '10px', borderRadius: '4px' }}>
@@ -284,7 +248,10 @@ export default function ActiveTaskScreen({
                                     <p style={{ margin: '0 0 5px 0' }}>{item.productName}</p>
                                     <p style={{ margin: '0 0 8px 0', color: '#aaa', fontSize: '0.9rem' }}>SKU: {item.productSku}</p>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: isDone ? '#4CAF50' : '#fff' }}>Picked: {item.pickedQuantity} / {item.requiredQuantity}</span>
+                                        <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: isDone ? '#4CAF50' : '#fff' }}>
+                                            Picked: {item.pickedQuantity} / {item.requiredQuantity}
+                                            {item.missingQuantity > 0 && ` (${item.missingQuantity} missing)`}
+                                        </span>
                                         {isDone && <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>✓ Done</span>}
                                     </div>
                                 </div>
@@ -299,7 +266,7 @@ export default function ActiveTaskScreen({
             {isMenuOpen && (
                 <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.9)', borderRadius: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', boxSizing: 'border-box', zIndex: 10 }}>
 
-                    {!isMissingMode && !isDefectMode ? (
+                    {!missingOverride.isOpen && !defectOverride.isOpen ? (
                         <>
                             <h3 style={{ color: '#ff5252', marginBottom: '25px', textAlign: 'center' }}>Exceptions menu</h3>
 
@@ -316,20 +283,22 @@ export default function ActiveTaskScreen({
                             </button>
 
                             <button onClick={() => {
-                                setIsMissingMode(true);
-                                // Prefill with whatever is still left to pick
+                                missingOverride.open();
+                                // Prefill with whatever is still genuinely outstanding —
+                                // excluding anything already written off as missing.
                                 if (currentItem) {
-                                    setMissingQty(currentItem.requiredQuantity - currentItem.pickedQuantity);
+                                    setMissingQty(currentItem.requiredQuantity - currentItem.pickedQuantity - currentItem.missingQuantity);
                                 }
                             }} style={{ width: '100%', padding: '15px', backgroundColor: '#e91e63', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>
                                 ❌ Item not found
                             </button>
 
                             <button onClick={() => {
-                                setIsDefectMode(true);
-                                // Prefill with whatever is still left to pick
+                                defectOverride.open();
+                                // Prefill with whatever is still genuinely outstanding —
+                                // excluding anything already written off as missing.
                                 if (currentItem) {
-                                    setDefectiveQty(currentItem.requiredQuantity - currentItem.pickedQuantity);
+                                    setDefectiveQty(currentItem.requiredQuantity - currentItem.pickedQuantity - currentItem.missingQuantity);
                                 }
                             }} style={{ width: '100%', padding: '15px', backgroundColor: '#795548', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>
                                 🔧 Defective / Damaged
@@ -343,7 +312,7 @@ export default function ActiveTaskScreen({
                                 Close (Esc)
                             </button>
                         </>
-                    ) : isMissingMode ? (
+                    ) : missingOverride.isOpen ? (
                         // SUBMENU: shortage write-off
                         <div style={{ width: '100%', textAlign: 'center' }}>
                             <h3 style={{ color: '#ff5252', marginBottom: '15px' }}>Confirm shortage</h3>
@@ -352,7 +321,7 @@ export default function ActiveTaskScreen({
                             <input
                                 type="number"
                                 min="1"
-                                max={currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity : 1}
+                                max={currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity - currentItem.missingQuantity : 1}
                                 value={missingQty}
                                 onChange={(e) => setMissingQty(Number(e.target.value))}
                                 style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '20px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.2rem', textAlign: 'center' }}
@@ -363,15 +332,15 @@ export default function ActiveTaskScreen({
                                 type="text"
                                 autoFocus
                                 placeholder="Supervisor barcode..."
-                                value={supervisorBadge}
-                                onChange={(e) => setSupervisorBadge(e.target.value.trim())}
+                                value={missingOverride.badge}
+                                onChange={(e) => missingOverride.setBadge(e.target.value.trim())}
                                 style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '20px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem', textAlign: 'center' }}
                             />
 
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button onClick={() => setIsMissingMode(false)} disabled={isReportingMissing} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingMissing ? 'not-allowed' : 'pointer' }}>Cancel</button>
-                                <button onClick={handleMissingSubmit} disabled={isReportingMissing} style={{ flex: 2, padding: '12px', backgroundColor: '#e91e63', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingMissing ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-                                    {isReportingMissing ? 'Reporting...' : 'Confirm'}
+                                <button onClick={missingOverride.close} disabled={missingOverride.isSubmitting} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: missingOverride.isSubmitting ? 'not-allowed' : 'pointer' }}>Cancel</button>
+                                <button onClick={handleMissingSubmit} disabled={missingOverride.isSubmitting} style={{ flex: 2, padding: '12px', backgroundColor: '#e91e63', color: 'white', border: 'none', borderRadius: '4px', cursor: missingOverride.isSubmitting ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                                    {missingOverride.isSubmitting ? 'Reporting...' : 'Confirm'}
                                 </button>
                             </div>
                         </div>
@@ -384,7 +353,7 @@ export default function ActiveTaskScreen({
                             <input
                                 type="number"
                                 min="1"
-                                max={currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity : 1}
+                                max={currentItem ? currentItem.requiredQuantity - currentItem.pickedQuantity - currentItem.missingQuantity : 1}
                                 value={defectiveQty}
                                 onChange={(e) => setDefectiveQty(Number(e.target.value))}
                                 style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '20px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.2rem', textAlign: 'center' }}
@@ -400,15 +369,15 @@ export default function ActiveTaskScreen({
                                 type="text"
                                 autoFocus
                                 placeholder="Supervisor barcode..."
-                                value={supervisorBadge}
-                                onChange={(e) => setSupervisorBadge(e.target.value.trim())}
+                                value={defectOverride.badge}
+                                onChange={(e) => defectOverride.setBadge(e.target.value.trim())}
                                 style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '20px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem', textAlign: 'center' }}
                             />
 
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button onClick={() => setIsDefectMode(false)} disabled={isReportingDefect} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingDefect ? 'not-allowed' : 'pointer' }}>Cancel</button>
-                                <button onClick={handleDefectSubmit} disabled={isReportingDefect} style={{ flex: 2, padding: '12px', backgroundColor: '#795548', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingDefect ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-                                    {isReportingDefect ? 'Reporting...' : 'Confirm'}
+                                <button onClick={defectOverride.close} disabled={defectOverride.isSubmitting} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: defectOverride.isSubmitting ? 'not-allowed' : 'pointer' }}>Cancel</button>
+                                <button onClick={handleDefectSubmit} disabled={defectOverride.isSubmitting} style={{ flex: 2, padding: '12px', backgroundColor: '#795548', color: 'white', border: 'none', borderRadius: '4px', cursor: defectOverride.isSubmitting ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                                    {defectOverride.isSubmitting ? 'Reporting...' : 'Confirm'}
                                 </button>
                             </div>
                         </div>

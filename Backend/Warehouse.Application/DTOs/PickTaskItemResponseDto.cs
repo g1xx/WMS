@@ -9,5 +9,6 @@ public class PickTaskItemResponseDto
     public string ProductSku { get; set; } = string.Empty;
     public int RequiredQuantity { get; set; }
     public int PickedQuantity { get; set; }
+    public int MissingQuantity { get; set; }
     public int AvailableStock { get; set; }
 }

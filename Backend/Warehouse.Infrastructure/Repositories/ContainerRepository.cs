@@ -49,6 +49,16 @@ public class ContainerRepository : IContainerRepository
         return await _context.Containers.AnyAsync(c => c.Barcode == barcode);
     }
 
+    public async Task<HashSet<string>> GetExistingBarcodesAsync(List<string> barcodes)
+    {
+        var existing = await _context.Containers
+            .Where(c => barcodes.Contains(c.Barcode))
+            .Select(c => c.Barcode)
+            .ToListAsync();
+
+        return existing.ToHashSet();
+    }
+
     public async Task<List<Container>> GetAllWithLocationAsync()
     {
         return await _context.Containers
@@ -69,5 +79,10 @@ public class ContainerRepository : IContainerRepository
     public void Add(Container container)
     {
         _context.Containers.Add(container);
+    }
+
+    public void AddRange(IEnumerable<Container> containers)
+    {
+        _context.Containers.AddRange(containers);
     }
 }

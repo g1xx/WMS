@@ -10,7 +10,12 @@ public enum OrderStatus
 
     // Appended last on purpose: the enum is persisted as int, so inserting
     // a value above would shift the stored values of the existing statuses.
-    AwaitingReplenishment // Parked: not enough stock to allocate the order
+    AwaitingReplenishment, // Parked: not enough stock to allocate the order
+
+    // Terminal, like Packed, but at least one line was resolved via a permanent
+    // shortfall (OrderItem.ShortedQuantity > 0) rather than being fully picked —
+    // dispatch reached, just not with everything the customer ordered.
+    ShortShipped
 }
 
 public class Order

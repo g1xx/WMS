@@ -13,10 +13,17 @@ public interface IUnitOfWork
 
     Task<int> SaveChangesAsync();
 
-    // Explicit transaction control for the multi-step flows (DispatchContainerAsync,
-    // ReportDefectAsync, CreateProductWithLocationAsync) that must commit or roll back
-    // several repository operations together.
+    // Explicit transaction control, for callers that need to interleave it with
+    // steps ExecuteInTransactionAsync can't express (e.g. an early rollback-and-
+    // return before any mutation has happened).
     Task BeginTransactionAsync();
     Task CommitTransactionAsync();
     Task RollbackTransactionAsync();
+
+    // Runs action() inside Begin/Commit, rolling back and rethrowing on any
+    // exception — the multi-step flows (DispatchContainerAsync, ReportDefectAsync,
+    // ConfirmItemAsync, CreateProductWithLocationAsync) all had this exact
+    // try/catch/rollback/throw hand-written identically; this is the one copy.
+    Task ExecuteInTransactionAsync(Func<Task> action);
+    Task<T> ExecuteInTransactionAsync<T>(Func<Task<T>> action);
 }

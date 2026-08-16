@@ -1,6 +1,7 @@
 using Warehouse.Application.Common;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
+using Warehouse.Application.Mapping;
 using Warehouse.Domain;
 
 namespace Warehouse.Application.Services;
@@ -8,16 +9,21 @@ namespace Warehouse.Application.Services;
 public class PutawayService : IPutawayService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IRouteOptimizerService _routeOptimizer;
 
-    public PutawayService(IUnitOfWork unitOfWork)
+    public PutawayService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer)
     {
         _unitOfWork = unitOfWork;
+        _routeOptimizer = routeOptimizer;
     }
 
     public async Task<Result<PutawayTaskResponseDto>> CreatePutawayTaskAsync(CreatePutawayTaskDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.ContainerBarcode))
             return Result<PutawayTaskResponseDto>.Failure("A container barcode is required.");
+
+        if (string.IsNullOrWhiteSpace(dto.Sector))
+            return Result<PutawayTaskResponseDto>.Failure("A sector is required.");
 
         if (dto.Items == null || dto.Items.Count == 0)
             return Result<PutawayTaskResponseDto>.Failure("At least one expected item is required.");
@@ -44,59 +50,47 @@ public class PutawayService : IPutawayService
         }
 
         var skus = dto.Items.Select(l => l.ProductSku).Distinct().ToList();
-        var locationBarcodes = dto.Items.Select(l => l.DestinationLocationBarcode).Distinct().ToList();
-
         var productsBySku = await _unitOfWork.Products.GetBySkusAsync(skus);
-        var locationsByBarcode = await _unitOfWork.Locations.GetByBarcodesAsync(locationBarcodes);
 
-        var plannedItems = new List<(Product Product, Location Destination, int Quantity)>();
+        var plannedItems = new List<(Product Product, int Quantity)>();
 
         foreach (var line in dto.Items)
         {
             if (!productsBySku.TryGetValue(line.ProductSku, out var product))
                 return Result<PutawayTaskResponseDto>.Failure($"Product with SKU '{line.ProductSku}' was not found.", ResultErrorType.NotFound);
 
-            if (!locationsByBarcode.TryGetValue(line.DestinationLocationBarcode, out var destination))
-                return Result<PutawayTaskResponseDto>.Failure($"Destination location '{line.DestinationLocationBarcode}' was not found.", ResultErrorType.NotFound);
-
-            plannedItems.Add((product, destination, line.ExpectedQuantity));
+            plannedItems.Add((product, line.ExpectedQuantity));
         }
 
-        // One PutawayTask per destination zone — mirrors how OrderAllocationService
-        // splits a multi-zone order into one PickTask per zone.
-        Guid? firstTaskId = null;
-
-        foreach (var zoneGroup in plannedItems.GroupBy(p => p.Destination.ZoneCode))
+        // Destinations are chosen by the worker during execution now (see
+        // ConfirmItemAsync), so there's no per-item zone to split by anymore —
+        // everything lands in one task, routed to the requested sector.
+        var task = new PutawayTask
         {
-            var task = new PutawayTask
+            ContainerId = container.Id,
+            Sector = dto.Sector,
+            Status = PutawayTaskStatus.New,
+            Items = plannedItems.Select(p => new PutawayTaskItem
             {
-                ContainerId = container.Id,
-                Sector = zoneGroup.Key,
-                Status = PutawayTaskStatus.New,
-                Items = zoneGroup.Select(p => new PutawayTaskItem
-                {
-                    ProductId = p.Product.Id,
-                    DestinationLocationId = p.Destination.Id,
-                    ExpectedQuantity = p.Quantity
-                }).ToList()
-            };
+                ProductId = p.Product.Id,
+                ExpectedQuantity = p.Quantity
+            }).ToList()
+        };
 
-            _unitOfWork.PutawayTasks.Add(task);
-            firstTaskId ??= task.Id;
-        }
+        _unitOfWork.PutawayTasks.Add(task);
 
         await _unitOfWork.SaveChangesAsync();
 
-        var created = await _unitOfWork.PutawayTasks.GetByIdWithDetailsAsync(firstTaskId!.Value);
+        var created = await _unitOfWork.PutawayTasks.GetByIdWithDetailsAsync(task.Id);
 
-        return Result<PutawayTaskResponseDto>.Success(MapToDto(created!));
+        return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(created!));
     }
 
     public async Task<PutawayTaskResponseDto?> GetActivePutawayTaskForUserAsync(string workerId)
     {
         var task = await _unitOfWork.PutawayTasks.GetActiveForUserAsync(workerId);
 
-        return task == null ? null : MapToDto(task);
+        return task == null ? null : await MapToDtoWithSuggestionsAsync(task);
     }
 
     public async Task<Result<ContainerValidationDto>> ValidateContainerAsync(string containerBarcode, string sector)
@@ -159,7 +153,7 @@ public class PutawayService : IPutawayService
             await _unitOfWork.SaveChangesAsync();
         }
 
-        return Result<PutawayTaskResponseDto>.Success(MapToDto(task));
+        return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }
 
     public async Task<Result<PutawayTaskResponseDto>> ConfirmItemAsync(Guid taskId, ConfirmPutawayItemDto dto, string workerId)
@@ -178,30 +172,36 @@ public class PutawayService : IPutawayService
         if (task.AssignedWorkerId != workerId)
             return Result<PutawayTaskResponseDto>.Failure("Access error! The task is being performed by another worker.");
 
-        var item = task.Items.FirstOrDefault(i =>
-            i.DestinationLocation!.AddressBarcode == dto.LocationBarcode &&
-            i.Product!.Sku == dto.ProductSku);
+        var item = task.Items.FirstOrDefault(i => i.Product!.Sku == dto.ProductSku);
 
         if (item == null)
-            return Result<PutawayTaskResponseDto>.Failure("Scan error! Wrong location or wrong item for this container.");
+            return Result<PutawayTaskResponseDto>.Failure("Scan error! Wrong item for this container.");
 
         var remaining = item.ExpectedQuantity - item.PutAwayQuantity - item.MissingQuantity;
         if (dto.Quantity > remaining)
             return Result<PutawayTaskResponseDto>.Failure($"Over-scan! Only {remaining} more unit(s) are expected here.");
 
-        await _unitOfWork.BeginTransactionAsync();
-        try
+        // The destination is whatever location the worker actually scanned — chosen
+        // dynamically during execution, not fixed when the task was created.
+        var location = await _unitOfWork.Locations.GetByBarcodeAsync(dto.LocationBarcode);
+        if (location == null)
+            return Result<PutawayTaskResponseDto>.Failure($"Location '{dto.LocationBarcode}' was not found.", ResultErrorType.NotFound);
+
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             item.PutAwayQuantity += dto.Quantity;
 
-            var stock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(item.ProductId, item.DestinationLocationId);
+            // Find-or-create respects the unique (ProductId, LocationId) index on Stock —
+            // this may be a brand-new pairing if the worker picked a location the
+            // product wasn't suggested for.
+            var stock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(item.ProductId, location.Id);
 
             if (stock == null)
             {
                 stock = new Stock
                 {
                     ProductId = item.ProductId,
-                    LocationId = item.DestinationLocationId,
+                    LocationId = location.Id,
                     PhysicalQuantity = 0,
                     ReservedQuantity = 0
                 };
@@ -213,7 +213,7 @@ public class PutawayService : IPutawayService
             _unitOfWork.StockTransactions.Add(new StockTransaction
             {
                 ProductId = item.ProductId,
-                LocationId = item.DestinationLocationId,
+                LocationId = location.Id,
                 QuantityChange = dto.Quantity,
                 TransactionType = StockTransactionType.Putaway,
                 UserId = workerId
@@ -226,15 +226,9 @@ public class PutawayService : IPutawayService
             }
 
             await _unitOfWork.SaveChangesAsync();
-            await _unitOfWork.CommitTransactionAsync();
+        });
 
-            return Result<PutawayTaskResponseDto>.Success(MapToDto(task));
-        }
-        catch
-        {
-            await _unitOfWork.RollbackTransactionAsync();
-            throw;
-        }
+        return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }
 
     public async Task<Result<PutawayTaskResponseDto>> ReportMissingAsync(Guid taskId, ReportPutawayMissingDto dto, string workerId)
@@ -254,12 +248,10 @@ public class PutawayService : IPutawayService
         // Brigadier/Admin role, and the caller is expected to be a supervisor
         // confirming the shortage, not the worker the task is assigned to.
 
-        var item = task.Items.FirstOrDefault(i =>
-            i.DestinationLocation!.AddressBarcode == dto.LocationBarcode &&
-            i.Product!.Sku == dto.ProductSku);
+        var item = task.Items.FirstOrDefault(i => i.Product!.Sku == dto.ProductSku);
 
         if (item == null)
-            return Result<PutawayTaskResponseDto>.Failure("Item not found in this container: wrong location or SKU.");
+            return Result<PutawayTaskResponseDto>.Failure("Item not found in this container: wrong SKU.");
 
         var remaining = item.ExpectedQuantity - item.PutAwayQuantity - item.MissingQuantity;
 
@@ -282,7 +274,7 @@ public class PutawayService : IPutawayService
 
         await _unitOfWork.SaveChangesAsync();
 
-        return Result<PutawayTaskResponseDto>.Success(MapToDto(task));
+        return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }
 
     // A container can hold multiple PutawayTasks (one per destination zone). Only once
@@ -302,24 +294,15 @@ public class PutawayService : IPutawayService
         }
     }
 
-    private static PutawayTaskResponseDto MapToDto(PutawayTask task)
+    private async Task<PutawayTaskResponseDto> MapToDtoWithSuggestionsAsync(PutawayTask task)
     {
-        return new PutawayTaskResponseDto
-        {
-            Id = task.Id,
-            ContainerBarcode = task.Container?.Barcode ?? string.Empty,
-            Sector = task.Sector,
-            Status = task.Status.ToString(),
-            Items = task.Items.Select(i => new PutawayTaskItemResponseDto
-            {
-                Id = i.Id,
-                LocationBarcode = i.DestinationLocation!.AddressBarcode,
-                ProductName = i.Product!.Name,
-                ProductSku = i.Product.Sku,
-                ExpectedQuantity = i.ExpectedQuantity,
-                PutAwayQuantity = i.PutAwayQuantity,
-                MissingQuantity = i.MissingQuantity
-            }).ToList()
-        };
+        var productIds = task.Items.Select(i => i.ProductId).Distinct().ToList();
+        var suggestionsByProduct = await _unitOfWork.Stocks.GetLocationBarcodesByProductAsync(productIds);
+
+        var dto = task.ToDto(suggestionsByProduct);
+        // Serpentine route over each item's first suggested location: minimizes
+        // the worker's walking distance across aisles.
+        dto.Items = _routeOptimizer.OptimizeRoute(dto.Items, i => i.SuggestedLocationBarcodes.FirstOrDefault());
+        return dto;
     }
 }

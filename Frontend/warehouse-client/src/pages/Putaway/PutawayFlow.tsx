@@ -1,5 +1,14 @@
-import { useState, useEffect } from 'react';
-import axiosClient, { SECTOR_STORAGE_KEY } from '../../api/axiosClient';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { SECTOR_STORAGE_KEY, alertIfSupervisorAuthError, extractErrorMessage } from '../../api/axiosClient';
+import { queryKeys } from '../../api/queryKeys';
+import {
+    fetchActivePutawayTask,
+    validateContainer,
+    startPutaway,
+    confirmPutawayItem,
+    reportPutawayMissing,
+} from '../../api/putawayApi';
 import type { PutawayTask } from '../../types/putaway';
 import ContainerScanScreen from './ContainerScanScreen';
 import ActivePutawayScreen from './ActivePutawayScreen';
@@ -13,118 +22,115 @@ interface Props {
 }
 
 export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Props) {
+    const queryClient = useQueryClient();
+
     const [phase, setPhase] = useState<Phase>('LOADING');
     const [task, setTask] = useState<PutawayTask | null>(null);
-    const [scanning, setScanning] = useState<boolean>(false);
     const [finishedContainerBarcode, setFinishedContainerBarcode] = useState<string>('');
-
-    useEffect(() => {
-        void checkActiveOnMount();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     // Resume-on-load, same reasoning as the picking flow: a worker who gets
     // logged out (or hits Escape and comes back) mid-putaway must be able to
-    // resume without rescanning the container.
-    const checkActiveOnMount = async () => {
-        setPhase('LOADING');
-        try {
-            const response = await axiosClient.get(`/PutawayTask/active?t=${new Date().getTime()}`);
-            if (response.data) {
-                setTask(response.data);
-                setPhase('LOOP');
-                return;
-            }
-        } catch (error) {
-            console.error('Error checking for an active putaway task:', error);
-        }
-        setPhase('SCAN');
-    };
+    // resume without rescanning the container. This is a one-shot check — once
+    // resolved, the mutations below own every further state transition, so the
+    // query is disabled again immediately (staleTime: Infinity, enabled while
+    // still LOADING only) rather than kept live in the background.
+    const { data: resumedTask, isFetched } = useQuery({
+        queryKey: queryKeys.putawayTask.active,
+        queryFn: fetchActivePutawayTask,
+        enabled: phase === 'LOADING',
+        staleTime: Infinity,
+    });
 
-    const claimAndEnterLoop = async (containerBarcode: string, targetSector: string) => {
-        try {
-            const startResponse = await axiosClient.post('/PutawayTask/start', {
-                containerBarcode,
-                sector: targetSector
-            });
-            setTask(startResponse.data);
+    useEffect(() => {
+        if (phase !== 'LOADING' || !isFetched) return;
+
+        if (resumedTask) {
+            setTask(resumedTask);
             setPhase('LOOP');
-        } catch (error: any) {
-            console.error('Error starting putaway:', error);
-            alert(error.response?.data || 'Failed to start putaway for this container.');
+        } else {
+            setPhase('SCAN');
         }
-    };
+    }, [phase, isFetched, resumedTask]);
 
-    const handleScanContainer = async (containerBarcode: string) => {
-        setScanning(true);
-        try {
-            const validateResponse = await axiosClient.post('/PutawayTask/validate-container', {
-                containerBarcode,
-                sector
-            });
-            const validation = validateResponse.data;
+    const scanContainerMutation = useMutation({
+        mutationFn: async (scannedBarcode: string) => {
+            const validation = await validateContainer(scannedBarcode, sector);
 
             if (validation.isValid) {
-                await claimAndEnterLoop(containerBarcode, sector);
-                return;
+                const startedTask = await startPutaway(scannedBarcode, sector);
+                return { task: startedTask, switchedSector: null as string | null };
             }
 
             // Sector mismatch is a normal 200 OK outcome, not an error — walk
             // through the exact alert -> confirm sequence this flow requires.
             alert(`This container is from sector ${validation.containerSector}.`);
             const wantsSwitch = window.confirm(`Do you want to change your current sector to ${validation.containerSector}? (Yes/No)`);
-            if (wantsSwitch) {
-                localStorage.setItem(SECTOR_STORAGE_KEY, validation.containerSector);
-                onSectorChange(validation.containerSector);
-                await claimAndEnterLoop(containerBarcode, validation.containerSector);
+            if (!wantsSwitch) {
+                return null;
             }
-        } catch (error: any) {
-            console.error('Error validating container:', error);
-            alert(error.response?.data || 'Failed to validate container.');
-        } finally {
-            setScanning(false);
-        }
-    };
 
-    const handleConfirmItem = async (locationBarcode: string, productSku: string, quantity: number) => {
-        if (!task) return;
-        try {
-            const response = await axiosClient.post(`/PutawayTask/${task.id}/confirm-item`, {
-                locationBarcode,
-                productSku,
-                quantity
-            });
-            applyTaskUpdate(response.data);
-        } catch (error: any) {
-            console.error('Error confirming item:', error);
-            alert(error.response?.data || 'Failed to confirm this item.');
-        }
-    };
+            localStorage.setItem(SECTOR_STORAGE_KEY, validation.containerSector);
+            const startedTask = await startPutaway(scannedBarcode, validation.containerSector);
+            return { task: startedTask, switchedSector: validation.containerSector };
+        },
+        onSuccess: (result) => {
+            if (!result) return; // user declined the sector switch — stay on SCAN
 
-    const handleReportMissing = async (locationBarcode: string, productSku: string, missingQuantity: number) => {
-        if (!task) return;
-        try {
-            const response = await axiosClient.post(`/PutawayTask/${task.id}/report-missing`, {
-                locationBarcode,
-                productSku,
-                missingQuantity
-            });
-            applyTaskUpdate(response.data);
-        } catch (error: any) {
-            console.error('Error reporting missing item:', error);
-            alert(error.response?.data || 'Failed to report the missing item.');
-        }
-    };
+            if (result.switchedSector) {
+                onSectorChange(result.switchedSector);
+            }
 
+            setTask(result.task);
+            setPhase('LOOP');
+            queryClient.setQueryData(queryKeys.putawayTask.active, result.task);
+            void queryClient.invalidateQueries({ queryKey: queryKeys.putawayTask.active });
+        },
+        onError: (error: unknown) => {
+            console.error('Error validating/starting putaway:', error);
+            alert(extractErrorMessage(error, 'Failed to validate or start putaway for this container.'));
+        },
+    });
+
+    // Shared by confirm-item and report-missing: both endpoints return the fresh
+    // PutawayTask directly, so the response IS the new truth — no extra round trip
+    // needed, just keep the query cache in sync with it.
     const applyTaskUpdate = (updatedTask: PutawayTask) => {
         if (updatedTask.status === 'Completed') {
             setFinishedContainerBarcode(updatedTask.containerBarcode);
             setTask(null);
             setPhase('DONE');
+            queryClient.setQueryData(queryKeys.putawayTask.active, null);
         } else {
             setTask(updatedTask);
+            queryClient.setQueryData(queryKeys.putawayTask.active, updatedTask);
         }
+        void queryClient.invalidateQueries({ queryKey: queryKeys.putawayTask.active });
     };
+
+    const confirmItemMutation = useMutation({
+        mutationFn: ({ locationBarcode, productSku, quantity }: { locationBarcode: string; productSku: string; quantity: number }) => {
+            if (!task) throw new Error('No active putaway task.');
+            return confirmPutawayItem(task.id, locationBarcode, productSku, quantity);
+        },
+        onSuccess: applyTaskUpdate,
+        onError: (error: unknown) => {
+            console.error('Error confirming item:', error);
+            alert(extractErrorMessage(error, 'Failed to confirm this item.'));
+        },
+    });
+
+    const reportMissingMutation = useMutation({
+        mutationFn: ({ productSku, missingQuantity, supervisorBadge }: { productSku: string; missingQuantity: number; supervisorBadge: string }) => {
+            if (!task) throw new Error('No active putaway task.');
+            return reportPutawayMissing(task.id, productSku, missingQuantity, supervisorBadge);
+        },
+        onSuccess: applyTaskUpdate,
+        onError: (error: unknown) => {
+            if (alertIfSupervisorAuthError(error)) return;
+            console.error('Error reporting missing item:', error);
+            alert(extractErrorMessage(error, 'Failed to report the missing item.'));
+        },
+    });
 
     if (phase === 'LOADING') {
         return <p>Loading...</p>;
@@ -134,9 +140,9 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
         return (
             <ContainerScanScreen
                 sector={sector}
-                onScan={handleScanContainer}
+                onScan={(containerBarcode) => scanContainerMutation.mutate(containerBarcode)}
                 onExitToMenu={onExitToMenu}
-                scanning={scanning}
+                scanning={scanContainerMutation.isPending}
             />
         );
     }
@@ -145,8 +151,14 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
         return (
             <ActivePutawayScreen
                 task={task}
-                onConfirmItem={handleConfirmItem}
-                onReportMissing={handleReportMissing}
+                onConfirmItem={async (locationBarcode, productSku, quantity) => {
+                    await confirmItemMutation.mutateAsync({ locationBarcode, productSku, quantity }).catch(() => {});
+                }}
+                onReportMissing={async (missingQuantity, supervisorBadge) => {
+                    const currentItem = task.items.find(i => i.putAwayQuantity + i.missingQuantity < i.expectedQuantity);
+                    if (!currentItem) return;
+                    await reportMissingMutation.mutateAsync({ productSku: currentItem.productSku, missingQuantity, supervisorBadge }).catch(() => {});
+                }}
             />
         );
     }

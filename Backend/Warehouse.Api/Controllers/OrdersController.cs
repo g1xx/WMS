@@ -43,6 +43,11 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder(OrderCreateDto dto)
     {
+        if (dto.Items.Any(i => i.RequiredQuantity <= 0))
+        {
+            return BadRequest("Required quantity must be greater than zero for every item.");
+        }
+
         var newOrder = new Order
         {
             OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}",
@@ -111,21 +116,11 @@ public class OrdersController : ControllerBase
         var failingTask = pickTasks.FirstOrDefault(pt =>
             pt.Container == null ||
             pt.Container.Location == null ||
-            (int)pt.Container.Location.Type != 2);
+            pt.Container.Location.Type != LocationType.DockDoor);
 
         if (failingTask != null)
         {
-            string debugMsg = $"ERROR DEBUG for task {failingTask.Id}:\n";
-            debugMsg += $"- Container linked to task (Include worked)? {(failingTask.Container != null ? "Yes" : "NO (null)")}\n";
-            debugMsg += $"- Container location found (ThenInclude worked)? {(failingTask.Container?.Location != null ? "Yes" : "NO (null)")}\n";
-
-            if (failingTask.Container?.Location != null)
-            {
-                debugMsg += $"- Location barcode: {failingTask.Container.Location.AddressBarcode}\n";
-                debugMsg += $"- Location type (integer): {(int)failingTask.Container.Location.Type}\n";
-            }
-
-            return BadRequest(debugMsg);
+            return BadRequest($"Cannot pack order: task {failingTask.Id}'s container is not staged at a dock door.");
         }
 
         order.Status = OrderStatus.Packed;

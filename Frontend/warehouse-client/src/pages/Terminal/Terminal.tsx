@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axiosClient, { SECTOR_STORAGE_KEY } from '../../api/axiosClient';
+import type { PickTask } from '../../types/task';
+import type { PutawayTask } from '../../types/putaway';
 import MainMenu from './MainMenu';
 import SectorSelect from './SectorSelect';
 import PickTasks from '../PickTasks/PickTasks';
@@ -26,7 +28,7 @@ export default function Terminal() {
         setScreen('LOADING');
 
         try {
-            const pickResponse = await axiosClient.get(`/PickTask/active?t=${new Date().getTime()}`);
+            const pickResponse = await axiosClient.get<PickTask | null>(`/PickTask/active?t=${new Date().getTime()}`);
             if (pickResponse.data) {
                 setSector(pickResponse.data.sector);
                 setScreen('PICKING');
@@ -37,7 +39,7 @@ export default function Terminal() {
         }
 
         try {
-            const putawayResponse = await axiosClient.get(`/PutawayTask/active?t=${new Date().getTime()}`);
+            const putawayResponse = await axiosClient.get<PutawayTask | null>(`/PutawayTask/active?t=${new Date().getTime()}`);
             if (putawayResponse.data) {
                 setSector(putawayResponse.data.sector);
                 setScreen('PUTAWAY');
