@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 
 // Shared by every supervisor-gated submenu (picking's missing-item and defect
-// write-offs, putaway's missing-item write-off): badge input, in-flight state,
-// and the "empty badge" client-side validation were previously three
-// independently drifting copies of the same logic — this is the one implementation.
+// write-offs, putaway's missing-item write-off): the one implementation of badge
+// input, in-flight state, and "empty badge" client-side validation. Duplicating
+// this per-submenu instead of sharing it is how these copies drift apart.
 //
 // open/close/submit are wrapped in useCallback so consumers (e.g. a useEffect that
 // only needs `close`) get a stable function reference across renders instead of a

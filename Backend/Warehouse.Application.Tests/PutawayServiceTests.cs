@@ -38,9 +38,9 @@ public class PutawayServiceTests
         _stockRepositoryMock.Setup(r => r.GetLocationBarcodesByProductAsync(It.IsAny<List<Guid>>()))
             .ReturnsAsync(new Dictionary<Guid, List<string>>());
 
-        // ConfirmItemAsync now delegates transaction handling to this instead of hand-rolling
-        // Begin/Commit/Rollback — default to transparently running the action, same as the
-        // real UnitOfWork does on success, so existing tests don't all need to set this up.
+        // ConfirmItemAsync runs its work inside a transaction; default to transparently
+        // running the action, same as the real UnitOfWork does on success, so most tests
+        // don't need to set this up individually.
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
             .Returns<Func<Task>>(action => action());
@@ -52,8 +52,8 @@ public class PutawayServiceTests
 
     // Single-item InProgress task: expected 10, put away 0, missing 0, SKU matching
     // the dtos used below. Container is attached so ReleaseContainerIfFullyProcessedAsync
-    // can resolve it via task.Container without an extra repository round-trip. The
-    // item itself no longer carries a location — the worker supplies one per scan.
+    // can resolve it via task.Container without an extra repository round-trip. The item
+    // does not carry its own location — the worker supplies one at scan time.
     private static PutawayTask BuildTaskWithOneItem(
         string assignedWorkerId = "worker-1",
         int expectedQuantity = 10,
@@ -176,11 +176,9 @@ public class PutawayServiceTests
     [Fact]
     public async Task ConfirmItemAsync_TransactionThrows_PropagatesExceptionInsteadOfSwallowingIt()
     {
-        // Arrange: ConfirmItemAsync no longer has its own try/catch — it trusts
-        // ExecuteInTransactionAsync's own rollback-and-rethrow. Simulating a failure
-        // there (e.g. a concurrency conflict) must still surface to the caller; the
-        // global exception handler is now the only thing responsible for turning it
-        // into a response.
+        // Arrange: a transaction failure (e.g. a concurrency conflict) must propagate
+        // to the caller rather than being swallowed — the global exception handler is
+        // the only thing responsible for turning it into a response.
         var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 6);
         var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1" };
 

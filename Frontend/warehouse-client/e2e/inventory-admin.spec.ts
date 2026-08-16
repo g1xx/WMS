@@ -1,12 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { API_BASE, fulfillJson, primeAuthToken } from './fixtures/mockApi';
 
-// Regression coverage for the AdjustPhysicalStockAsync fix: a manual stock correction
-// that would eat into stock already reserved for an allocated order used to either
-// crash (raw DB check-constraint violation) or silently erase the reservation. It now
-// comes back as a clean 409 asking for confirmation — this proves the admin screen
-// surfaces that conflict and can actually get the correction submitted, instead of the
-// form becoming permanently stuck on first attempt.
+// A manual stock correction that would eat into stock already reserved for an
+// allocated order must come back as a clean 409 asking for confirmation, never a
+// raw crash or a silent reservation loss. This proves the admin screen surfaces
+// that conflict and can actually get the correction submitted on the retry.
 test.describe('Inventory admin: adjust stock', () => {
     const product = {
         id: 'product-1',
