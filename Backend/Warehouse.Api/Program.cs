@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using Warehouse.Api.Middleware;
+using Warehouse.Api.Seeding;
 using Warehouse.Application.Services;
 using Warehouse.Infrastructure;
 
@@ -33,6 +34,8 @@ builder.Services.AddSingleton<IRouteOptimizerService, RouteOptimizerService>();
 builder.Services.AddSingleton<IDefectReplacementPlanner, DefectReplacementPlanner>();
 // Scoped, not Singleton: it depends on IUnitOfWork (tied to the per-request DbContext).
 builder.Services.AddScoped<IUnfulfillableUnitHandler, UnfulfillableUnitHandler>();
+// Only ever resolved by the --seed-demo-data path below, never during normal requests.
+builder.Services.AddScoped<DemoDataSeeder>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -124,6 +127,19 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.Migrate();
+}
+
+// Opt-in only — never runs on a normal startup. Trigger with:
+//   docker compose exec backend dotnet Warehouse.Api.dll --seed-demo-data
+// Exits immediately after, before Kestrel ever binds a port (that happens inside
+// app.Run() below), so it can't collide with the already-running container. See
+// Warehouse.Api/Seeding/DemoDataSeeder.cs for what it creates.
+if (args.Contains("--seed-demo-data"))
+{
+    using var seedScope = app.Services.CreateScope();
+    var seeder = seedScope.ServiceProvider.GetRequiredService<DemoDataSeeder>();
+    await seeder.SeedAsync();
+    return;
 }
 
 if (app.Environment.IsDevelopment())

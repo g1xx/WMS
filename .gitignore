@@ -34,6 +34,13 @@ pnpm-debug.log*
 /playwright/.cache/
 
 # =========================================================================
+# Docker — local-only overrides (e.g. remapping a port that conflicts with
+# something already running on a dev machine). Never meant to reach a commit;
+# `docker compose` picks this up automatically, no -f flag needed.
+# =========================================================================
+docker-compose.override.yml
+
+# =========================================================================
 # Environment / secrets
 # =========================================================================
 .env
