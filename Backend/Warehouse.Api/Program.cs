@@ -90,13 +90,22 @@ builder.Services.AddAuthentication(options =>
 // http://localhost:5173 / :5175 are the Vite dev servers (warehouse-client,
 // TestOrderGenerator); :80 / :3000 are the nginx-served Docker frontend (see
 // Frontend/warehouse-client/Dockerfile — port depends on the compose port mapping).
+//
+// The deployed frontend itself doesn't actually need an entry here: nginx proxies
+// /api same-origin (see nginx.conf), so the browser never makes a cross-origin
+// call to reach it. These origins stay for anything that DOES call the API
+// directly (TestOrderGenerator, Swagger "Try it out" from a different origin,
+// manual testing). https:// is listed now, ahead of actually enabling it, so this
+// file doesn't need touching again once a TLS-terminating layer is added in front.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
         policy.WithOrigins(
                   "http://localhost:5173", "http://localhost:5175",
-                  "http://localhost", "http://localhost:80", "http://localhost:3000")
+                  "http://localhost", "http://localhost:80", "http://localhost:3000",
+                  "http://wms.polandcentral.cloudapp.azure.com",
+                  "https://wms.polandcentral.cloudapp.azure.com")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

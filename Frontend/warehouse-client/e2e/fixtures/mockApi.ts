@@ -1,8 +1,10 @@
 import type { Page, Route } from '@playwright/test';
 
-// Hardcoded in src/api/axiosClient.ts — not env-configurable, so tests intercept
-// this exact origin regardless of what the frontend itself is served from.
-export const API_BASE = 'http://localhost:5124/api';
+// axiosClient.ts's baseURL is the relative path "/api", which the browser resolves
+// against whatever origin the page itself loaded from — during these tests, that's
+// always playwright.config.ts's baseURL (localhost:5173, the Vite dev server), not
+// wherever the real backend happens to be running.
+export const API_BASE = 'http://localhost:5173/api';
 
 // Seeds localStorage with a session token before the app's first script runs,
 // so ProtectedRoute treats the worker as already logged in without needing to

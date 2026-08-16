@@ -1,9 +1,15 @@
 # Local & production-shaped deployment for the WMS.
 #
 # Quick start: `docker compose up --build`
-#   - frontend: http://localhost   (nginx, serving the Vite build)
-#   - backend:  http://localhost:5124/api  (matches axiosClient.ts's baseURL exactly)
+#   - frontend: http://localhost   (nginx, serving the Vite build; also proxies /api
+#     to `backend` internally — see Frontend/warehouse-client/nginx.conf)
+#   - backend:  http://localhost:5124/api — only needed for local debugging
+#     (Swagger, curl); the browser never calls this directly, see nginx.conf
 #   - db:       localhost:5432 (exposed for local debugging — see note below)
+#
+# Only port 80 (frontend) needs to be reachable from outside the host — 5124 and
+# 5432 exist purely for local debugging convenience and can be firewalled off (or
+# their `ports:` mappings removed entirely) without the app losing any function.
 #
 # All secrets below have safe local-dev defaults via `${VAR:-default}` so this runs
 # out of the box with no setup. For a real deployment, copy .env.example to .env and
@@ -53,11 +59,9 @@ services:
       JwtSettings__Issuer: ${JWT_ISSUER:-WarehouseApi}
       JwtSettings__Audience: ${JWT_AUDIENCE:-WarehouseClient}
     ports:
-      # Host-side 5124 is load-bearing: Frontend/warehouse-client/src/api/axiosClient.ts
-      # has baseURL hardcoded to http://localhost:5124/api (a browser-side constant,
-      # not a build arg), so the browser calls this port directly regardless of which
-      # host port `frontend` itself ends up on. Changing this requires updating that
-      # file too, not just this compose file.
+      # Not required for the app itself — the browser reaches the backend through
+      # nginx's /api proxy (same origin as the frontend), never this port directly.
+      # Published purely for local debugging (Swagger UI, curl, a REST client).
       - "5124:8080"
 
   frontend:

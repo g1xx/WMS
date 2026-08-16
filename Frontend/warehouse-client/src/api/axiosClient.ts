@@ -11,8 +11,14 @@ declare module 'axios' {
     }
 }
 
+// Relative, not an absolute host:port — the browser always calls the API on the
+// same origin it loaded the page from. In Docker, nginx proxies /api to the
+// backend container (see nginx.conf); in local dev, Vite's dev server does the
+// same (see vite.config.ts's server.proxy). This is what makes the app work from
+// a remote host at all — a hardcoded "localhost:5124" would only ever resolve to
+// whatever machine the browser itself is running on, never the actual server.
 const axiosClient = axios.create({
-    baseURL: 'http://localhost:5124/api',
+    baseURL: '/api',
 });
 
 // The only place session state gets torn down — explicit user logout and a
