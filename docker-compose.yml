@@ -1,9 +1,17 @@
 # Local & production-shaped deployment for the WMS.
 #
 # Quick start: `docker compose up --build`
-#   - frontend: http://localhost   (nginx, serving the Vite build)
-#   - backend:  http://localhost:5124/api  (matches axiosClient.ts's baseURL exactly)
-#   - db:       localhost:5432 (exposed for local debugging — see note below)
+#   - frontend: http://localhost   (nginx, serving the Vite build; also proxies /api
+#     to `backend` internally — see Frontend/warehouse-client/nginx.conf)
+#   - backend:  http://127.0.0.1:5124/api — loopback-only, for local debugging
+#     (Swagger, curl) from on the host itself, or via an SSH tunnel on a remote
+#     box; the browser never calls this directly, see nginx.conf
+#   - db:       127.0.0.1:5432 — loopback-only, same reasoning as backend
+#
+# frontend is the only service meant to be reachable from outside the host. db and
+# backend are bound to 127.0.0.1 specifically (not just "published, but firewalled
+# elsewhere") so they're never internet-reachable even if the host firewall/NSG is
+# ever misconfigured — belt and suspenders, not a substitute for the firewall.
 #
 # All secrets below have safe local-dev defaults via `${VAR:-default}` so this runs
 # out of the box with no setup. For a real deployment, copy .env.example to .env and
@@ -21,10 +29,11 @@ services:
     volumes:
       - wms_db_data:/var/lib/postgresql/data
     ports:
-      # Exposed for local debugging (psql, a GUI client, etc.) — safe to remove
-      # this mapping entirely for a stricter production posture, since `backend`
-      # reaches `db` over the internal compose network regardless.
-      - "5432:5432"
+      # Loopback-only (127.0.0.1, not 0.0.0.0) — reachable from `psql`/a GUI client
+      # on the host itself, never from outside it. `backend` reaches `db` over the
+      # internal compose network regardless, so this mapping is purely for humans;
+      # safe to remove it entirely for a stricter posture.
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-warehouse_db}"]
       interval: 5s
@@ -53,12 +62,11 @@ services:
       JwtSettings__Issuer: ${JWT_ISSUER:-WarehouseApi}
       JwtSettings__Audience: ${JWT_AUDIENCE:-WarehouseClient}
     ports:
-      # Host-side 5124 is load-bearing: Frontend/warehouse-client/src/api/axiosClient.ts
-      # has baseURL hardcoded to http://localhost:5124/api (a browser-side constant,
-      # not a build arg), so the browser calls this port directly regardless of which
-      # host port `frontend` itself ends up on. Changing this requires updating that
-      # file too, not just this compose file.
-      - "5124:8080"
+      # Loopback-only (127.0.0.1, not 0.0.0.0) — not required for the app itself,
+      # since the browser reaches the backend through nginx's /api proxy (same
+      # origin as the frontend), never this port directly. Kept for local
+      # debugging (Swagger UI, curl, a REST client) from on the host itself.
+      - "127.0.0.1:5124:8080"
 
   frontend:
     build:
@@ -69,6 +77,8 @@ services:
     depends_on:
       - backend
     ports:
+      # Deliberately bound to all interfaces (0.0.0.0), not just loopback — this
+      # is the one service actually meant to be reachable from outside the host.
       # 80 by default; swap the host side for "3000:80" if 80 is already taken
       # locally. CORS on the backend already allows both (see Program.cs).
       - "80:80"

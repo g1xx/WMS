@@ -21,7 +21,7 @@ public class UnfulfillableUnitResult
 // stock/StockTransaction adjustment is done: find a replacement pick somewhere
 // reachable, or write the shortfall off against the order. Callers own the
 // reason-specific inventory side effects; this owns the replacement search and the
-// order-level consequence, so the two report paths cannot drift apart on it again.
+// order-level consequence, so the two report paths cannot drift apart on it.
 public interface IUnfulfillableUnitHandler
 {
     Task<UnfulfillableUnitResult> HandleAsync(PickTask task, Guid productId, Guid excludeLocationId, int quantityNeeded);

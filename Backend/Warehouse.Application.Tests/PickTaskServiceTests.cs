@@ -36,23 +36,21 @@ public class PickTaskServiceTests
         _unitOfWorkMock.Setup(u => u.Locations).Returns(_locationRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.StockTransactions).Returns(_stockTransactionRepositoryMock.Object);
 
-        // DispatchContainerAsync/ReportDefectAsync now delegate transaction handling to
-        // this instead of hand-rolling Begin/Commit/Rollback — default to transparently
-        // running the action, same as the real UnitOfWork does on success, so existing
-        // tests don't all need to set this up themselves.
+        // DispatchContainerAsync/ReportDefectAsync/ReportMissingItemAsync/PickItemAsync all
+        // run their work inside a transaction; default every overload to transparently
+        // running the action, same as the real UnitOfWork does on success, so most tests
+        // don't need to set this up individually.
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Guid?>>>()))
             .Returns<Func<Task<Guid?>>>(action => action());
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<ReportDefectResultDto>>>()))
             .Returns<Func<Task<ReportDefectResultDto>>>(action => action());
-        // ReportMissingItemAsync now also runs inside ExecuteInTransactionAsync, returning
-        // the built message string.
+        // ReportMissingItemAsync's transaction returns the built message string.
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<string>>>()))
             .Returns<Func<Task<string>>>(action => action());
-        // PickItemAsync now also runs inside ExecuteInTransactionAsync (no return value —
-        // the non-generic overload).
+        // PickItemAsync's transaction has no return value — the non-generic overload.
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
             .Returns<Func<Task>>(action => action());
@@ -418,11 +416,10 @@ public class PickTaskServiceTests
 
     // ===================== PickItemAsync =====================
     //
-    // Regression coverage for the phantom-shelf-inventory fix: Stock used to stay
-    // untouched until DispatchContainerAsync, so a cycle count taken while a worker was
-    // still mid-route (tote half full, container nowhere near the conveyor yet) would
-    // see the picked units as if they were still sitting on the shelf. The decrement
-    // now happens the instant the item is scanned into the tote.
+    // Stock must be decremented the instant an item is scanned into the tote, not
+    // deferred to DispatchContainerAsync — otherwise a cycle count taken while a worker
+    // is still mid-route (tote half full, container nowhere near the conveyor) would
+    // see picked units as if they were still sitting on the shelf.
 
     [Fact]
     public async Task PickItemAsync_ValidScan_DecrementsShelfStockImmediately_BeforeAnyDispatch()
@@ -499,11 +496,9 @@ public class PickTaskServiceTests
     [Fact]
     public async Task DispatchContainerAsync_TransactionThrows_PropagatesExceptionInsteadOfSwallowingIt()
     {
-        // Arrange: DispatchContainerAsync no longer has its own try/catch — it trusts
-        // ExecuteInTransactionAsync's own rollback-and-rethrow. Simulating a failure
-        // there (e.g. a concurrency conflict) must still surface to the caller; the
-        // global exception handler is now the only thing responsible for turning it
-        // into a response.
+        // Arrange: a transaction failure (e.g. a concurrency conflict) must propagate
+        // to the caller rather than being swallowed — the global exception handler is
+        // the only thing responsible for turning it into a response.
         var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", pickedQuantity: 1);
         task.ContainerId = Guid.NewGuid();
         var container = new Container { Id = task.ContainerId.Value, Barcode = "CONT-1", Status = ContainerStatus.InProgress };
@@ -530,8 +525,8 @@ public class PickTaskServiceTests
     [Fact]
     public async Task ReportDefectAsync_TransactionThrows_PropagatesExceptionInsteadOfSwallowingIt()
     {
-        // Arrange: same regression guard as DispatchContainerAsync above, for the
-        // other method that used to hand-roll its own try/catch/rollback.
+        // Arrange: same guarantee as DispatchContainerAsync above — a transaction
+        // failure here must also propagate rather than being swallowed.
         var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1");
         var taskItem = task.Items.First();
         var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
@@ -622,11 +617,10 @@ public class PickTaskServiceTests
     [Fact]
     public async Task ReportDefectAsync_ReplacementOnlyInNonActiveZone_IsIgnoredAndFlagsReplenishment()
     {
-        // Arrange: before unification, ReportDefectAsync only excluded the bulk sector
-        // ("w") — any other zone was fair game. The shared handler is stricter: only
-        // the enumerated active picking zones count. "mp5" (a real warehouse/sector
-        // combination, just not one workers currently pick from) must now be rejected
-        // even though it isn't the bulk sector.
+        // Arrange: replacement stock must come from an enumerated active picking zone,
+        // not merely "any zone but bulk". "mp5" (a real warehouse/sector combination,
+        // just not one workers currently pick from) must be rejected even though it
+        // isn't the bulk sector.
         var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", requiredQuantity: 10, pickedQuantity: 0);
         var taskItem = task.Items.First();
         var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
@@ -758,15 +752,13 @@ public class PickTaskServiceTests
 
     // ===== Alternating picked/missing items -> full Pick+Dispatch flow =====
     //
-    // Regression coverage for the ReportMissingItemAsync/DispatchContainerAsync fix:
-    // a missing item used to (a) auto-complete the task before the container was ever
-    // physically dispatched, orphaning the container and skipping stock movement for
-    // whatever else had been picked on that same task, and (b) never wrote the
-    // shortfall off the order, so the order could never reach Packed. These tests
-    // drive the real worker sequence (scan present items via PickItemAsync, report
-    // absent ones via ReportMissingItemAsync, then physically dispatch the container)
-    // across several alternating present/missing patterns to confirm the order
-    // completes cleanly every time.
+    // A missing item must not auto-complete the task before the container is
+    // physically dispatched — the container has to actually reach the conveyor for
+    // stock to move and for the order's shortfall to be written off, or the order can
+    // never reach a terminal state. These tests drive the real worker sequence (scan
+    // present items via PickItemAsync, report absent ones via ReportMissingItemAsync,
+    // then physically dispatch the container) across several alternating
+    // present/missing patterns to confirm the order completes cleanly every time.
 
     private sealed record ScenarioLine(Product Product, Location Location, Stock Stock, bool IsPresent);
 
@@ -911,9 +903,8 @@ public class PickTaskServiceTests
     }
 
     // Runs the exact "item 1 in stock, item 2 missing, item 3 in stock" scenario several
-    // times over, per request, to be sure the outcome isn't order-of-operations-sensitive
-    // (e.g. the batched GetByProductAndLocationsAsync dictionary lookup added alongside
-    // this fix, or Moq call ordering) — each run builds entirely fresh entities/mocks.
+    // times over to confirm the outcome isn't order-of-operations- or Moq-call-ordering-
+    // sensitive — each run builds entirely fresh entities/mocks.
     [Theory]
     [InlineData(1)]
     [InlineData(2)]

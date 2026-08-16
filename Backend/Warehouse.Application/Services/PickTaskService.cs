@@ -451,8 +451,8 @@ namespace Warehouse.Application.Services
                 sourceStock.ReservedQuantity = Math.Max(0, sourceStock.ReservedQuantity - replacementNeeded);
 
                 // 2. Same "find a replacement in an active picking zone, else write off
-                //    against the order" logic ReportMissingItemAsync uses — the two paths
-                //    can no longer drift apart on what happens once a unit can't be sourced.
+                //    against the order" logic ReportMissingItemAsync uses, via the shared
+                //    handler — what happens once a unit can't be sourced lives in one place.
                 var handlerResult = replacementNeeded > 0
                     ? await _unfulfillableUnitHandler.HandleAsync(task, taskItem.ProductId, taskItem.LocationId, replacementNeeded)
                     : new UnfulfillableUnitResult();
