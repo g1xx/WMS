@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosClient from '../../api/axiosClient';
+import axiosClient, { extractErrorMessage } from '../../api/axiosClient';
 
 interface ProductStock {
     productId: string;
@@ -15,14 +15,34 @@ interface Product {
     stocks: ProductStock[];
 }
 
+// Mirrors Warehouse.Application.DTOs.StockAdjustmentResultDto.
+interface StockAdjustmentResult {
+    productId: string;
+    locationBarcode: string;
+    quantityDelta: number;
+    newPhysicalQuantity: number;
+    reason: string;
+    reservedQuantityReduced: number;
+}
+
+// Mirrors Warehouse.Application.DTOs.ProductResponseDto.
+interface CreateProductResult {
+    id: string;
+    name: string;
+    sku: string;
+    sizeCategory: string;
+    stocks: ProductStock[];
+}
+
 function getAvailableQuantity(product: Product): number {
     return product.stocks.reduce((sum, s) => sum + s.quantity, 0);
 }
 
-function extractErrorMessage(error: unknown, fallback: string): string {
-    const data = (error as { response?: { data?: unknown } })?.response?.data;
-    if (typeof data === 'string' && data.trim()) return data;
-    return fallback;
+// The backend returns 409 specifically when an adjustment would eat into stock already
+// reserved for an allocated order — every other rejection (validation, not-found) is a
+// 400/404. That's the signal to offer "confirm and apply anyway" instead of just an error.
+function isReservationImpactConflict(error: unknown): boolean {
+    return (error as { response?: { status?: number } })?.response?.status === 409;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -57,6 +77,14 @@ export default function InventoryAdmin() {
     const [adjustReason, setAdjustReason] = useState<string>('');
     const [adjustSubmitting, setAdjustSubmitting] = useState<boolean>(false);
     const [adjustMessage, setAdjustMessage] = useState<string>('');
+    // Set only by a 409 (reservation-impact conflict) — offers a distinct "confirm and
+    // apply anyway" action instead of just showing an error. Cleared whenever any field
+    // changes, so a stale confirmation can never silently apply to different values.
+    const [adjustConflictMessage, setAdjustConflictMessage] = useState<string>('');
+
+    const clearAdjustConflict = () => {
+        if (adjustConflictMessage) setAdjustConflictMessage('');
+    };
 
     // --- Create product form ---
     const [newName, setNewName] = useState<string>('');
@@ -92,7 +120,7 @@ export default function InventoryAdmin() {
         }
     };
 
-    const handleAdjustSubmit = async () => {
+    const handleAdjustSubmit = async (confirmReservationImpact: boolean) => {
         if (!adjustProductId || !adjustLocationBarcode.trim() || adjustDelta === 0 || !adjustReason.trim()) {
             setAdjustMessage('Product, location, a non-zero quantity delta, and a reason are all required.');
             return;
@@ -100,19 +128,31 @@ export default function InventoryAdmin() {
 
         setAdjustSubmitting(true);
         setAdjustMessage('');
+        setAdjustConflictMessage('');
         try {
-            const response = await axiosClient.post('/Inventory/adjust-stock', {
+            const response = await axiosClient.post<StockAdjustmentResult>('/Inventory/adjust-stock', {
                 productId: adjustProductId,
                 locationBarcode: adjustLocationBarcode.trim(),
                 quantityDelta: adjustDelta,
-                reason: adjustReason.trim()
+                reason: adjustReason.trim(),
+                confirmReservationImpact
             });
-            setAdjustMessage(`Done. New physical quantity: ${response.data?.newPhysicalQuantity ?? '?'}.`);
+            const reservedQuantityReduced = response.data?.reservedQuantityReduced ?? 0;
+            setAdjustMessage(
+                reservedQuantityReduced > 0
+                    ? `Done. New physical quantity: ${response.data?.newPhysicalQuantity ?? '?'}. ` +
+                      `WARNING: this also released ${reservedQuantityReduced} reserved unit(s) — check which order(s) at this location are now short.`
+                    : `Done. New physical quantity: ${response.data?.newPhysicalQuantity ?? '?'}.`
+            );
             setAdjustDelta(0);
             setAdjustReason('');
             await loadProducts();
         } catch (error) {
-            setAdjustMessage(extractErrorMessage(error, 'Failed to adjust stock.'));
+            if (isReservationImpactConflict(error)) {
+                setAdjustConflictMessage(extractErrorMessage(error, 'This would reduce stock already reserved for an order.'));
+            } else {
+                setAdjustMessage(extractErrorMessage(error, 'Failed to adjust stock.'));
+            }
         } finally {
             setAdjustSubmitting(false);
         }
@@ -127,7 +167,7 @@ export default function InventoryAdmin() {
         setCreateSubmitting(true);
         setCreateMessage('');
         try {
-            const response = await axiosClient.post('/Inventory/products', {
+            const response = await axiosClient.post<CreateProductResult>('/Inventory/products', {
                 name: newName.trim(),
                 sku: newSku.trim(),
                 price: newPrice,
@@ -182,7 +222,7 @@ export default function InventoryAdmin() {
                     <h3 style={{ color: '#4CAF50', marginTop: 0 }}>Adjust Stock</h3>
 
                     <label style={labelStyle}>Product</label>
-                    <select value={adjustProductId} onChange={(e) => setAdjustProductId(e.target.value)} style={inputStyle} disabled={loadingProducts}>
+                    <select value={adjustProductId} onChange={(e) => { setAdjustProductId(e.target.value); clearAdjustConflict(); }} style={inputStyle} disabled={loadingProducts}>
                         <option value="">{loadingProducts ? 'Loading products...' : 'Select a product...'}</option>
                         {products.map(p => (
                             <option key={p.id} value={p.id}>{p.name} ({p.sku}) — available: {getAvailableQuantity(p)}</option>
@@ -190,21 +230,34 @@ export default function InventoryAdmin() {
                     </select>
 
                     <label style={labelStyle}>Location barcode</label>
-                    <input type="text" value={adjustLocationBarcode} onChange={(e) => setAdjustLocationBarcode(e.target.value)} placeholder="e.g. mp101010101a" style={inputStyle} />
+                    <input type="text" value={adjustLocationBarcode} onChange={(e) => { setAdjustLocationBarcode(e.target.value); clearAdjustConflict(); }} placeholder="e.g. mp101010101a" style={inputStyle} />
 
                     <label style={labelStyle}>Quantity delta (positive to add, negative to remove)</label>
-                    <input type="number" value={adjustDelta} onChange={(e) => setAdjustDelta(Number(e.target.value))} style={inputStyle} />
+                    <input type="number" value={adjustDelta} onChange={(e) => { setAdjustDelta(Number(e.target.value)); clearAdjustConflict(); }} style={inputStyle} />
 
                     <label style={labelStyle}>Reason</label>
-                    <input type="text" value={adjustReason} onChange={(e) => setAdjustReason(e.target.value)} placeholder="e.g. cycle count correction" style={inputStyle} />
+                    <input type="text" value={adjustReason} onChange={(e) => { setAdjustReason(e.target.value); clearAdjustConflict(); }} placeholder="e.g. cycle count correction" style={inputStyle} />
 
                     <button
-                        onClick={() => void handleAdjustSubmit()}
+                        onClick={() => void handleAdjustSubmit(false)}
                         disabled={adjustSubmitting}
                         style={{ width: '100%', padding: '14px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: adjustSubmitting ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
                     >
                         {adjustSubmitting ? 'Submitting...' : 'Apply Adjustment'}
                     </button>
+
+                    {adjustConflictMessage && (
+                        <div style={{ marginTop: '12px', padding: '12px', borderRadius: '4px', backgroundColor: '#4a1f1f', border: '1px solid #ff5252' }}>
+                            <p style={{ margin: '0 0 10px 0', color: '#ff8a80' }}>{adjustConflictMessage}</p>
+                            <button
+                                onClick={() => void handleAdjustSubmit(true)}
+                                disabled={adjustSubmitting}
+                                style={{ width: '100%', padding: '12px', backgroundColor: '#ff5252', color: 'white', border: 'none', borderRadius: '4px', cursor: adjustSubmitting ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
+                            >
+                                {adjustSubmitting ? 'Submitting...' : 'Confirm and Apply Anyway'}
+                            </button>
+                        </div>
+                    )}
 
                     {adjustMessage && <p style={{ marginTop: '12px', color: '#ffeb3b' }}>{adjustMessage}</p>}
                 </section>

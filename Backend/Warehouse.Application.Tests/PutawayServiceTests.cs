@@ -38,7 +38,16 @@ public class PutawayServiceTests
         _stockRepositoryMock.Setup(r => r.GetLocationBarcodesByProductAsync(It.IsAny<List<Guid>>()))
             .ReturnsAsync(new Dictionary<Guid, List<string>>());
 
-        _sut = new PutawayService(_unitOfWorkMock.Object);
+        // ConfirmItemAsync now delegates transaction handling to this instead of hand-rolling
+        // Begin/Commit/Rollback — default to transparently running the action, same as the
+        // real UnitOfWork does on success, so existing tests don't all need to set this up.
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
+            .Returns<Func<Task>>(action => action());
+
+        // Real implementation, not a mock: route ordering is pure logic with no
+        // dependencies, and these tests don't care about item order.
+        _sut = new PutawayService(_unitOfWorkMock.Object, new RouteOptimizerService());
     }
 
     // Single-item InProgress task: expected 10, put away 0, missing 0, SKU matching
@@ -162,6 +171,32 @@ public class PutawayServiceTests
         task.Status.Should().Be(PutawayTaskStatus.Completed);
         task.Container!.Status.Should().Be(ContainerStatus.Available);
         task.Container!.AssignedSector.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ConfirmItemAsync_TransactionThrows_PropagatesExceptionInsteadOfSwallowingIt()
+    {
+        // Arrange: ConfirmItemAsync no longer has its own try/catch — it trusts
+        // ExecuteInTransactionAsync's own rollback-and-rethrow. Simulating a failure
+        // there (e.g. a concurrency conflict) must still surface to the caller; the
+        // global exception handler is now the only thing responsible for turning it
+        // into a response.
+        var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 6);
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1" };
+
+        _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
+            .ThrowsAsync(new InvalidOperationException("boom"));
+
+        var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 4 };
+
+        // Act
+        Func<Task> act = () => _sut.ConfirmItemAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>();
     }
 
     // ===================== ReportMissingAsync =====================

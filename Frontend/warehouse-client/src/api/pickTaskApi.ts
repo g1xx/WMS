@@ -9,30 +9,30 @@ export interface ActionResultMessage {
 // UI's point of view this is ONE read — "what should this worker be looking at
 // right now" — so it lives behind a single query function/key, not two.
 export async function fetchCurrentPickTask(sector: string): Promise<PickTask | null> {
-    const activeResponse = await axiosClient.get(`/PickTask/active?t=${Date.now()}`);
+    const activeResponse = await axiosClient.get<PickTask | null>(`/PickTask/active?t=${Date.now()}`);
     if (activeResponse.data) {
         return activeResponse.data;
     }
 
-    const nextResponse = await axiosClient.get(`/PickTask/next?sector=${encodeURIComponent(sector)}&t=${Date.now()}`);
+    const nextResponse = await axiosClient.get<PickTask | null>(`/PickTask/next?sector=${encodeURIComponent(sector)}&t=${Date.now()}`);
     return nextResponse.data ?? null;
 }
 
 export async function startPickTask(taskId: string, containerBarcode: string): Promise<void> {
-    await axiosClient.post(`/PickTask/${taskId}/start`, { containerBarcode });
+    await axiosClient.post<string>(`/PickTask/${taskId}/start`, { containerBarcode });
 }
 
 export async function pickItem(taskId: string, locationBarcode: string, productSku: string, quantity: number): Promise<void> {
-    await axiosClient.post(`/PickTask/${taskId}/pick`, { locationBarcode, productSku, quantity });
+    await axiosClient.post<string>(`/PickTask/${taskId}/pick`, { locationBarcode, productSku, quantity });
 }
 
 export async function dispatchContainer(taskId: string, containerBarcode: string, conveyorBarcode: string): Promise<ActionResultMessage> {
-    const response = await axiosClient.post(`/PickTask/${taskId}/dispatch`, { containerBarcode, conveyorBarcode });
+    const response = await axiosClient.post<ActionResultMessage>(`/PickTask/${taskId}/dispatch`, { containerBarcode, conveyorBarcode });
     return response.data;
 }
 
 export async function cancelPickTask(taskId: string): Promise<ActionResultMessage> {
-    const response = await axiosClient.post(`/PickTask/${taskId}/cancel`);
+    const response = await axiosClient.post<ActionResultMessage>(`/PickTask/${taskId}/cancel`);
     return response.data;
 }
 
@@ -46,7 +46,7 @@ export async function reportMissingItem(
     supervisorBadge: string
 ): Promise<ActionResultMessage> {
     const elevatedConfig = await fetchSupervisorAuthHeader(supervisorBadge);
-    const response = await axiosClient.post(
+    const response = await axiosClient.post<ActionResultMessage>(
         `/PickTask/${taskId}/report-missing`,
         { locationBarcode, productSku, missingQuantity },
         elevatedConfig
@@ -63,7 +63,7 @@ export async function reportDefect(
     supervisorBadge: string
 ): Promise<ActionResultMessage> {
     const elevatedConfig = await fetchSupervisorAuthHeader(supervisorBadge);
-    const response = await axiosClient.post(
+    const response = await axiosClient.post<ActionResultMessage>(
         `/PickTask/${taskId}/report-defect`,
         { locationBarcode, productSku, defectiveQuantity },
         elevatedConfig

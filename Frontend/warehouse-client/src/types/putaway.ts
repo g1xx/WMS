@@ -1,3 +1,6 @@
+// Mirrors Warehouse.Domain.PutawayTaskStatus (serialized via JsonStringEnumConverter).
+export type PutawayTaskStatus = 'New' | 'InProgress' | 'Completed' | 'Canceled';
+
 export interface PutawayTaskItem {
     id: string;
     productName: string;
@@ -14,6 +17,6 @@ export interface PutawayTask {
     id: string;
     containerBarcode: string;
     sector: string;
-    status: string;
+    status: PutawayTaskStatus;
     items: PutawayTaskItem[];
 }

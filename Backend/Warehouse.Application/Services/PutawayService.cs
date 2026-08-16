@@ -1,6 +1,7 @@
 using Warehouse.Application.Common;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
+using Warehouse.Application.Mapping;
 using Warehouse.Domain;
 
 namespace Warehouse.Application.Services;
@@ -8,10 +9,12 @@ namespace Warehouse.Application.Services;
 public class PutawayService : IPutawayService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IRouteOptimizerService _routeOptimizer;
 
-    public PutawayService(IUnitOfWork unitOfWork)
+    public PutawayService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer)
     {
         _unitOfWork = unitOfWork;
+        _routeOptimizer = routeOptimizer;
     }
 
     public async Task<Result<PutawayTaskResponseDto>> CreatePutawayTaskAsync(CreatePutawayTaskDto dto)
@@ -184,8 +187,7 @@ public class PutawayService : IPutawayService
         if (location == null)
             return Result<PutawayTaskResponseDto>.Failure($"Location '{dto.LocationBarcode}' was not found.", ResultErrorType.NotFound);
 
-        await _unitOfWork.BeginTransactionAsync();
-        try
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             item.PutAwayQuantity += dto.Quantity;
 
@@ -224,15 +226,9 @@ public class PutawayService : IPutawayService
             }
 
             await _unitOfWork.SaveChangesAsync();
-            await _unitOfWork.CommitTransactionAsync();
+        });
 
-            return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
-        }
-        catch
-        {
-            await _unitOfWork.RollbackTransactionAsync();
-            throw;
-        }
+        return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }
 
     public async Task<Result<PutawayTaskResponseDto>> ReportMissingAsync(Guid taskId, ReportPutawayMissingDto dto, string workerId)
@@ -303,24 +299,10 @@ public class PutawayService : IPutawayService
         var productIds = task.Items.Select(i => i.ProductId).Distinct().ToList();
         var suggestionsByProduct = await _unitOfWork.Stocks.GetLocationBarcodesByProductAsync(productIds);
 
-        return new PutawayTaskResponseDto
-        {
-            Id = task.Id,
-            ContainerBarcode = task.Container?.Barcode ?? string.Empty,
-            Sector = task.Sector,
-            Status = task.Status.ToString(),
-            Items = task.Items.Select(i => new PutawayTaskItemResponseDto
-            {
-                Id = i.Id,
-                ProductName = i.Product!.Name,
-                ProductSku = i.Product.Sku,
-                ExpectedQuantity = i.ExpectedQuantity,
-                PutAwayQuantity = i.PutAwayQuantity,
-                MissingQuantity = i.MissingQuantity,
-                SuggestedLocationBarcodes = suggestionsByProduct.TryGetValue(i.ProductId, out var barcodes)
-                    ? barcodes
-                    : new List<string>()
-            }).ToList()
-        };
+        var dto = task.ToDto(suggestionsByProduct);
+        // Serpentine route over each item's first suggested location: minimizes
+        // the worker's walking distance across aisles.
+        dto.Items = _routeOptimizer.OptimizeRoute(dto.Items, i => i.SuggestedLocationBarcodes.FirstOrDefault());
+        return dto;
     }
 }

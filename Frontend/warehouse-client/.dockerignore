@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+*.local
+
+.vscode/
+.git/
+.gitignore
+
+e2e/
+playwright-report/
+test-results/
+**/*.md

@@ -15,6 +15,7 @@ public class PickTaskServiceTests
     private readonly Mock<IStockRepository> _stockRepositoryMock;
     private readonly Mock<IContainerRepository> _containerRepositoryMock;
     private readonly Mock<IOrderRepository> _orderRepositoryMock;
+    private readonly Mock<ILocationRepository> _locationRepositoryMock;
     private readonly Mock<IStockTransactionRepository> _stockTransactionRepositoryMock;
     private readonly PickTaskService _sut;
 
@@ -25,15 +26,53 @@ public class PickTaskServiceTests
         _stockRepositoryMock = new Mock<IStockRepository>();
         _containerRepositoryMock = new Mock<IContainerRepository>();
         _orderRepositoryMock = new Mock<IOrderRepository>();
+        _locationRepositoryMock = new Mock<ILocationRepository>();
         _stockTransactionRepositoryMock = new Mock<IStockTransactionRepository>();
 
         _unitOfWorkMock.Setup(u => u.PickTasks).Returns(_pickTaskRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Stocks).Returns(_stockRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Containers).Returns(_containerRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Orders).Returns(_orderRepositoryMock.Object);
+        _unitOfWorkMock.Setup(u => u.Locations).Returns(_locationRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.StockTransactions).Returns(_stockTransactionRepositoryMock.Object);
 
-        _sut = new PickTaskService(_unitOfWorkMock.Object);
+        // DispatchContainerAsync/ReportDefectAsync now delegate transaction handling to
+        // this instead of hand-rolling Begin/Commit/Rollback — default to transparently
+        // running the action, same as the real UnitOfWork does on success, so existing
+        // tests don't all need to set this up themselves.
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Guid?>>>()))
+            .Returns<Func<Task<Guid?>>>(action => action());
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<ReportDefectResultDto>>>()))
+            .Returns<Func<Task<ReportDefectResultDto>>>(action => action());
+        // ReportMissingItemAsync now also runs inside ExecuteInTransactionAsync, returning
+        // the built message string.
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<string>>>()))
+            .Returns<Func<Task<string>>>(action => action());
+        // PickItemAsync now also runs inside ExecuteInTransactionAsync (no return value —
+        // the non-generic overload).
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
+            .Returns<Func<Task>>(action => action());
+
+        // ReportMissingItemAsync now always runs a replacement search (via
+        // IUnfulfillableUnitHandler) same as ReportDefectAsync always has. Default to
+        // "nothing found" so tests that aren't about replacement sourcing specifically
+        // don't all need to stub this themselves — same reasoning as the
+        // ExecuteInTransactionAsync defaults above.
+        _stockRepositoryMock
+            .Setup(r => r.GetReplacementCandidatesAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
+            .ReturnsAsync(new List<Stock>());
+
+        // Real implementations, not mocks: all three are pure logic with no dependencies
+        // of their own beyond the (already-mocked) IUnitOfWork, and these tests don't care
+        // about item order or replacement zone selection beyond what's asserted explicitly.
+        _sut = new PickTaskService(
+            _unitOfWorkMock.Object,
+            new RouteOptimizerService(),
+            new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()));
     }
 
     // Builds a single-item InProgress task: required 10, picked 0, missing 0,
@@ -131,10 +170,13 @@ public class PickTaskServiceTests
     }
 
     [Fact]
-    public async Task ReportMissingItemAsync_AllItemsFullyAccountedFor_CompletesTask()
+    public async Task ReportMissingItemAsync_AllItemsFullyAccountedFor_DoesNotCompleteTask()
     {
         // Arrange: one item, required 10, already picked 7 — reporting the last 3 as
-        // missing means 7 + 3 == 10, so every line is now fully resolved.
+        // missing means every line is now accounted for (picked or missing). The task
+        // must NOT auto-complete here: the worker still has to physically dispatch the
+        // container onto the conveyor, and DispatchContainerAsync is the only place
+        // that releases the container and moves stock for what was actually picked.
         var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 7);
         var taskItem = task.Items.First();
         var stock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 3, ReservedQuantity = 3 };
@@ -149,7 +191,178 @@ public class PickTaskServiceTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        task.Status.Should().Be(PickTaskStatus.Completed);
+        task.Status.Should().Be(PickTaskStatus.InProgress);
+    }
+
+    [Fact]
+    public async Task ReportMissingItemAsync_MissingExceedsOutstanding_ReturnsFailure()
+    {
+        // Arrange: required 10, already picked 7 — only 3 units are legitimately
+        // outstanding, so reporting 4 as missing must be rejected rather than silently
+        // overshooting (which would corrupt the leftover/order-writeoff math downstream).
+        var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 7);
+        var taskItem = task.Items.First();
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+
+        var dto = BuildMissingItemDto(4);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        taskItem.MissingQuantity.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ReportMissingItemAsync_ZeroOrNegativeQuantity_ReturnsFailure()
+    {
+        var task = BuildTaskWithOneItem();
+
+        var dto = BuildMissingItemDto(0);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ReportMissingItemAsync_NoReplacementFound_WritesOffOrderItemShortedQuantity()
+    {
+        // Arrange: RequiredQuantity must stay untouched — it always reflects what was
+        // actually ordered. With no replacement stock anywhere (default stub), the
+        // shortfall lands on ShortedQuantity instead, and the line is flagged for
+        // replenishment, exactly like an unrecoverable defect would be.
+        var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 7);
+        var taskItem = task.Items.First();
+        var stock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 3, ReservedQuantity = 3 };
+
+        var order = new Order
+        {
+            Id = task.OrderId,
+            Items = new List<OrderItem>
+            {
+                new() { ProductId = taskItem.ProductId, RequiredQuantity = 10, PickedQuantity = 7 }
+            }
+        };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(stock);
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+
+        var dto = BuildMissingItemDto(3);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        var orderItem = order.Items.First();
+        orderItem.RequiredQuantity.Should().Be(10, "history is never rewritten — this is still what was ordered");
+        orderItem.PickedQuantity.Should().Be(7);
+        orderItem.ShortedQuantity.Should().Be(3);
+        orderItem.IsPendingReplenishment.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ReportMissingItemAsync_ReplacementFoundInActiveZone_CoversShortfallWithoutTouchingOrder()
+    {
+        // Arrange: a genuinely missing unit gets the same chance a defective one does —
+        // if a replacement is sitting in another active picking zone, take it instead of
+        // writing the order off.
+        var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 0);
+        task.Sector = "mp1";
+        var taskItem = task.Items.First();
+        var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
+
+        var replacementLocation = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-2", WarehouseCode = "m", Sector = "r", Floor = 1 };
+        var replacementStock = new Stock
+        {
+            ProductId = taskItem.ProductId,
+            LocationId = replacementLocation.Id,
+            Location = replacementLocation,
+            PhysicalQuantity = 10,
+            ReservedQuantity = 0
+        };
+
+        var order = new Order
+        {
+            Id = task.OrderId,
+            Items = new List<OrderItem> { new() { ProductId = taskItem.ProductId, RequiredQuantity = 10, PickedQuantity = 0 } }
+        };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(sourceStock);
+        _stockRepositoryMock
+            .Setup(r => r.GetReplacementCandidatesAsync(taskItem.ProductId, taskItem.LocationId, It.IsAny<string>()))
+            .ReturnsAsync(new List<Stock> { replacementStock });
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+
+        var dto = BuildMissingItemDto(10);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        var orderItem = order.Items.First();
+        orderItem.ShortedQuantity.Should().Be(0);
+        orderItem.IsPendingReplenishment.Should().BeFalse();
+        replacementStock.ReservedQuantity.Should().Be(10);
+        // Different zone (mr1) from the task's own sector (mp1) -> a new PickTask, not an
+        // appended line on the current one.
+        _pickTaskRepositoryMock.Verify(r => r.Add(It.Is<PickTask>(t => t.Sector == "mr1" && t.OrderId == task.OrderId)), Times.Once);
+    }
+
+    [Fact]
+    public async Task ReportMissingItemAsync_ReplacementOnlyInBulkSector_IsIgnoredAndShortsTheOrder()
+    {
+        // Arrange: plenty of physical stock exists, but only in the bulk/reserve sector
+        // ("w") — a picker can't be routed there, so this must be treated exactly like no
+        // stock existing at all.
+        var task = BuildTaskWithOneItem(requiredQuantity: 5, pickedQuantity: 0);
+        task.Sector = "mp1";
+        var taskItem = task.Items.First();
+        var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 5, ReservedQuantity = 5 };
+
+        var bulkLocation = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-BULK", WarehouseCode = "m", Sector = "w", Floor = 1 };
+        var bulkStock = new Stock
+        {
+            ProductId = taskItem.ProductId,
+            LocationId = bulkLocation.Id,
+            Location = bulkLocation,
+            PhysicalQuantity = 500,
+            ReservedQuantity = 0
+        };
+
+        var order = new Order
+        {
+            Id = task.OrderId,
+            Items = new List<OrderItem> { new() { ProductId = taskItem.ProductId, RequiredQuantity = 5, PickedQuantity = 0 } }
+        };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(sourceStock);
+        _stockRepositoryMock
+            .Setup(r => r.GetReplacementCandidatesAsync(taskItem.ProductId, taskItem.LocationId, It.IsAny<string>()))
+            .ReturnsAsync(new List<Stock> { bulkStock });
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+
+        var dto = BuildMissingItemDto(5);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        var orderItem = order.Items.First();
+        orderItem.ShortedQuantity.Should().Be(5, "the only stock found is in a bulk sector and must be ignored");
+        orderItem.IsPendingReplenishment.Should().BeTrue();
+        bulkStock.ReservedQuantity.Should().Be(0, "a bulk-sector row must never be reserved for a picker replacement");
+        _pickTaskRepositoryMock.Verify(r => r.Add(It.IsAny<PickTask>()), Times.Never);
     }
 
     [Fact]
@@ -201,6 +414,248 @@ public class PickTaskServiceTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         task.Status.Should().Be(PickTaskStatus.InProgress);
+    }
+
+    // ===================== PickItemAsync =====================
+    //
+    // Regression coverage for the phantom-shelf-inventory fix: Stock used to stay
+    // untouched until DispatchContainerAsync, so a cycle count taken while a worker was
+    // still mid-route (tote half full, container nowhere near the conveyor yet) would
+    // see the picked units as if they were still sitting on the shelf. The decrement
+    // now happens the instant the item is scanned into the tote.
+
+    [Fact]
+    public async Task PickItemAsync_ValidScan_DecrementsShelfStockImmediately_BeforeAnyDispatch()
+    {
+        // Arrange: 10 physically on the shelf, all 10 reserved for this order.
+        var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 0);
+        var taskItem = task.Items.First();
+        var stock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(stock);
+
+        var dto = new PickItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 4 };
+
+        // Act — pick only, no dispatch call at all.
+        var result = await _sut.PickItemAsync(task.Id, dto, "worker-1");
+
+        // Assert: the shelf already reflects reality, mid-route, with no dispatch in sight.
+        result.IsSuccess.Should().BeTrue();
+        stock.PhysicalQuantity.Should().Be(6, "a cycle count taken right now must see what's actually on the shelf");
+        stock.ReservedQuantity.Should().Be(6);
+        taskItem.PickedQuantity.Should().Be(4);
+
+        _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
+            t.ProductId == taskItem.ProductId &&
+            t.LocationId == taskItem.LocationId &&
+            t.QuantityChange == -4 &&
+            t.TransactionType == StockTransactionType.Pick)), Times.Once);
+    }
+
+    [Fact]
+    public async Task PickItemAsync_QuantityExceedsPhysicalStock_ReturnsFailureWithoutMutatingAnything()
+    {
+        // Arrange: the task item still expects 10, but the shelf itself only has 3 left
+        // (e.g. a cycle-count adjustment shrank it after allocation) — over-pick against
+        // the task's own requirement would pass, but the shelf genuinely can't cover it.
+        var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 0);
+        var taskItem = task.Items.First();
+        var stock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 3, ReservedQuantity = 3 };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(stock);
+
+        var dto = new PickItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 5 };
+
+        // Act
+        var result = await _sut.PickItemAsync(task.Id, dto, "worker-1");
+
+        // Assert: clean failure, not a DB check-constraint exception, and nothing moved.
+        result.IsSuccess.Should().BeFalse();
+        stock.PhysicalQuantity.Should().Be(3);
+        stock.ReservedQuantity.Should().Be(3);
+        taskItem.PickedQuantity.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task PickItemAsync_NoStockRecordAtLocation_ReturnsFailure()
+    {
+        var task = BuildTaskWithOneItem(requiredQuantity: 10, pickedQuantity: 0);
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+
+        var dto = new PickItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 1 };
+
+        // Act
+        var result = await _sut.PickItemAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+    }
+
+    // ===================== DispatchContainerAsync =====================
+
+    [Fact]
+    public async Task DispatchContainerAsync_TransactionThrows_PropagatesExceptionInsteadOfSwallowingIt()
+    {
+        // Arrange: DispatchContainerAsync no longer has its own try/catch — it trusts
+        // ExecuteInTransactionAsync's own rollback-and-rethrow. Simulating a failure
+        // there (e.g. a concurrency conflict) must still surface to the caller; the
+        // global exception handler is now the only thing responsible for turning it
+        // into a response.
+        var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", pickedQuantity: 1);
+        task.ContainerId = Guid.NewGuid();
+        var container = new Container { Id = task.ContainerId.Value, Barcode = "CONT-1", Status = ContainerStatus.InProgress };
+        var station = new Location { Id = Guid.NewGuid(), AddressBarcode = "CONV-1" };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(task.ContainerId!.Value)).ReturnsAsync(container);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("CONV-1")).ReturnsAsync(station);
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Guid?>>>()))
+            .ThrowsAsync(new InvalidOperationException("boom"));
+
+        var dto = new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" };
+
+        // Act
+        Func<Task> act = () => _sut.DispatchContainerAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    // ===================== ReportDefectAsync =====================
+
+    [Fact]
+    public async Task ReportDefectAsync_TransactionThrows_PropagatesExceptionInsteadOfSwallowingIt()
+    {
+        // Arrange: same regression guard as DispatchContainerAsync above, for the
+        // other method that used to hand-roll its own try/catch/rollback.
+        var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1");
+        var taskItem = task.Items.First();
+        var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(sourceStock);
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<ReportDefectResultDto>>>()))
+            .ThrowsAsync(new InvalidOperationException("boom"));
+
+        var dto = new ReportDefectDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", DefectiveQuantity = 2 };
+
+        // Act
+        Func<Task> act = () => _sut.ReportDefectAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task ReportDefectAsync_ReplacementFoundInSameZone_AppendsLineToCurrentTask()
+    {
+        // Arrange: 3 defective units, fully replaceable from one candidate stock
+        // that happens to be in the same zone as the task.
+        var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", requiredQuantity: 10, pickedQuantity: 0);
+        task.Sector = "mp1";
+        var taskItem = task.Items.First();
+        var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
+
+        var replacementLocation = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-2", WarehouseCode = "m", Sector = "p", Floor = 1 };
+        var replacementStock = new Stock { ProductId = taskItem.ProductId, LocationId = replacementLocation.Id, Location = replacementLocation, PhysicalQuantity = 5, ReservedQuantity = 0 };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(sourceStock);
+        _stockRepositoryMock
+            .Setup(r => r.GetReplacementCandidatesAsync(taskItem.ProductId, taskItem.LocationId, "w"))
+            .ReturnsAsync(new List<Stock> { replacementStock });
+
+        var dto = new ReportDefectDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", DefectiveQuantity = 3 };
+
+        // Act
+        var result = await _sut.ReportDefectAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.DefectiveQuantityDeducted.Should().Be(3);
+        result.Value.AppendedToCurrentTaskQuantity.Should().Be(3);
+        result.Value.ShortageQuantity.Should().Be(0);
+
+        task.Items.Should().HaveCount(2);
+        task.Items.Should().Contain(i => i.LocationId == replacementLocation.Id && i.RequiredQuantity == 3);
+        replacementStock.ReservedQuantity.Should().Be(3);
+        sourceStock.PhysicalQuantity.Should().Be(7);
+    }
+
+    [Fact]
+    public async Task ReportDefectAsync_NoReplacementCandidates_FlagsOrderItemForReplenishment()
+    {
+        // Arrange: no candidate stock exists anywhere for this product, so the
+        // whole replacement need becomes a shortage the order must be flagged for.
+        var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", requiredQuantity: 10, pickedQuantity: 0);
+        var taskItem = task.Items.First();
+        var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
+
+        var orderItem = new OrderItem { ProductId = taskItem.ProductId, RequiredQuantity = 10 };
+        var order = new Order { Id = task.OrderId, Items = new List<OrderItem> { orderItem } };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(sourceStock);
+        _stockRepositoryMock
+            .Setup(r => r.GetReplacementCandidatesAsync(taskItem.ProductId, taskItem.LocationId, "w"))
+            .ReturnsAsync(new List<Stock>());
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+
+        var dto = new ReportDefectDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", DefectiveQuantity = 4 };
+
+        // Act
+        var result = await _sut.ReportDefectAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.ShortageQuantity.Should().Be(4);
+        result.Value.AppendedToCurrentTaskQuantity.Should().Be(0);
+        result.Value.NewPickTaskIds.Should().BeEmpty();
+        orderItem.IsPendingReplenishment.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ReportDefectAsync_ReplacementOnlyInNonActiveZone_IsIgnoredAndFlagsReplenishment()
+    {
+        // Arrange: before unification, ReportDefectAsync only excluded the bulk sector
+        // ("w") — any other zone was fair game. The shared handler is stricter: only
+        // the enumerated active picking zones count. "mp5" (a real warehouse/sector
+        // combination, just not one workers currently pick from) must now be rejected
+        // even though it isn't the bulk sector.
+        var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", requiredQuantity: 10, pickedQuantity: 0);
+        var taskItem = task.Items.First();
+        var sourceStock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 10, ReservedQuantity = 10 };
+
+        var nonActiveLocation = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-5", WarehouseCode = "m", Sector = "p", Floor = 5 };
+        var nonActiveStock = new Stock { ProductId = taskItem.ProductId, LocationId = nonActiveLocation.Id, Location = nonActiveLocation, PhysicalQuantity = 50, ReservedQuantity = 0 };
+
+        var orderItem = new OrderItem { ProductId = taskItem.ProductId, RequiredQuantity = 10 };
+        var order = new Order { Id = task.OrderId, Items = new List<OrderItem> { orderItem } };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(sourceStock);
+        _stockRepositoryMock
+            .Setup(r => r.GetReplacementCandidatesAsync(taskItem.ProductId, taskItem.LocationId, "w"))
+            .ReturnsAsync(new List<Stock> { nonActiveStock });
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+
+        var dto = new ReportDefectDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", DefectiveQuantity = 4 };
+
+        // Act
+        var result = await _sut.ReportDefectAsync(task.Id, dto, "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value!.ShortageQuantity.Should().Be(4);
+        result.Value.AppendedToCurrentTaskQuantity.Should().Be(0);
+        result.Value.NewPickTaskIds.Should().BeEmpty();
+        nonActiveStock.ReservedQuantity.Should().Be(0, "stock outside the active picking zones must never be reserved for a picker");
+        orderItem.IsPendingReplenishment.Should().BeTrue();
     }
 
     // ===================== CancelPickTaskAsync =====================
@@ -299,5 +754,238 @@ public class PickTaskServiceTests
         result.IsSuccess.Should().BeFalse();
         result.ErrorType.Should().Be(ResultErrorType.Conflict);
         result.Error.Should().Contain("claimed by another worker");
+    }
+
+    // ===== Alternating picked/missing items -> full Pick+Dispatch flow =====
+    //
+    // Regression coverage for the ReportMissingItemAsync/DispatchContainerAsync fix:
+    // a missing item used to (a) auto-complete the task before the container was ever
+    // physically dispatched, orphaning the container and skipping stock movement for
+    // whatever else had been picked on that same task, and (b) never wrote the
+    // shortfall off the order, so the order could never reach Packed. These tests
+    // drive the real worker sequence (scan present items via PickItemAsync, report
+    // absent ones via ReportMissingItemAsync, then physically dispatch the container)
+    // across several alternating present/missing patterns to confirm the order
+    // completes cleanly every time.
+
+    private sealed record ScenarioLine(Product Product, Location Location, Stock Stock, bool IsPresent);
+
+    private static (Order Order, PickTask Task, Container Container, Location Station, List<ScenarioLine> Lines) BuildDispatchScenario(
+        bool[] presentPattern, int quantityPerItem)
+    {
+        var orderId = Guid.NewGuid();
+        var lines = new List<ScenarioLine>();
+        var taskItems = new List<PickTaskItem>();
+        var orderItems = new List<OrderItem>();
+
+        for (var i = 0; i < presentPattern.Length; i++)
+        {
+            var product = new Product { Id = Guid.NewGuid(), Sku = $"SKU-{i}" };
+            var location = new Location { Id = Guid.NewGuid(), AddressBarcode = $"LOC-{i}" };
+            var stock = new Stock { ProductId = product.Id, LocationId = location.Id, PhysicalQuantity = quantityPerItem, ReservedQuantity = quantityPerItem };
+
+            taskItems.Add(new PickTaskItem
+            {
+                ProductId = product.Id,
+                Product = product,
+                LocationId = location.Id,
+                Location = location,
+                RequiredQuantity = quantityPerItem,
+                PickedQuantity = 0,
+                MissingQuantity = 0
+            });
+            orderItems.Add(new OrderItem { ProductId = product.Id, RequiredQuantity = quantityPerItem, PickedQuantity = 0 });
+
+            lines.Add(new ScenarioLine(product, location, stock, presentPattern[i]));
+        }
+
+        var task = new PickTask
+        {
+            Id = Guid.NewGuid(),
+            OrderId = orderId,
+            Status = PickTaskStatus.InProgress,
+            AssignedWorkerId = "worker-1",
+            Sector = "mp1",
+            ContainerId = Guid.NewGuid(),
+            Items = taskItems
+        };
+
+        var order = new Order { Id = orderId, Status = OrderStatus.Picking, Items = orderItems };
+        var container = new Container { Id = task.ContainerId!.Value, Barcode = "CONT-1", Status = ContainerStatus.InProgress };
+        var station = new Location { Id = Guid.NewGuid(), AddressBarcode = "CONV-1" };
+
+        return (order, task, container, station, lines);
+    }
+
+    private async Task<Result<DispatchContainerResultDto>> RunAlternatingScenarioAsync(bool[] presentPattern, int quantityPerItem = 10)
+    {
+        var (order, task, container, station, lines) = BuildDispatchScenario(presentPattern, quantityPerItem);
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
+
+        foreach (var line in lines)
+        {
+            _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(line.Product.Id, line.Location.Id)).ReturnsAsync(line.Stock);
+        }
+
+        foreach (var line in lines)
+        {
+            if (line.IsPresent)
+            {
+                var pickDto = new PickItemDto { LocationBarcode = line.Location.AddressBarcode, ProductSku = line.Product.Sku, Quantity = quantityPerItem };
+                var pickResult = await _sut.PickItemAsync(task.Id, pickDto, "worker-1");
+                pickResult.IsSuccess.Should().BeTrue($"picking {line.Product.Sku} should succeed: {pickResult.Error}");
+            }
+            else
+            {
+                var missingDto = new ReportMissingItemDto { LocationBarcode = line.Location.AddressBarcode, ProductSku = line.Product.Sku, MissingQuantity = quantityPerItem };
+                var missingResult = await _sut.ReportMissingItemAsync(task.Id, missingDto, "supervisor-1");
+                missingResult.IsSuccess.Should().BeTrue($"reporting {line.Product.Sku} missing should succeed: {missingResult.Error}");
+            }
+        }
+
+        // The task must still be InProgress right up to the moment of physical dispatch,
+        // regardless of how many items were reported missing along the way.
+        task.Status.Should().Be(PickTaskStatus.InProgress);
+
+        var dispatchDto = new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" };
+        var dispatchResult = await _sut.DispatchContainerAsync(task.Id, dispatchDto, "worker-1");
+
+        dispatchResult.IsSuccess.Should().BeTrue($"dispatch should succeed: {dispatchResult.Error}");
+        task.Status.Should().Be(PickTaskStatus.Completed);
+        container.Status.Should().Be(ContainerStatus.Available);
+
+        // Every line was either fully picked or written off as missing, so the order
+        // always reaches SOME terminal state — but the two outcomes must stay
+        // distinguishable: only an all-picked pattern reaches Packed. Any pattern with
+        // at least one missing line (and, per the default stub, no replacement found
+        // anywhere) must land on ShortShipped instead, never silently as Packed.
+        var expectedStatus = presentPattern.All(isPresent => isPresent) ? OrderStatus.Packed : OrderStatus.ShortShipped;
+        order.Status.Should().Be(expectedStatus);
+
+        for (var i = 0; i < lines.Count; i++)
+        {
+            var orderItem = order.Items.First(oi => oi.ProductId == lines[i].Product.Id);
+            orderItem.RequiredQuantity.Should().Be(quantityPerItem, "RequiredQuantity must never be rewritten");
+            if (lines[i].IsPresent)
+            {
+                orderItem.ShortedQuantity.Should().Be(0);
+            }
+            else
+            {
+                orderItem.ShortedQuantity.Should().Be(quantityPerItem, "no replacement stock exists anywhere in this scenario");
+                orderItem.IsPendingReplenishment.Should().BeTrue();
+            }
+        }
+
+        dispatchResult.Value!.NextTaskId.Should().BeNull("every line was accounted for, so no leftover pick task should be spawned");
+        _pickTaskRepositoryMock.Verify(r => r.Add(It.IsAny<PickTask>()), Times.Never);
+
+        return dispatchResult;
+    }
+
+    public static IEnumerable<object[]> AlternatingPatterns()
+    {
+        // [Present, Missing, Present] — the exact scenario requested.
+        yield return new object[] { new[] { true, false, true } };
+        // Missing first and last instead.
+        yield return new object[] { new[] { false, true, false } };
+        // Longer alternating run: "...and so on".
+        yield return new object[] { new[] { true, false, true, false, true } };
+        yield return new object[] { new[] { false, true, false, true, false } };
+        // Two missing items in a row in the middle of an otherwise-normal task.
+        yield return new object[] { new[] { true, false, false, true } };
+        // Sanity check: no missing items at all still behaves as before.
+        yield return new object[] { new[] { true, true, true } };
+    }
+
+    [Theory]
+    [MemberData(nameof(AlternatingPatterns))]
+    public async Task DispatchContainerAsync_AlternatingPickedAndMissingItems_OrderReachesTerminalState(bool[] presentPattern)
+    {
+        await RunAlternatingScenarioAsync(presentPattern);
+    }
+
+    // Runs the exact "item 1 in stock, item 2 missing, item 3 in stock" scenario several
+    // times over, per request, to be sure the outcome isn't order-of-operations-sensitive
+    // (e.g. the batched GetByProductAndLocationsAsync dictionary lookup added alongside
+    // this fix, or Moq call ordering) — each run builds entirely fresh entities/mocks.
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    public async Task DispatchContainerAsync_CanonicalStockMissingStockPattern_SucceedsOnRepeatedRuns(int run)
+    {
+        // Vary quantity per run too, so "several times" isn't just the identical call five times.
+        await RunAlternatingScenarioAsync(new[] { true, false, true }, quantityPerItem: run * 3 + 1);
+    }
+
+    [Fact]
+    public async Task DispatchContainerAsync_AlternatingPickedAndMissingItems_StockAndTransactionsAreCorrect()
+    {
+        var (order, task, container, station, lines) = BuildDispatchScenario(new[] { true, false, true }, quantityPerItem: 10);
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
+
+        foreach (var line in lines)
+        {
+            _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(line.Product.Id, line.Location.Id)).ReturnsAsync(line.Stock);
+        }
+
+        await _sut.PickItemAsync(task.Id, new PickItemDto { LocationBarcode = lines[0].Location.AddressBarcode, ProductSku = lines[0].Product.Sku, Quantity = 10 }, "worker-1");
+        await _sut.ReportMissingItemAsync(task.Id, new ReportMissingItemDto { LocationBarcode = lines[1].Location.AddressBarcode, ProductSku = lines[1].Product.Sku, MissingQuantity = 10 }, "supervisor-1");
+        await _sut.PickItemAsync(task.Id, new PickItemDto { LocationBarcode = lines[2].Location.AddressBarcode, ProductSku = lines[2].Product.Sku, Quantity = 10 }, "worker-1");
+
+        var dispatchResult = await _sut.DispatchContainerAsync(task.Id, new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" }, "worker-1");
+
+        dispatchResult.IsSuccess.Should().BeTrue();
+
+        // Item 1 (present): physically picked and dispatched — stock fully drawn down.
+        lines[0].Stock.PhysicalQuantity.Should().Be(0);
+        lines[0].Stock.ReservedQuantity.Should().Be(0);
+
+        // Item 2 (missing): written off entirely at report-missing time, untouched by dispatch.
+        lines[1].Stock.PhysicalQuantity.Should().Be(0);
+        lines[1].Stock.ReservedQuantity.Should().Be(0);
+
+        // Item 3 (present): same as item 1.
+        lines[2].Stock.PhysicalQuantity.Should().Be(0);
+        lines[2].Stock.ReservedQuantity.Should().Be(0);
+
+        // RequiredQuantity is never rewritten for any line — it always reflects what was
+        // actually ordered. Item 2's shortfall is recorded on ShortedQuantity instead,
+        // and the order lands on ShortShipped, not silently on Packed.
+        var orderItem0 = order.Items.First(oi => oi.ProductId == lines[0].Product.Id);
+        var orderItem1 = order.Items.First(oi => oi.ProductId == lines[1].Product.Id);
+        var orderItem2 = order.Items.First(oi => oi.ProductId == lines[2].Product.Id);
+
+        orderItem0.RequiredQuantity.Should().Be(10);
+        orderItem0.ShortedQuantity.Should().Be(0);
+
+        orderItem1.RequiredQuantity.Should().Be(10);
+        orderItem1.ShortedQuantity.Should().Be(10);
+        orderItem1.IsPendingReplenishment.Should().BeTrue();
+
+        orderItem2.RequiredQuantity.Should().Be(10);
+        orderItem2.ShortedQuantity.Should().Be(0);
+
+        order.Status.Should().Be(OrderStatus.ShortShipped);
+
+        _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
+            t.ProductId == lines[0].Product.Id && t.TransactionType == StockTransactionType.Pick && t.QuantityChange == -10)), Times.Once);
+        _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
+            t.ProductId == lines[1].Product.Id && t.TransactionType == StockTransactionType.Missing && t.QuantityChange == -10)), Times.Once);
+        _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
+            t.ProductId == lines[2].Product.Id && t.TransactionType == StockTransactionType.Pick && t.QuantityChange == -10)), Times.Once);
     }
 }

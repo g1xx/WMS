@@ -28,7 +28,7 @@ public class InventoryController : ControllerBase
         var userId = GetUserId();
         if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
 
-        var result = await _inventoryService.AdjustPhysicalStockAsync(dto.ProductId, dto.LocationBarcode, dto.QuantityDelta, dto.Reason, userId);
+        var result = await _inventoryService.AdjustPhysicalStockAsync(dto.ProductId, dto.LocationBarcode, dto.QuantityDelta, dto.Reason, dto.ConfirmReservationImpact, userId);
         return result.ToActionResult();
     }
 

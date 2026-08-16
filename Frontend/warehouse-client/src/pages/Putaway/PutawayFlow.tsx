@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { SECTOR_STORAGE_KEY, isSupervisorAuthError } from '../../api/axiosClient';
+import { SECTOR_STORAGE_KEY, alertIfSupervisorAuthError, extractErrorMessage } from '../../api/axiosClient';
+import { queryKeys } from '../../api/queryKeys';
 import {
     fetchActivePutawayTask,
     validateContainer,
@@ -20,8 +21,6 @@ interface Props {
     onSectorChange: (newSector: string) => void;
 }
 
-const putawayActiveTaskKey = ['putawayTask', 'active'] as const;
-
 export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Props) {
     const queryClient = useQueryClient();
 
@@ -36,7 +35,7 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
     // query is disabled again immediately (staleTime: Infinity, enabled while
     // still LOADING only) rather than kept live in the background.
     const { data: resumedTask, isFetched } = useQuery({
-        queryKey: putawayActiveTaskKey,
+        queryKey: queryKeys.putawayTask.active,
         queryFn: fetchActivePutawayTask,
         enabled: phase === 'LOADING',
         staleTime: Infinity,
@@ -83,12 +82,12 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
 
             setTask(result.task);
             setPhase('LOOP');
-            queryClient.setQueryData(putawayActiveTaskKey, result.task);
-            void queryClient.invalidateQueries({ queryKey: putawayActiveTaskKey });
+            queryClient.setQueryData(queryKeys.putawayTask.active, result.task);
+            void queryClient.invalidateQueries({ queryKey: queryKeys.putawayTask.active });
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Error validating/starting putaway:', error);
-            alert(error.response?.data || 'Failed to validate or start putaway for this container.');
+            alert(extractErrorMessage(error, 'Failed to validate or start putaway for this container.'));
         },
     });
 
@@ -100,12 +99,12 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
             setFinishedContainerBarcode(updatedTask.containerBarcode);
             setTask(null);
             setPhase('DONE');
-            queryClient.setQueryData(putawayActiveTaskKey, null);
+            queryClient.setQueryData(queryKeys.putawayTask.active, null);
         } else {
             setTask(updatedTask);
-            queryClient.setQueryData(putawayActiveTaskKey, updatedTask);
+            queryClient.setQueryData(queryKeys.putawayTask.active, updatedTask);
         }
-        void queryClient.invalidateQueries({ queryKey: putawayActiveTaskKey });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.putawayTask.active });
     };
 
     const confirmItemMutation = useMutation({
@@ -114,9 +113,9 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
             return confirmPutawayItem(task.id, locationBarcode, productSku, quantity);
         },
         onSuccess: applyTaskUpdate,
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Error confirming item:', error);
-            alert(error.response?.data || 'Failed to confirm this item.');
+            alert(extractErrorMessage(error, 'Failed to confirm this item.'));
         },
     });
 
@@ -126,13 +125,10 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
             return reportPutawayMissing(task.id, productSku, missingQuantity, supervisorBadge);
         },
         onSuccess: applyTaskUpdate,
-        onError: (error: any) => {
-            if (isSupervisorAuthError(error)) {
-                alert('Supervisor authorization failed: Invalid badge or missing permissions.');
-                return;
-            }
+        onError: (error: unknown) => {
+            if (alertIfSupervisorAuthError(error)) return;
             console.error('Error reporting missing item:', error);
-            alert(error.response?.data || 'Failed to report the missing item.');
+            alert(extractErrorMessage(error, 'Failed to report the missing item.'));
         },
     });
 

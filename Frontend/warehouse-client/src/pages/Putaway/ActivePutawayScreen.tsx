@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import type { PutawayTask } from '../../types/putaway';
+import { useSupervisorOverride } from '../../hooks/useSupervisorOverride';
+import { usePutawayWizardSteps } from './usePutawayWizardSteps';
 
 interface Props {
     task: PutawayTask;
@@ -8,105 +10,37 @@ interface Props {
 }
 
 export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissing }: Props) {
-    // Real warehouse operation order: the worker walks to a location FIRST, then
-    // scans/counts whatever they're placing there. Location is locked in before
-    // Product/Quantity are even shown.
-    const [locationInput, setLocationInput] = useState<string>('');
-    const [scannedLocation, setScannedLocation] = useState<string>('');
+    const {
+        currentItem,
+        remaining,
+        suggestedLocations,
+        locationInput, setLocationInput,
+        scannedLocation,
+        scanSku, setScanSku,
+        scanQty, setScanQty,
+        localError,
+        isSubmitting,
+        resetToLocationStep,
+        confirmLocation,
+        changeLocation,
+        confirmItem,
+    } = usePutawayWizardSteps({ task, onConfirmItem });
 
-    const [scanSku, setScanSku] = useState<string>('');
-    const [scanQty, setScanQty] = useState<number>(1);
-
-    const [localError, setLocalError] = useState<string>('');
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-    // Supervisor-gated shortage submenu, mirroring ActiveTaskScreen's missing-item flow.
-    const [isMissingMode, setIsMissingMode] = useState<boolean>(false);
+    // Supervisor-gated shortage submenu, shared with ActiveTaskScreen's missing-item flow.
+    const missingOverride = useSupervisorOverride();
     const [missingQty, setMissingQty] = useState<number>(1);
-    const [supervisorBadge, setSupervisorBadge] = useState<string>('');
-    const [isReportingMissing, setIsReportingMissing] = useState<boolean>(false);
-
-    const currentItem = task.items.find(i => i.putAwayQuantity + i.missingQuantity < i.expectedQuantity);
-    const remaining = currentItem ? currentItem.expectedQuantity - currentItem.putAwayQuantity - currentItem.missingQuantity : 0;
-    const suggestedLocations = currentItem?.suggestedLocationBarcodes ?? [];
-
-    const resetToLocationStep = () => {
-        setLocationInput('');
-        setScannedLocation('');
-        setScanSku('');
-        setScanQty(1);
-        setLocalError('');
-    };
-
-    const handleLocationConfirm = () => {
-        const trimmed = locationInput.trim();
-        if (!trimmed) return;
-
-        const isSuggested = suggestedLocations.includes(trimmed);
-        if (!isSuggested) {
-            const confirmed = window.confirm(
-                'Данного адреса нет в списке рекомендованных. Уверены, что хотите положить товар сюда?'
-            );
-            if (!confirmed) return;
-        }
-
-        setScannedLocation(trimmed);
-        setScanQty(remaining);
-        setLocalError('');
-    };
-
-    const handleChangeLocation = () => {
-        setScannedLocation('');
-        setLocationInput('');
-    };
-
-    const handleConfirm = async () => {
-        if (!currentItem || !scannedLocation) return;
-
-        if (scanSku.trim() !== currentItem.productSku.trim()) {
-            setLocalError(`Wrong item! Expected: ${currentItem.productSku}`);
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            await onConfirmItem(scannedLocation, currentItem.productSku, scanQty);
-            // Back to Step 1 for whatever the next item turns out to be.
-            resetToLocationStep();
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     const handleReportMissingClick = () => {
         if (!currentItem) return;
-        setIsMissingMode(true);
+        missingOverride.open();
         // Prefill with whatever is still left to put away
         setMissingQty(remaining);
     };
 
-    const handleMissingCancel = () => {
-        setIsMissingMode(false);
-        setSupervisorBadge('');
-    };
-
-    const handleMissingSubmit = async () => {
-        if (!currentItem) return;
-        if (!supervisorBadge.trim()) {
-            alert("Scan the supervisor's badge!");
-            return;
-        }
-
-        setIsReportingMissing(true);
-        try {
-            await onReportMissing(missingQty, supervisorBadge);
-            setIsMissingMode(false);
-            setSupervisorBadge('');
-            resetToLocationStep();
-        } finally {
-            setIsReportingMissing(false);
-        }
-    };
+    const handleMissingSubmit = () => missingOverride.submit(async (badge) => {
+        await onReportMissing(missingQty, badge);
+        resetToLocationStep();
+    });
 
     if (!currentItem) {
         return (
@@ -143,7 +77,7 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                     </div>
                 )}
 
-                {isMissingMode ? (
+                {missingOverride.isOpen ? (
                     // ================= SUBMENU: REPORT MISSING =================
                     <>
                         <p style={{ color: '#aaa', margin: '0 0 10px 0' }}>Quantity missing (pcs):</p>
@@ -161,15 +95,15 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                             type="text"
                             autoFocus
                             placeholder="Supervisor barcode..."
-                            value={supervisorBadge}
-                            onChange={(e) => setSupervisorBadge(e.target.value.trim())}
+                            value={missingOverride.badge}
+                            onChange={(e) => missingOverride.setBadge(e.target.value.trim())}
                             style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '15px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem', textAlign: 'center' }}
                         />
 
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <button onClick={handleMissingCancel} disabled={isReportingMissing} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingMissing ? 'not-allowed' : 'pointer' }}>Cancel</button>
-                            <button onClick={handleMissingSubmit} disabled={isReportingMissing} style={{ flex: 2, padding: '12px', backgroundColor: '#e91e63', color: 'white', border: 'none', borderRadius: '4px', cursor: isReportingMissing ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-                                {isReportingMissing ? 'Reporting...' : 'Confirm'}
+                            <button onClick={missingOverride.close} disabled={missingOverride.isSubmitting} style={{ flex: 1, padding: '12px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: missingOverride.isSubmitting ? 'not-allowed' : 'pointer' }}>Cancel</button>
+                            <button onClick={handleMissingSubmit} disabled={missingOverride.isSubmitting} style={{ flex: 2, padding: '12px', backgroundColor: '#e91e63', color: 'white', border: 'none', borderRadius: '4px', cursor: missingOverride.isSubmitting ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
+                                {missingOverride.isSubmitting ? 'Reporting...' : 'Confirm'}
                             </button>
                         </div>
                     </>
@@ -183,11 +117,11 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                             placeholder="Location barcode..."
                             value={locationInput}
                             onChange={(e) => setLocationInput(e.target.value.trim())}
-                            onKeyDown={(e) => { if (e.key === 'Enter') handleLocationConfirm(); }}
+                            onKeyDown={(e) => { if (e.key === 'Enter') confirmLocation(); }}
                             style={{ width: '100%', padding: '12px', boxSizing: 'border-box', marginBottom: '15px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white', fontSize: '1.1rem' }}
                         />
                         <button
-                            onClick={handleLocationConfirm}
+                            onClick={confirmLocation}
                             disabled={!locationInput}
                             style={{ width: '100%', padding: '15px', fontSize: '1.1rem', backgroundColor: locationInput ? '#2196F3' : '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: locationInput ? 'pointer' : 'not-allowed', fontWeight: 'bold' }}
                         >
@@ -202,7 +136,7 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                                 Location: <strong style={{ color: '#64b5f6', fontSize: '1.1rem' }}>{scannedLocation}</strong>
                             </span>
                             <button
-                                onClick={handleChangeLocation}
+                                onClick={changeLocation}
                                 disabled={isSubmitting}
                                 style={{ padding: '6px 10px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: isSubmitting ? 'not-allowed' : 'pointer', fontSize: '0.85rem' }}
                             >
@@ -233,7 +167,7 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                         </div>
 
                         <button
-                            onClick={handleConfirm}
+                            onClick={confirmItem}
                             disabled={isSubmitting || !scanSku}
                             style={{ width: '100%', padding: '15px', backgroundColor: (!isSubmitting && scanSku) ? '#4CAF50' : '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: (isSubmitting || !scanSku) ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
                         >
@@ -242,7 +176,7 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                     </>
                 )}
 
-                {!isMissingMode && (
+                {!missingOverride.isOpen && (
                     <button
                         onClick={handleReportMissingClick}
                         disabled={isSubmitting}

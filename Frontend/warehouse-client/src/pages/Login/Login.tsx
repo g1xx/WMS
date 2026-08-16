@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axiosClient from '../../api/axiosClient';
+import axiosClient, { type TokenResponse } from '../../api/axiosClient';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +12,7 @@ export default function Login() {
         e.preventDefault(); 
 
         try {
-            const response = await axiosClient.post('/Auth/login', {
+            const response = await axiosClient.post<TokenResponse>('/Auth/login', {
                 username: username,
                 password: password
             });

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Warehouse.Application.Services;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
@@ -83,7 +84,7 @@ namespace Warehouse.Api.Controllers
 
         // Supervisor-only: confirms a shortage on a task assigned to some worker,
         // not necessarily the caller — see PutawayService.ReportMissingAsync.
-        [Authorize(Roles = "Brigadier,Admin")]
+        [Authorize(Roles = RoleNames.BrigadierOrAdmin)]
         [HttpPost("{id}/report-missing")]
         public async Task<ActionResult> ReportMissing(Guid id, [FromBody] ReportPutawayMissingDto dto)
         {

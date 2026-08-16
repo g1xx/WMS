@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Warehouse.Application.Services;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
@@ -98,7 +99,7 @@ namespace Warehouse.Api.Controllers
 
         // Supervisor-only: confirms a shortage on a task assigned to some worker,
         // not necessarily the caller — see PickTaskService.ReportMissingItemAsync.
-        [Authorize(Roles = "Brigadier,Admin")]
+        [Authorize(Roles = RoleNames.BrigadierOrAdmin)]
         [HttpPost("{id}/report-missing")]
         public async Task<ActionResult> ReportMissingItem(Guid id, [FromBody] ReportMissingItemDto dto)
         {
@@ -111,7 +112,7 @@ namespace Warehouse.Api.Controllers
 
         // Supervisor-only: confirms a defect on a task assigned to some worker,
         // not necessarily the caller — see PickTaskService.ReportDefectAsync.
-        [Authorize(Roles = "Brigadier,Admin")]
+        [Authorize(Roles = RoleNames.BrigadierOrAdmin)]
         [HttpPost("{id}/report-defect")]
         public async Task<ActionResult> ReportDefect(Guid id, [FromBody] ReportDefectDto dto)
         {

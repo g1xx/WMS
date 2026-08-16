@@ -476,13 +476,19 @@ namespace Warehouse.Infrastructure.Migrations
                     b.Property<int>("RequiredQuantity")
                         .HasColumnType("integer");
 
+                    b.Property<int>("ShortedQuantity")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", t =>
+                        {
+                            t.HasCheckConstraint("CK_OrderItem_ShortedQuantity_NonNegative", "\"ShortedQuantity\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Warehouse.Domain.PickTask", b =>

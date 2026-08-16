@@ -7,22 +7,22 @@ export interface ContainerValidation {
 }
 
 export async function fetchActivePutawayTask(): Promise<PutawayTask | null> {
-    const response = await axiosClient.get(`/PutawayTask/active?t=${Date.now()}`);
+    const response = await axiosClient.get<PutawayTask | null>(`/PutawayTask/active?t=${Date.now()}`);
     return response.data ?? null;
 }
 
 export async function validateContainer(containerBarcode: string, sector: string): Promise<ContainerValidation> {
-    const response = await axiosClient.post('/PutawayTask/validate-container', { containerBarcode, sector });
+    const response = await axiosClient.post<ContainerValidation>('/PutawayTask/validate-container', { containerBarcode, sector });
     return response.data;
 }
 
 export async function startPutaway(containerBarcode: string, sector: string): Promise<PutawayTask> {
-    const response = await axiosClient.post('/PutawayTask/start', { containerBarcode, sector });
+    const response = await axiosClient.post<PutawayTask>('/PutawayTask/start', { containerBarcode, sector });
     return response.data;
 }
 
 export async function confirmPutawayItem(taskId: string, locationBarcode: string, productSku: string, quantity: number): Promise<PutawayTask> {
-    const response = await axiosClient.post(`/PutawayTask/${taskId}/confirm-item`, { locationBarcode, productSku, quantity });
+    const response = await axiosClient.post<PutawayTask>(`/PutawayTask/${taskId}/confirm-item`, { locationBarcode, productSku, quantity });
     return response.data;
 }
 
@@ -30,7 +30,7 @@ export async function confirmPutawayItem(taskId: string, locationBarcode: string
 // (see fetchSupervisorAuthHeader) and attaches it to this one call only.
 export async function reportPutawayMissing(taskId: string, productSku: string, missingQuantity: number, supervisorBadge: string): Promise<PutawayTask> {
     const elevatedConfig = await fetchSupervisorAuthHeader(supervisorBadge);
-    const response = await axiosClient.post(
+    const response = await axiosClient.post<PutawayTask>(
         `/PutawayTask/${taskId}/report-missing`,
         { productSku, missingQuantity },
         elevatedConfig

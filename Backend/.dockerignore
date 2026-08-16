@@ -1,0 +1,17 @@
+# Host-built output — the image builds its own inside the container. Copying these
+# in would leak the host's OS/arch-specific binaries into the build context and can
+# break `dotnet restore`/`publish` (stale obj/project.assets.json).
+**/bin/
+**/obj/
+
+**/.vs/
+**/.vscode/
+*.user
+
+# Test projects aren't needed in the runtime image.
+Warehouse.Application.Tests/
+Warehouse.Api.Tests/
+
+**/*.md
+.git/
+.gitignore

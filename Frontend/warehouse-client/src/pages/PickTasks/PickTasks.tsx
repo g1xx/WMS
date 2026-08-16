@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { isSupervisorAuthError } from '../../api/axiosClient';
+import { alertIfSupervisorAuthError, extractErrorMessage } from '../../api/axiosClient';
+import { queryKeys } from '../../api/queryKeys';
 import {
     fetchCurrentPickTask,
     startPickTask,
@@ -17,8 +18,6 @@ interface Props {
     sector: string;
     onExitToMenu: () => void;
 }
-
-const pickTaskQueryKey = (sector: string) => ['pickTask', 'current', sector] as const;
 
 export default function PickTasks({ sector, onExitToMenu }: Props) {
     const queryClient = useQueryClient();
@@ -37,11 +36,11 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
         isLoading: taskLoading,
         refetch: refetchTask,
     } = useQuery({
-        queryKey: pickTaskQueryKey(sector),
+        queryKey: queryKeys.pickTask.current(sector),
         queryFn: () => fetchCurrentPickTask(sector),
     });
 
-    const invalidateTask = () => queryClient.invalidateQueries({ queryKey: pickTaskQueryKey(sector) });
+    const invalidateTask = () => queryClient.invalidateQueries({ queryKey: queryKeys.pickTask.current(sector) });
 
     // Clears any half-scanned container barcode whenever the resolved task changes
     // (new task loaded, task cleared, etc.) — mirrors the original's unconditional
@@ -75,9 +74,9 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
         onSuccess: () => {
             void invalidateTask();
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Error starting task:', error);
-            alert(error.response?.data || 'Failed to start task.');
+            alert(extractErrorMessage(error, 'Failed to start task.'));
             void invalidateTask();
         },
     });
@@ -94,9 +93,9 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
             setScanQty(1);
             void invalidateTask();
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Error picking item:', error);
-            alert(error.response?.data || 'Scan error!');
+            alert(extractErrorMessage(error, 'Scan error!'));
         },
     });
 
@@ -109,9 +108,9 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
             alert(data?.message || 'Container successfully sent to the conveyor.');
             void invalidateTask();
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Error dispatching task:', error);
-            alert(error.response?.data || 'Failed to close the container.');
+            alert(extractErrorMessage(error, 'Failed to close the container.'));
         },
     });
 
@@ -124,9 +123,9 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
             alert(data?.message || 'Task cancelled.');
             void invalidateTask();
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error('Error canceling task:', error);
-            alert(error.response?.data || 'Failed to cancel the task.');
+            alert(extractErrorMessage(error, 'Failed to cancel the task.'));
         },
     });
 
@@ -144,20 +143,17 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
             // close out the line (or the whole task) server-side, so don't trust
             // the task/item that was on screen a moment ago. Clear it immediately
             // and only then ask the server what to work on next.
-            queryClient.setQueryData(pickTaskQueryKey(sector), null);
+            queryClient.setQueryData(queryKeys.pickTask.current(sector), null);
             setScanLocation('');
             setScanSku('');
             setScanQty(1);
             setContainerBarcode('');
             void invalidateTask();
         },
-        onError: (error: any) => {
-            if (isSupervisorAuthError(error)) {
-                alert('Supervisor authorization failed: Invalid badge or missing permissions.');
-                return;
-            }
+        onError: (error: unknown) => {
+            if (alertIfSupervisorAuthError(error)) return;
             console.error('Shortage write-off error:', error);
-            alert(error.response?.data || 'Failed to confirm the shortage.');
+            alert(extractErrorMessage(error, 'Failed to confirm the shortage.'));
         },
     });
 
@@ -176,20 +172,17 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
             // different pick task entirely. Clear it immediately and only then ask
             // the server what to work on next, rather than risking another action
             // (e.g. a scan) racing against a task that's no longer active.
-            queryClient.setQueryData(pickTaskQueryKey(sector), null);
+            queryClient.setQueryData(queryKeys.pickTask.current(sector), null);
             setScanLocation('');
             setScanSku('');
             setScanQty(1);
             setContainerBarcode('');
             void invalidateTask();
         },
-        onError: (error: any) => {
-            if (isSupervisorAuthError(error)) {
-                alert('Supervisor authorization failed: Invalid badge or missing permissions.');
-                return;
-            }
+        onError: (error: unknown) => {
+            if (alertIfSupervisorAuthError(error)) return;
             console.error('Error reporting defect:', error);
-            alert(error.response?.data || 'Failed to report the defect.');
+            alert(extractErrorMessage(error, 'Failed to report the defect.'));
         },
     });
 
