@@ -48,4 +48,15 @@ public class LocationRepository : ILocationRepository
     {
         _context.Locations.AddRange(locations);
     }
+
+    public async Task LockForUpdateAsync(Guid locationId)
+    {
+        // Result unused — the point is the side effect of holding the row lock for the
+        // rest of the caller's transaction. AsNoTracking so this doesn't collide with
+        // an already-tracked Location instance for the same Id elsewhere in the request.
+        await _context.Set<Location>()
+            .FromSqlInterpolated($"SELECT * FROM \"Locations\" WHERE \"Id\" = {locationId} FOR UPDATE")
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

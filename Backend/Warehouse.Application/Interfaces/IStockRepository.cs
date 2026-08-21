@@ -23,4 +23,11 @@ public interface IStockRepository
     Task<Dictionary<Guid, List<string>>> GetLocationBarcodesByProductAsync(List<Guid> productIds);
 
     void Add(Stock stock);
+
+    // Distinct products with a physical presence at this location — a SKU whose Stock
+    // row has dropped to zero doesn't occupy a slot, so it's excluded here. Feeds the
+    // MaxDistinctSkus check in PutawayService.ConfirmItemAsync. Call this only after
+    // ILocationRepository.LockForUpdateAsync on the same location, inside the same
+    // transaction — otherwise this read isn't protected against a concurrent confirm.
+    Task<int> CountDistinctProductsWithStockAtLocationAsync(Guid locationId);
 }

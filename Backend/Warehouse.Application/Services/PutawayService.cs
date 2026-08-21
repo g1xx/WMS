@@ -187,14 +187,45 @@ public class PutawayService : IPutawayService
         if (location == null)
             return Result<PutawayTaskResponseDto>.Failure($"Location '{dto.LocationBarcode}' was not found.", ResultErrorType.NotFound);
 
-        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        // Nullable string: null means "checks passed, mutation committed"; non-null is
+        // a capacity-limit rejection message. Using the generic ExecuteInTransactionAsync
+        // overload lets that rejection travel straight out of the transaction instead of
+        // being stashed in a captured outer variable.
+        var capacityRejection = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            item.PutAwayQuantity += dto.Quantity;
+            // Row lock on the destination first, before reading or writing anything else
+            // in this transaction — without it, two concurrent confirms into the same
+            // near-full location could both read "room for one more" before either
+            // commits. A second concurrent caller targeting the same location blocks
+            // here until this transaction commits or rolls back.
+            await _unitOfWork.Locations.LockForUpdateAsync(location.Id);
 
             // Find-or-create respects the unique (ProductId, LocationId) index on Stock —
             // this may be a brand-new pairing if the worker picked a location the
             // product wasn't suggested for.
             var stock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(item.ProductId, location.Id);
+
+            // A SKU already present here with a non-zero quantity doesn't newly occupy a
+            // slot — including one whose Stock row is currently at 0 (previously here,
+            // now empty): that's checked exactly like a brand-new SKU would be, not
+            // silently exempted.
+            var alreadyOccupiesSlot = stock != null && stock.PhysicalQuantity > 0;
+
+            if (!alreadyOccupiesSlot)
+            {
+                var limit = location.MaxDistinctSkus ?? LocationCapacityDefaults.GetDefaultMaxDistinctSkus(location.Type);
+                if (limit.HasValue)
+                {
+                    var currentDistinctSkuCount = await _unitOfWork.Stocks.CountDistinctProductsWithStockAtLocationAsync(location.Id);
+                    if (currentDistinctSkuCount >= limit.Value)
+                    {
+                        return $"Location '{location.AddressBarcode}' already stocks {currentDistinctSkuCount}/{limit.Value} distinct SKUs " +
+                               $"and doesn't currently stock {dto.ProductSku} — choose a different location.";
+                    }
+                }
+            }
+
+            item.PutAwayQuantity += dto.Quantity;
 
             if (stock == null)
             {
@@ -226,7 +257,12 @@ public class PutawayService : IPutawayService
             }
 
             await _unitOfWork.SaveChangesAsync();
+
+            return (string?)null;
         });
+
+        if (capacityRejection != null)
+            return Result<PutawayTaskResponseDto>.Failure(capacityRejection);
 
         return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }

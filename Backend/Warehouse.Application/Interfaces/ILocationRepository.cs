@@ -16,4 +16,12 @@ public interface ILocationRepository
 
     void Add(Location location);
     void AddRange(IEnumerable<Location> locations);
+
+    // Takes a row lock on this Location for the rest of the caller's transaction (a
+    // raw SELECT ... FOR UPDATE — EF Core has no fluent way to express this). Used
+    // before checking/enforcing MaxDistinctSkus: without it, two concurrent putaway
+    // confirms into the same near-full location could both read "room for one more"
+    // before either commits. A second concurrent caller locking the same Id blocks
+    // here until the first transaction commits or rolls back.
+    Task LockForUpdateAsync(Guid locationId);
 }

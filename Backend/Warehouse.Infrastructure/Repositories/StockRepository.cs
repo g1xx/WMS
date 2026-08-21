@@ -64,4 +64,13 @@ public class StockRepository : IStockRepository
     {
         _context.Stocks.Add(stock);
     }
+
+    public async Task<int> CountDistinctProductsWithStockAtLocationAsync(Guid locationId)
+    {
+        return await _context.Stocks
+            .Where(s => s.LocationId == locationId && s.PhysicalQuantity > 0)
+            .Select(s => s.ProductId)
+            .Distinct()
+            .CountAsync();
+    }
 }

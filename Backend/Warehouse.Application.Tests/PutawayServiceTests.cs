@@ -40,10 +40,30 @@ public class PutawayServiceTests
 
         // ConfirmItemAsync runs its work inside a transaction; default to transparently
         // running the action, same as the real UnitOfWork does on success, so most tests
-        // don't need to set this up individually.
+        // don't need to set this up individually. Both overloads: ConfirmItemAsync uses
+        // the generic one (to carry a MaxDistinctSkus rejection out of the transaction),
+        // nothing else in this file currently uses the non-generic one, but it's kept
+        // stubbed since Moq's default for an unstubbed Task<T>-returning method silently
+        // skips the action entirely rather than throwing — a real gotcha (see the commit
+        // that added the MaxDistinctSkus check for how this bit the existing tests here).
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
             .Returns<Func<Task>>(action => action());
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<string?>>>()))
+            .Returns<Func<Task<string?>>>(action => action());
+
+        // Defaults so tests that don't care about the MaxDistinctSkus check don't need to
+        // set these up individually: no-op lock, and "nothing else stocked here yet" (0
+        // is below every LocationCapacityDefaults value, including Shelf's default of 3 —
+        // the Type every test Location implicitly gets, since LocationType.Shelf is the
+        // enum's default value).
+        _locationRepositoryMock
+            .Setup(r => r.LockForUpdateAsync(It.IsAny<Guid>()))
+            .Returns(Task.CompletedTask);
+        _stockRepositoryMock
+            .Setup(r => r.CountDistinctProductsWithStockAtLocationAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(0);
 
         // Real implementation, not a mock: route ordering is pure logic with no
         // dependencies, and these tests don't care about item order.
@@ -185,7 +205,7 @@ public class PutawayServiceTests
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
         _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
         _unitOfWorkMock
-            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<string?>>>()))
             .ThrowsAsync(new InvalidOperationException("boom"));
 
         var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 4 };
@@ -195,6 +215,178 @@ public class PutawayServiceTests
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    // ===================== ConfirmItemAsync: MaxDistinctSkus =====================
+
+    [Fact]
+    public async Task ConfirmItemAsync_AtLimitWithNewSku_ReturnsFailure()
+    {
+        // Arrange: location already stocks 2 distinct SKUs against a limit of 2, and the
+        // one being confirmed here isn't one of them.
+        var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 0);
+        var item = task.Items.First();
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1", MaxDistinctSkus = 2 };
+
+        _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync((Stock?)null);
+        _stockRepositoryMock.Setup(r => r.CountDistinctProductsWithStockAtLocationAsync(location.Id)).ReturnsAsync(2);
+
+        var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 1 };
+
+        // Act
+        var result = await _sut.ConfirmItemAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain("2/2");
+        result.Error.Should().Contain("SKU-1");
+        item.PutAwayQuantity.Should().Be(0);
+
+        _stockRepositoryMock.Verify(r => r.Add(It.IsAny<Stock>()), Times.Never);
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task ConfirmItemAsync_AtLimitButSkuAlreadyStockedHere_Succeeds()
+    {
+        // Arrange: location is at its limit of 2, but the SKU being confirmed is already
+        // one of the 2 it stocks (non-zero quantity) — adding more of it isn't a new
+        // distinct SKU, so the limit shouldn't even be consulted.
+        var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 0);
+        var item = task.Items.First();
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1", MaxDistinctSkus = 2 };
+        var stock = new Stock { ProductId = item.ProductId, LocationId = location.Id, PhysicalQuantity = 5, ReservedQuantity = 0 };
+
+        _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync(stock);
+        _stockRepositoryMock.Setup(r => r.CountDistinctProductsWithStockAtLocationAsync(location.Id)).ReturnsAsync(2);
+
+        var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 3 };
+
+        // Act
+        var result = await _sut.ConfirmItemAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        stock.PhysicalQuantity.Should().Be(8);
+
+        // Proves the check was skipped entirely, not just coincidentally satisfied.
+        _stockRepositoryMock.Verify(r => r.CountDistinctProductsWithStockAtLocationAsync(It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ConfirmItemAsync_SkuHadZeroQuantityRowHere_CheckedAsNewNotExempt()
+    {
+        // Arrange: this exact SKU was stocked here before and is now at 0 — per spec that
+        // doesn't occupy a slot, so it must be checked exactly like a brand-new SKU would
+        // be, not automatically exempted just because a Stock row already exists.
+        var task = BuildTaskWithOneItem(expectedQuantity: 10, putAwayQuantity: 0);
+        var item = task.Items.First();
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1", MaxDistinctSkus = 2 };
+        var stock = new Stock { ProductId = item.ProductId, LocationId = location.Id, PhysicalQuantity = 0, ReservedQuantity = 0 };
+
+        _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync(stock);
+        _stockRepositoryMock.Setup(r => r.CountDistinctProductsWithStockAtLocationAsync(location.Id)).ReturnsAsync(2);
+
+        var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 3 };
+
+        // Act
+        var result = await _sut.ConfirmItemAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain("2/2");
+        stock.PhysicalQuantity.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ConfirmItemAsync_ConcurrentConfirmsIntoSameNearFullLocation_ExactlyOneSucceeds()
+    {
+        // Arrange: two different products, one task with a line for each, one shared
+        // destination location at MaxDistinctSkus=2 already stocking exactly 1 distinct
+        // SKU (neither of the two below) — one free slot, contested by both at once.
+        //
+        // This simulates what a real "SELECT ... FOR UPDATE" transaction would guarantee:
+        // LockForUpdateAsync blocks the second caller until the first's whole transaction
+        // (not just the lock call) finishes, and only a successful transaction increments
+        // the committed count the next contender reads. A fixed/unsynchronized stub for
+        // CountDistinctProductsWithStockAtLocationAsync would let both callers read "1"
+        // and both pass — exactly the bug this test exists to catch.
+        var productA = new Product { Id = Guid.NewGuid(), Sku = "SKU-A" };
+        var productB = new Product { Id = Guid.NewGuid(), Sku = "SKU-B" };
+        var location = new Location { Id = Guid.NewGuid(), AddressBarcode = "LOC-1", MaxDistinctSkus = 2 };
+        var container = new Container { Id = Guid.NewGuid(), Status = ContainerStatus.InProgress, AssignedSector = "mp1" };
+
+        var task = new PutawayTask
+        {
+            Id = Guid.NewGuid(),
+            ContainerId = container.Id,
+            Container = container,
+            Status = PutawayTaskStatus.InProgress,
+            AssignedWorkerId = "worker-1",
+            Items = new List<PutawayTaskItem>
+            {
+                new() { ProductId = productA.Id, Product = productA, ExpectedQuantity = 10 },
+                new() { ProductId = productB.Id, Product = productB, ExpectedQuantity = 10 },
+            }
+        };
+
+        _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(productA.Id, location.Id)).ReturnsAsync((Stock?)null);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(productB.Id, location.Id)).ReturnsAsync((Stock?)null);
+
+        var committedDistinctCount = 1;
+        _stockRepositoryMock
+            .Setup(r => r.CountDistinctProductsWithStockAtLocationAsync(location.Id))
+            .Returns(() => Task.FromResult(committedDistinctCount));
+
+        // Real SemaphoreSlim standing in for the row lock: acquired inside
+        // LockForUpdateAsync, released only when the surrounding "transaction" below
+        // finishes — not when the lock call itself returns.
+        var locationLock = new SemaphoreSlim(1, 1);
+        _locationRepositoryMock
+            .Setup(r => r.LockForUpdateAsync(location.Id))
+            .Returns(() => locationLock.WaitAsync());
+
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<string?>>>()))
+            .Returns<Func<Task<string?>>>(async action =>
+            {
+                try
+                {
+                    var outcome = await action();
+                    // Mirrors a real commit: only a successful transaction actually adds a
+                    // new distinct SKU, so only that case should affect what the next
+                    // contender (waiting on the lock) reads.
+                    if (outcome == null) committedDistinctCount++;
+                    return outcome;
+                }
+                finally
+                {
+                    locationLock.Release();
+                }
+            });
+
+        var dtoA = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-A", Quantity = 1 };
+        var dtoB = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-B", Quantity = 1 };
+
+        // Act: genuinely concurrent — both start before either can have completed.
+        var taskA = _sut.ConfirmItemAsync(task.Id, dtoA, "worker-1");
+        var taskB = _sut.ConfirmItemAsync(task.Id, dtoB, "worker-1");
+        var results = await Task.WhenAll(taskA, taskB);
+
+        // Assert: exactly one succeeded, the other lost the race and was rejected on the
+        // capacity check — never both, which is what a missing or misordered lock would
+        // allow.
+        results.Count(r => r.IsSuccess).Should().Be(1);
+        results.Count(r => !r.IsSuccess).Should().Be(1);
+        results.Single(r => !r.IsSuccess).Error.Should().Contain("distinct SKUs");
     }
 
     // ===================== ReportMissingAsync =====================
