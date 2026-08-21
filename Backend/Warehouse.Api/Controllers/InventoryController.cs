@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Warehouse.Api.Common;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Services;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers;
 
@@ -22,6 +23,10 @@ public class InventoryController : ControllerBase
         _inventoryService = inventoryService;
     }
 
+    // Explicitly excludes the Integration role (see RoleNames.Integration) — it has no
+    // business adjusting stock, only class-level [Authorize] wouldn't stop it since
+    // Integration is just another authenticated role otherwise.
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [HttpPost("adjust-stock")]
     public async Task<ActionResult> AdjustStock([FromBody] AdjustStockDto dto)
     {
@@ -32,6 +37,7 @@ public class InventoryController : ControllerBase
         return result.ToActionResult();
     }
 
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [HttpPost("products")]
     public async Task<ActionResult> CreateProduct([FromBody] CreateProductWithLocationDto dto)
     {

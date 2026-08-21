@@ -38,6 +38,8 @@ Login: `admin` / `AdminDemo123!`
 
 To see the missing-item / short-shipment flow described above without setting it up by hand, open **Orders** and look for `ORD-DEMO-SHORTSHIP` — it's already been picked, short-reported, and dispatched, so you can see the resulting `ShortShipped` status and the per-line shorted quantity directly. There's also `ORD-DEMO-LIVE`, left unallocated on purpose, if you want to click through the normal allocate → pick → dispatch path yourself.
 
+There's a second login for `/inbound` — a simulated upstream ERP/marketplace feed pushing orders and receiving notices into the warehouse, linked from the admin inventory page: `erp-feed` / `IntegrationDemo123!`. It's a separate account on purpose, in a separate `Integration` role scoped to exactly two actions (create an order, register a receiving notice) — it can't touch stock, dispatch, or anything supervisor-gated, which is the point: an external system integration shouldn't share credentials, or blast radius, with warehouse staff.
+
 This is running on a free-tier VM and may go offline; the repo is the durable copy if the link is down.
 
 ## Running locally

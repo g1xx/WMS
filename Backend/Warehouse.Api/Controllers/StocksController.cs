@@ -18,6 +18,10 @@ namespace Warehouse.Api.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        // Both actions explicitly exclude the Integration role (see RoleNames.Integration)
+        // — bare class-level [Authorize] alone wouldn't, since Integration is otherwise
+        // just another authenticated role.
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Stock>>> GetStocks()
         {
@@ -26,6 +30,7 @@ namespace Warehouse.Api.Controllers
             return Ok(stocks);
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost]
         public async Task<ActionResult> AddStock(StockCreateDto dto)
         {

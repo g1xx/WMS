@@ -2,7 +2,8 @@
 #
 # Quick start: `docker compose up --build`
 #   - frontend: http://localhost   (nginx, serving the Vite build; also proxies /api
-#     to `backend` internally — see Frontend/warehouse-client/nginx.conf)
+#     to `backend` internally — see Frontend/nginx.conf; also serves the simulated
+#     inbound order feed at /inbound)
 #   - backend:  http://127.0.0.1:5124/api — loopback-only, for local debugging
 #     (Swagger, curl) from on the host itself, or via an SSH tunnel on a remote
 #     box; the browser never calls this directly, see nginx.conf
@@ -77,7 +78,10 @@ services:
 
   frontend:
     build:
-      context: ./Frontend/warehouse-client
+      # Parent of both warehouse-client and TestOrderGenerator (the simulated inbound
+      # order feed, served at /inbound/) — see Frontend/Dockerfile for why the context
+      # has to be one level up from either subproject.
+      context: ./Frontend
       dockerfile: Dockerfile
     container_name: wms_frontend
     restart: unless-stopped

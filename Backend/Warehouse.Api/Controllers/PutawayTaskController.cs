@@ -21,12 +21,11 @@ namespace Warehouse.Api.Controllers
             _putawayService = putawayService;
         }
 
-        // Registers a container's expected inbound contents. Stands in for a
-        // receiving/inbound flow this system doesn't have yet — see PutawayService.
-        // Unauthenticated on purpose, same as OrdersController.CreateOrder: this is
-        // a seeding/setup action for tooling (e.g. the test data generator), not a
-        // worker-facing terminal action like the rest of this controller.
-        [AllowAnonymous]
+        // Registers a container's expected inbound contents (an ASN, in real WMS terms).
+        // Restricted to the Integration role (see RoleNames.Integration) rather than any
+        // staff role — this represents an upstream system pushing a receiving notice in,
+        // not a worker-facing terminal action like the rest of this controller.
+        [Authorize(Roles = RoleNames.Integration)]
         [HttpPost]
         public async Task<ActionResult> CreatePutawayTask([FromBody] CreatePutawayTaskDto dto)
         {
@@ -35,7 +34,10 @@ namespace Warehouse.Api.Controllers
         }
 
         // The worker's own in-flight task, regardless of sector — lets a re-login
-        // resume straight back into it, same as PickTask/active.
+        // resume straight back into it, same as PickTask/active. Explicitly excludes
+        // Integration (see RoleNames.Integration) — bare class-level [Authorize] alone
+        // wouldn't, since it's otherwise just another authenticated role.
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveTask()
         {
@@ -46,6 +48,7 @@ namespace Warehouse.Api.Controllers
             return Ok(task);
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("validate-container")]
         public async Task<ActionResult> ValidateContainer([FromBody] ValidateContainerDto dto)
         {
@@ -59,6 +62,7 @@ namespace Warehouse.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("start")]
         public async Task<ActionResult> StartPutaway([FromBody] ValidateContainerDto dto)
         {
@@ -72,6 +76,7 @@ namespace Warehouse.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("{id}/confirm-item")]
         public async Task<ActionResult> ConfirmItem(Guid id, [FromBody] ConfirmPutawayItemDto dto)
         {
