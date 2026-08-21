@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +34,10 @@ namespace Warehouse.Api.Controllers
             return await RegisterUserWithRole(registerDto, RoleNames.Worker);
         }
 
+        // Admin-only: creates an account with the elevated Brigadier role. Without this
+        // guard, anyone unauthenticated could self-register as a supervisor and unlock
+        // every [Authorize(Roles = RoleNames.BrigadierOrAdmin)] endpoint in the app.
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpPost("register-brigadier")]
         public async Task<IActionResult> RegisterBrigadier(RegisterDto registerDto)
         {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
@@ -5,6 +6,7 @@ using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StocksController : ControllerBase
@@ -27,6 +29,11 @@ namespace Warehouse.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> AddStock(StockCreateDto dto)
         {
+            if (dto.Quantity <= 0)
+            {
+                return BadRequest("Quantity must be greater than zero.");
+            }
+
             var location = await _unitOfWork.Locations.GetByBarcodeAsync(dto.LocationBarcode);
 
             if (location == null)

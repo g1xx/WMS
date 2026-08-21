@@ -115,6 +115,9 @@ namespace Warehouse.Application.Services
             if (task.AssignedWorkerId != userId)
                 return Result<string>.Failure("Access error! The task is being performed by another worker.");
 
+            if (dto.Quantity <= 0)
+                return Result<string>.Failure("Quantity must be greater than zero.");
+
             var taskItem = task.Items.FirstOrDefault(i =>
                 i.Location!.AddressBarcode == dto.LocationBarcode &&
                 i.Product!.Sku == dto.ProductSku);
@@ -148,7 +151,11 @@ namespace Warehouse.Application.Services
                 //    mid-route (routine in a live warehouse) must see what's actually on
                 //    the shelf, not stock that's already sitting in the tote.
                 stock.PhysicalQuantity -= dto.Quantity;
-                stock.ReservedQuantity -= dto.Quantity;
+                // Clamped like ReportDefectAsync's equivalent decrement — ReservedQuantity
+                // can already be out of sync with this task's bookkeeping (e.g. an
+                // out-of-band cycle-count correction via InventoryService), so this must
+                // not go negative and corrupt Stock.AvailableQuantity.
+                stock.ReservedQuantity = Math.Max(0, stock.ReservedQuantity - dto.Quantity);
 
                 _unitOfWork.StockTransactions.Add(new StockTransaction
                 {
@@ -340,6 +347,9 @@ namespace Warehouse.Application.Services
             if (task == null)
                 return Result<MessageResponseDto>.Failure("Pick task not found.", ResultErrorType.NotFound);
 
+            if (task.Status != PickTaskStatus.InProgress)
+                return Result<MessageResponseDto>.Failure("Cannot report a shortage: task is not active.");
+
             // No AssignedWorkerId ownership check here: this action is gated to the
             // Brigadier/Admin role, and the caller is expected to be a supervisor
             // confirming the shortage, not the picker the task is assigned to.
@@ -371,7 +381,9 @@ namespace Warehouse.Application.Services
                 taskItem.MissingQuantity += dto.MissingQuantity;
 
                 stock.PhysicalQuantity -= dto.MissingQuantity;
-                stock.ReservedQuantity -= dto.MissingQuantity;
+                // Clamped like ReportDefectAsync's equivalent decrement — see PickItemAsync
+                // for why this must not go negative.
+                stock.ReservedQuantity = Math.Max(0, stock.ReservedQuantity - dto.MissingQuantity);
 
                 _unitOfWork.StockTransactions.Add(new StockTransaction
                 {
@@ -441,7 +453,11 @@ namespace Warehouse.Application.Services
                     UserId = workerId
                 });
 
-                var remainingOnItem = taskItem.RequiredQuantity - taskItem.PickedQuantity;
+                // Same "outstanding" formula as PickItemAsync/ReportMissingItemAsync — must
+                // also exclude units already written off as missing, or a defect report can
+                // overcount what's still outstanding and over-reduce RequiredQuantity below
+                // what's already accounted for.
+                var remainingOnItem = taskItem.RequiredQuantity - taskItem.PickedQuantity - taskItem.MissingQuantity;
                 var replacementNeeded = Math.Min(defectiveQuantity, remainingOnItem);
                 taskItem.RequiredQuantity -= replacementNeeded;
 

@@ -45,6 +45,7 @@ This is running on a free-tier VM and may go offline; the repo is the durable co
 ```bash
 git clone https://github.com/g1xx/WMS.git
 cd WMS
+cp .env.example .env   # set JWT_SECRET at minimum — see comments in the file
 docker compose up --build
 ```
 
