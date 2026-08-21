@@ -131,13 +131,13 @@ public class DemoDataSeeder
         return admin;
     }
 
-    // 6 shelf locations in the same zone, one per demo product — enough for the
+    // 5 shelf locations in the same zone, one per demo product — enough for the
     // scripted scenario and the live-demo order without needing hundreds of rows
     // (contrast with LocationsController.SeedMassLocations(), which generates ~25,000
     // and isn't idempotent — not appropriate for a lightweight portfolio seed).
     private async Task<Dictionary<string, string>> SeedShelfLocationsAsync()
     {
-        var barcodes = Enumerable.Range(1, 6)
+        var barcodes = Enumerable.Range(1, 5)
             .Select(rack => $"{DemoWarehouse}{DemoSector}{DemoFloor}01{rack:D3}01a")
             .ToList();
 
@@ -172,18 +172,22 @@ public class DemoDataSeeder
     }
 
     private static readonly string[] DemoProductSkus =
-        { "WM-100", "UC-200", "KB-300", "MN-400", "LS-500", "WC-600" };
+        { "SD137VT", "SR284VT", "SP063VT", "SW192VT", "SX075VT" };
 
+    // Suspension springs — invented SKUs and a fictional manufacturer, not real
+    // catalogue data. Automotive parts distribution is a more representative target
+    // domain for this project (Polish logistics/distribution) than generic
+    // electronics. Fitting position ("przód"/"tył" — front/rear) lives in the product
+    // name only; no separate column for it, matching the rest of this schema.
     private async Task<Dictionary<string, Product>> SeedProductsAsync()
     {
         var candidates = new List<Product>
         {
-            new() { Name = "Wireless Mouse", Sku = "WM-100", Price = 24.99m, WeightKg = 0.12m, LengthCm = 12, WidthCm = 6, HeightCm = 4, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
-            new() { Name = "USB-C Cable 2m", Sku = "UC-200", Price = 9.99m, WeightKg = 0.08m, LengthCm = 20, WidthCm = 8, HeightCm = 2, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
-            new() { Name = "Mechanical Keyboard", Sku = "KB-300", Price = 89.99m, WeightKg = 0.95m, LengthCm = 44, WidthCm = 14, HeightCm = 4, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
-            new() { Name = "27-inch Monitor", Sku = "MN-400", Price = 249.99m, WeightKg = 5.2m, LengthCm = 62, WidthCm = 15, HeightCm = 45, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
-            new() { Name = "Laptop Stand", Sku = "LS-500", Price = 34.99m, WeightKg = 1.1m, LengthCm = 25, WidthCm = 22, HeightCm = 15, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
-            new() { Name = "Webcam 1080p", Sku = "WC-600", Price = 45.99m, WeightKg = 0.15m, LengthCm = 10, WidthCm = 5, HeightCm = 5, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
+            new() { Name = "Sprężyna zawieszenia przód SD137VT", Sku = "SD137VT", Price = 119.40m, WeightKg = 3.2m, LengthCm = 38.6m, WidthCm = 15.8m, HeightCm = 15.8m, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
+            new() { Name = "Sprężyna zawieszenia tył SR284VT", Sku = "SR284VT", Price = 82.30m, WeightKg = 2.4m, LengthCm = 34.1m, WidthCm = 12.1m, HeightCm = 12.1m, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
+            new() { Name = "Sprężyna zawieszenia przód SP063VT", Sku = "SP063VT", Price = 139.80m, WeightKg = 3.8m, LengthCm = 35.7m, WidthCm = 16.9m, HeightCm = 16.9m, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
+            new() { Name = "Sprężyna zawieszenia tył SW192VT", Sku = "SW192VT", Price = 67.20m, WeightKg = 2.1m, LengthCm = 29.8m, WidthCm = 11.4m, HeightCm = 11.4m, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
+            new() { Name = "Sprężyna zawieszenia przód SX075VT", Sku = "SX075VT", Price = 175.50m, WeightKg = 4.1m, LengthCm = 42.4m, WidthCm = 14.7m, HeightCm = 14.7m, BaseUnit = UnitType.piece, ItemPerPackage = 1 },
         };
 
         var created = 0;
@@ -274,8 +278,8 @@ public class DemoDataSeeder
             return;
         }
 
-        var mouse = productsBySku["WM-100"];
-        var monitor = productsBySku["MN-400"];
+        var springSD137VT = productsBySku["SD137VT"];
+        var springSX075VT = productsBySku["SX075VT"];
         var adminId = admin.Id.ToString();
 
         var order = new Order
@@ -286,8 +290,8 @@ public class DemoDataSeeder
             Status = OrderStatus.New,
             Items = new List<OrderItem>
             {
-                new() { ProductId = mouse.Id, RequiredQuantity = 5 },
-                new() { ProductId = monitor.Id, RequiredQuantity = 5 },
+                new() { ProductId = springSD137VT.Id, RequiredQuantity = 5 },
+                new() { ProductId = springSX075VT.Id, RequiredQuantity = 5 },
             },
         };
         _unitOfWork.Orders.Add(order);
@@ -306,27 +310,27 @@ public class DemoDataSeeder
             adminId);
         ThrowIfFailed(startResult.IsSuccess, startResult.Error, "start the demo pick task");
 
-        var mousePick = await _pickTaskService.PickItemAsync(
+        var springSD137VTPick = await _pickTaskService.PickItemAsync(
             task.Id,
-            new PickItemDto { WorkerId = adminId, LocationBarcode = locationBarcodeBySku["WM-100"], ProductSku = "WM-100", Quantity = 5 },
+            new PickItemDto { WorkerId = adminId, LocationBarcode = locationBarcodeBySku["SD137VT"], ProductSku = "SD137VT", Quantity = 5 },
             adminId);
-        ThrowIfFailed(mousePick.IsSuccess, mousePick.Error, "pick the mouse (fully in stock)");
+        ThrowIfFailed(springSD137VTPick.IsSuccess, springSD137VTPick.Error, "pick the SD137VT front spring (fully in stock)");
 
         // Partial pick: 3 of 5 found on the shelf.
-        var monitorPick = await _pickTaskService.PickItemAsync(
+        var springSX075VTPick = await _pickTaskService.PickItemAsync(
             task.Id,
-            new PickItemDto { WorkerId = adminId, LocationBarcode = locationBarcodeBySku["MN-400"], ProductSku = "MN-400", Quantity = 3 },
+            new PickItemDto { WorkerId = adminId, LocationBarcode = locationBarcodeBySku["SX075VT"], ProductSku = "SX075VT", Quantity = 3 },
             adminId);
-        ThrowIfFailed(monitorPick.IsSuccess, monitorPick.Error, "partially pick the monitor");
+        ThrowIfFailed(springSX075VTPick.IsSuccess, springSX075VTPick.Error, "partially pick the SX075VT front spring");
 
         // Supervisor override: the remaining 2 are confirmed genuinely missing. No other
         // stock exists for this SKU anywhere, so the replacement search comes up empty
         // and this becomes a real, unrecoverable shortfall (ShortedQuantity + IsPendingReplenishment).
         var missingReport = await _pickTaskService.ReportMissingItemAsync(
             task.Id,
-            new ReportMissingItemDto { LocationBarcode = locationBarcodeBySku["MN-400"], ProductSku = "MN-400", MissingQuantity = 2 },
+            new ReportMissingItemDto { LocationBarcode = locationBarcodeBySku["SX075VT"], ProductSku = "SX075VT", MissingQuantity = 2 },
             adminId);
-        ThrowIfFailed(missingReport.IsSuccess, missingReport.Error, "report the monitor shortfall (supervisor override)");
+        ThrowIfFailed(missingReport.IsSuccess, missingReport.Error, "report the SX075VT shortfall (supervisor override)");
 
         var dispatchResult = await _pickTaskService.DispatchContainerAsync(
             task.Id,
@@ -335,8 +339,8 @@ public class DemoDataSeeder
         ThrowIfFailed(dispatchResult.IsSuccess, dispatchResult.Error, "dispatch the demo container");
 
         Console.WriteLine(
-            $"Created and walked order '{orderNumber}' through: mouse fully picked (5/5), " +
-            "monitor partially picked (3/5) + 2 confirmed missing with no replacement found -> " +
+            $"Created and walked order '{orderNumber}' through: SD137VT fully picked (5/5), " +
+            "SX075VT partially picked (3/5) + 2 confirmed missing with no replacement found -> " +
             "dispatched as ShortShipped.");
     }
 
@@ -351,8 +355,8 @@ public class DemoDataSeeder
             return;
         }
 
-        var keyboard = productsBySku["KB-300"];
-        var webcam = productsBySku["WC-600"];
+        var springSR284VT = productsBySku["SR284VT"];
+        var springSW192VT = productsBySku["SW192VT"];
 
         var order = new Order
         {
@@ -362,8 +366,8 @@ public class DemoDataSeeder
             Status = OrderStatus.New,
             Items = new List<OrderItem>
             {
-                new() { ProductId = keyboard.Id, RequiredQuantity = 3 },
-                new() { ProductId = webcam.Id, RequiredQuantity = 3 },
+                new() { ProductId = springSR284VT.Id, RequiredQuantity = 3 },
+                new() { ProductId = springSW192VT.Id, RequiredQuantity = 3 },
             },
         };
         _unitOfWork.Orders.Add(order);
