@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axiosClient, { extractErrorMessage } from './api/axiosClient';
+import { generateId } from './generateId';
 import type { Product } from './types/product';
 import { type PutawayItemRow, type CreatePutawayPayload, type CreatedPutawayTask } from './types/putaway';
 
@@ -10,7 +11,7 @@ function randomContainerId(): string {
 }
 
 function emptyRow(): PutawayItemRow {
-    return { id: crypto.randomUUID(), productSku: '', expectedQuantity: 1 };
+    return { id: generateId(), productSku: '', expectedQuantity: 1 };
 }
 
 export default function PutawayGenerator() {

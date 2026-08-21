@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import axiosClient, { extractErrorMessage } from './api/axiosClient';
+import { generateId } from './generateId';
 import { type Product, getAvailableQuantity } from './types/product';
 import type { LogEntry, LogStatus, OrderCreatePayload, OrderCreateResult, OrderMode } from './types/order';
 
@@ -42,7 +43,7 @@ export default function PickingGenerator() {
     };
 
     const appendLog = (entry: Omit<LogEntry, 'id'>) => {
-        setLog(prev => [{ id: crypto.randomUUID(), ...entry }, ...prev]);
+        setLog(prev => [{ id: generateId(), ...entry }, ...prev]);
     };
 
     const submitOrder = async (payload: OrderCreatePayload, mode: OrderMode) => {
