@@ -333,12 +333,81 @@ public class PutawayService : IPutawayService
     private async Task<PutawayTaskResponseDto> MapToDtoWithSuggestionsAsync(PutawayTask task)
     {
         var productIds = task.Items.Select(i => i.ProductId).Distinct().ToList();
-        var suggestionsByProduct = await _unitOfWork.Stocks.GetLocationBarcodesByProductAsync(productIds);
+        var candidatesByProduct = await _unitOfWork.Stocks.GetPutawaySuggestionCandidatesByProductAsync(productIds);
+
+        var allLocationIds = candidatesByProduct.Values
+            .SelectMany(candidates => candidates)
+            .Select(c => c.LocationId)
+            .Distinct()
+            .ToList();
+        var distinctSkuCountsByLocation = await _unitOfWork.Stocks.GetDistinctSkuCountsByLocationsAsync(allLocationIds);
+
+        var suggestionsByProduct = candidatesByProduct.ToDictionary(
+            kvp => kvp.Key,
+            kvp => RankSuggestions(kvp.Value, task.Sector, distinctSkuCountsByLocation));
 
         var dto = task.ToDto(suggestionsByProduct);
-        // Serpentine route over each item's first suggested location: minimizes
-        // the worker's walking distance across aisles.
-        dto.Items = _routeOptimizer.OptimizeRoute(dto.Items, i => i.SuggestedLocationBarcodes.FirstOrDefault());
+        // Serpentine route over each item's top-ranked suggested location: minimizes
+        // the worker's walking distance across aisles. Now a meaningful "best
+        // consolidation target" rather than an arbitrary DB-ordering artifact, since
+        // RankSuggestions below puts same-sector/already-stocked candidates first.
+        dto.Items = _routeOptimizer.OptimizeRoute(dto.Items, i => i.SuggestedLocations.FirstOrDefault()?.LocationBarcode);
         return dto;
+    }
+
+    // Three groups, in priority order:
+    //   1. Same sector, already stocks this SKU (qty > 0)      — top up existing stock.
+    //   2. Same sector, held this SKU before, now at 0         — its empty "home slot";
+    //      must not be hidden just because quantity is 0.
+    //   3. Other sector, currently stocks this SKU (qty > 0)   — informational only, the
+    //      worker isn't routed there, just shows the SKU is split across the warehouse.
+    //
+    // The MaxDistinctSkus exclusion only ever actually drops group-2 candidates: groups 1
+    // and 3 both require CurrentQuantity > 0 for THIS product to qualify at all, which by
+    // the same rule ConfirmItemAsync uses already exempts them from the limit. A group-2
+    // "home slot" that's now full of other SKUs is dropped — ConfirmItemAsync would
+    // reject a scan there anyway, so listing it would just be misleading.
+    private static List<SuggestedPutawayLocationDto> RankSuggestions(
+        List<PutawaySuggestionCandidate> candidates,
+        string currentSector,
+        IReadOnlyDictionary<Guid, int> distinctSkuCountsByLocation)
+    {
+        var sameSectorStocked = candidates
+            .Where(c => c.ZoneCode == currentSector && c.CurrentQuantity > 0)
+            .OrderByDescending(c => c.CurrentQuantity);
+
+        var sameSectorEmptyHomeSlot = candidates
+            .Where(c => c.ZoneCode == currentSector && c.CurrentQuantity == 0)
+            .Where(c => !IsAtDistinctSkuLimit(c, distinctSkuCountsByLocation))
+            .OrderBy(c => c.LocationBarcode);
+
+        var otherSectorStocked = candidates
+            .Where(c => c.ZoneCode != currentSector && c.CurrentQuantity > 0)
+            .OrderByDescending(c => c.CurrentQuantity);
+
+        return sameSectorStocked
+            .Concat(sameSectorEmptyHomeSlot)
+            .Concat(otherSectorStocked)
+            .Select(c =>
+            {
+                var limit = c.MaxDistinctSkus ?? LocationCapacityDefaults.GetDefaultMaxDistinctSkus(c.LocationType);
+                return new SuggestedPutawayLocationDto
+                {
+                    LocationBarcode = c.LocationBarcode,
+                    CurrentQuantity = c.CurrentQuantity,
+                    IsInCurrentSector = c.ZoneCode == currentSector,
+                    DistinctSkuCount = distinctSkuCountsByLocation.GetValueOrDefault(c.LocationId),
+                    MaxDistinctSkus = limit,
+                };
+            })
+            .ToList();
+    }
+
+    private static bool IsAtDistinctSkuLimit(PutawaySuggestionCandidate candidate, IReadOnlyDictionary<Guid, int> distinctSkuCountsByLocation)
+    {
+        var limit = candidate.MaxDistinctSkus ?? LocationCapacityDefaults.GetDefaultMaxDistinctSkus(candidate.LocationType);
+        if (!limit.HasValue) return false;
+
+        return distinctSkuCountsByLocation.GetValueOrDefault(candidate.LocationId) >= limit.Value;
     }
 }

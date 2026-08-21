@@ -48,16 +48,36 @@ public class StockRepository : IStockRepository
             .ToListAsync();
     }
 
-    public async Task<Dictionary<Guid, List<string>>> GetLocationBarcodesByProductAsync(List<Guid> productIds)
+    public async Task<Dictionary<Guid, List<PutawaySuggestionCandidate>>> GetPutawaySuggestionCandidatesByProductAsync(List<Guid> productIds)
     {
+        // No PhysicalQuantity > 0 filter here on purpose — a zero-quantity row is a
+        // SKU's empty "home slot" and PutawayService needs to see it, not have it
+        // silently excluded at the query level.
         var rows = await _context.Stocks
             .Include(s => s.Location)
-            .Where(s => productIds.Contains(s.ProductId) && s.PhysicalQuantity > 0)
+            .Where(s => productIds.Contains(s.ProductId))
             .ToListAsync();
 
         return rows
             .GroupBy(s => s.ProductId)
-            .ToDictionary(g => g.Key, g => g.Select(s => s.Location!.AddressBarcode).Distinct().ToList());
+            .ToDictionary(g => g.Key, g => g.Select(s => new PutawaySuggestionCandidate
+            {
+                LocationId = s.LocationId,
+                LocationBarcode = s.Location!.AddressBarcode,
+                CurrentQuantity = s.PhysicalQuantity,
+                ZoneCode = s.Location!.ZoneCode,
+                LocationType = s.Location!.Type,
+                MaxDistinctSkus = s.Location!.MaxDistinctSkus,
+            }).ToList());
+    }
+
+    public async Task<Dictionary<Guid, int>> GetDistinctSkuCountsByLocationsAsync(List<Guid> locationIds)
+    {
+        return await _context.Stocks
+            .Where(s => locationIds.Contains(s.LocationId) && s.PhysicalQuantity > 0)
+            .GroupBy(s => s.LocationId)
+            .Select(g => new { LocationId = g.Key, Count = g.Select(s => s.ProductId).Distinct().Count() })
+            .ToDictionaryAsync(x => x.LocationId, x => x.Count);
     }
 
     public void Add(Stock stock)

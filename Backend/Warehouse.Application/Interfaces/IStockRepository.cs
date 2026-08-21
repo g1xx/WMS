@@ -17,10 +17,18 @@ public interface IStockRepository
     // Product+Location included — feeds StocksController's full stock listing.
     Task<List<Stock>> GetAllWithDetailsAsync();
 
-    // Batched — every distinct product in a putaway task, mapped to the address
-    // barcodes of locations where it's currently physically stocked (PhysicalQuantity > 0).
-    // Powers the "suggested locations" a worker sees when choosing where to put an item away.
-    Task<Dictionary<Guid, List<string>>> GetLocationBarcodesByProductAsync(List<Guid> productIds);
+    // Batched — every distinct product in a putaway task, mapped to every location that
+    // has (or ever had) a Stock row for it, at whatever quantity it currently holds —
+    // including 0. Powers PutawayService's suggested-locations ranking, which needs the
+    // zero-quantity rows too (a SKU's "home slot" that's currently empty must still show
+    // up, not be silently dropped the way a PhysicalQuantity > 0 filter would).
+    Task<Dictionary<Guid, List<PutawaySuggestionCandidate>>> GetPutawaySuggestionCandidatesByProductAsync(List<Guid> productIds);
+
+    // Batched — current distinct-SKU count (PhysicalQuantity > 0 only) for each of the
+    // given locations. Feeds the MaxDistinctSkus exclusion when ranking suggestions;
+    // for the single-location version used at actual confirm time, see
+    // CountDistinctProductsWithStockAtLocationAsync below.
+    Task<Dictionary<Guid, int>> GetDistinctSkuCountsByLocationsAsync(List<Guid> locationIds);
 
     void Add(Stock stock);
 

@@ -20,7 +20,9 @@ test.describe('Putaway flow', () => {
                     missingQuantity: 0,
                     // Deliberately does NOT include the location the worker scans
                     // below, to exercise the soft-validation confirm dialog.
-                    suggestedLocationBarcodes: ['mp1000101a'],
+                    suggestedLocations: [
+                        { locationBarcode: 'mp1000101a', currentQuantity: 3, isInCurrentSector: true, distinctSkuCount: 1, maxDistinctSkus: 3 },
+                    ],
                 },
             ],
         };
@@ -49,7 +51,7 @@ test.describe('Putaway flow', () => {
         await page.getByPlaceholder('Scan Container Barcode').fill('TOTE-1');
         await page.getByRole('button', { name: 'Scan Container' }).click();
 
-        // STEP 1: location — scanning an address NOT in suggestedLocationBarcodes
+        // STEP 1: location — scanning an address NOT in suggestedLocations
         // must warn before locking it in.
         await expect(page.getByRole('heading', { name: /Container:/ })).toBeVisible();
         await page.getByPlaceholder('Location barcode...').fill('mp1999901a');
@@ -92,7 +94,9 @@ test.describe('Putaway flow', () => {
                     expectedQuantity: 5,
                     putAwayQuantity: 0,
                     missingQuantity: 0,
-                    suggestedLocationBarcodes: ['mp1000101a'],
+                    suggestedLocations: [
+                        { locationBarcode: 'mp1000101a', currentQuantity: 3, isInCurrentSector: true, distinctSkuCount: 1, maxDistinctSkus: 3 },
+                    ],
                 },
             ],
         };

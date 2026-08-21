@@ -5,9 +5,11 @@ namespace Warehouse.Application.Mapping;
 
 public static class PutawayTaskMappingExtensions
 {
-    // Pure shaping only — no route optimization. Suggestions are passed in already
-    // fetched, since resolving them is an async repository call the caller owns.
-    public static PutawayTaskResponseDto ToDto(this PutawayTask task, IReadOnlyDictionary<Guid, List<string>> suggestedLocationsByProduct)
+    // Pure shaping only — no ranking/filtering logic and no route optimization here.
+    // Suggestions are passed in already fetched and already ranked (see
+    // PutawayService.MapToDtoWithSuggestionsAsync), since both resolving them and
+    // deciding their order need task.Sector plus async repository calls the caller owns.
+    public static PutawayTaskResponseDto ToDto(this PutawayTask task, IReadOnlyDictionary<Guid, List<SuggestedPutawayLocationDto>> suggestedLocationsByProduct)
     {
         return new PutawayTaskResponseDto
         {
@@ -23,9 +25,9 @@ public static class PutawayTaskMappingExtensions
                 ExpectedQuantity = i.ExpectedQuantity,
                 PutAwayQuantity = i.PutAwayQuantity,
                 MissingQuantity = i.MissingQuantity,
-                SuggestedLocationBarcodes = suggestedLocationsByProduct.TryGetValue(i.ProductId, out var barcodes)
-                    ? barcodes
-                    : new List<string>()
+                SuggestedLocations = suggestedLocationsByProduct.TryGetValue(i.ProductId, out var suggestions)
+                    ? suggestions
+                    : new List<SuggestedPutawayLocationDto>()
             }).ToList()
         };
     }
