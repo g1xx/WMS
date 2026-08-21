@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
@@ -6,6 +7,7 @@ using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
