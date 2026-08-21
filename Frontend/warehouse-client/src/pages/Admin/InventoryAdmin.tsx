@@ -220,7 +220,7 @@ export default function InventoryAdmin() {
                         order feed), served by nginx alongside this one — a plain anchor,
                         not a router Link, since it's a full navigation across app boundaries. */}
                     <a
-                        href="/inbound"
+                        href="/inbound/"
                         style={{ padding: '8px 14px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', textDecoration: 'none' }}
                     >
                         Inbound Order Feed &rarr;
