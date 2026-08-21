@@ -10,6 +10,10 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
     {
         builder.Property(l => l.AddressBarcode).HasMaxLength(100);
 
+        builder.ToTable(t => t.HasCheckConstraint(
+            "CK_Location_MaxDistinctSkus_PositiveOrNull",
+            "\"MaxDistinctSkus\" IS NULL OR \"MaxDistinctSkus\" > 0"));
+
         builder.HasData(
             new Location
             {
