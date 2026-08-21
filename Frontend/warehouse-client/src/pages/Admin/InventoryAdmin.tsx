@@ -208,12 +208,24 @@ export default function InventoryAdmin() {
     return (
         <div style={{ backgroundColor: '#121212', minHeight: '100vh', color: '#e0e0e0', padding: '20px' }}>
             <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-                <button
-                    onClick={() => navigate('/')}
-                    style={{ padding: '8px 14px', marginBottom: '20px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                >
-                    &larr; Back to Picking Terminal
-                </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    <button
+                        onClick={() => navigate('/')}
+                        style={{ padding: '8px 14px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                        &larr; Back to Picking Terminal
+                    </button>
+
+                    {/* /inbound is a separate app (the simulated upstream ERP/marketplace
+                        order feed), served by nginx alongside this one — a plain anchor,
+                        not a router Link, since it's a full navigation across app boundaries. */}
+                    <a
+                        href="/inbound"
+                        style={{ padding: '8px 14px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', textDecoration: 'none' }}
+                    >
+                        Inbound Order Feed &rarr;
+                    </a>
+                </div>
 
                 <h2 style={{ marginBottom: '20px' }}>Admin: Inventory</h2>
 

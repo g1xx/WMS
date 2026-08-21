@@ -21,6 +21,7 @@ public class OrdersController : ControllerBase
         _orderAllocationService = orderAllocationService;
     }
 
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
     {
@@ -29,6 +30,7 @@ public class OrdersController : ControllerBase
         return Ok(orders);
     }
 
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Order>> GetOrder(Guid id)
     {
@@ -42,8 +44,11 @@ public class OrdersController : ControllerBase
         return Ok(order);
     }
 
+    // No Roles restriction beyond the class-level [Authorize] — this is the one action
+    // the Integration role (an upstream ERP/marketplace feed) is granted, alongside
+    // PutawayTaskController's create action. See RoleNames.Integration.
     [HttpPost]
-    public async Task<ActionResult<Order>> CreateOrder(OrderCreateDto dto)
+    public async Task<ActionResult> CreateOrder(OrderCreateDto dto)
     {
         if (dto.Items.Any(i => i.RequiredQuantity <= 0))
         {
@@ -69,10 +74,37 @@ public class OrdersController : ControllerBase
         _unitOfWork.Orders.Add(newOrder);
         await _unitOfWork.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, newOrder);
+        // The order is durably committed above already, so nothing below can make order
+        // creation itself "fail" — a shortage isn't an error (OrderAllocationService parks
+        // the order as AwaitingReplenishment and returns IsAllocated=false, same as it would
+        // for a manual /allocate call), and even a genuine unexpected exception here must
+        // not roll back or hide the order that was just created. The Integration role (see
+        // RoleNames.Integration) has no access to the separate /allocate endpoint, so this
+        // is the only place its orders ever get a chance to reach Picking.
+        bool isAllocated;
+        string? allocationMessage;
+        try
+        {
+            (isAllocated, allocationMessage) = await _orderAllocationService.AllocateOrderAsync(newOrder.Id);
+        }
+        catch (Exception ex)
+        {
+            isAllocated = false;
+            allocationMessage = $"Order was created, but allocation failed unexpectedly: {ex.Message}";
+        }
+
+        var result = new OrderCreateResultDto
+        {
+            Order = newOrder,
+            IsAllocated = isAllocated,
+            AllocationMessage = allocationMessage,
+        };
+
+        return CreatedAtAction(nameof(GetOrder), new { id = newOrder.Id }, result);
     }
 
 
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [HttpPost("{id}/allocate")]
     public async Task<ActionResult> AllocateOrder(Guid id)
     {
@@ -88,6 +120,7 @@ public class OrdersController : ControllerBase
         return Ok("Order reserved, products allocated to locations, and status set to Picking.");
     }
 
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [HttpPost("{id}/pack")]
     public async Task<ActionResult> PackOrder(Guid id)
     {

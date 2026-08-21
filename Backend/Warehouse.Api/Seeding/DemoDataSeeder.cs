@@ -29,6 +29,13 @@ public class DemoDataSeeder
     private const string AdminUsername = "admin";
     private const string AdminPassword = "AdminDemo123!";
 
+    // A separate, deliberately narrow identity for the simulated upstream ERP/marketplace
+    // feed (see RoleNames.Integration) — not the admin account, so the demo actually shows
+    // the two identities are different: this one can create inbound orders and register
+    // receiving notices, and nothing else.
+    private const string IntegrationUsername = "erp-feed";
+    private const string IntegrationPassword = "IntegrationDemo123!";
+
     // Reuses one of LocationConfiguration.cs's existing HasData conveyor drops —
     // see the class comment above for why this isn't seeded again here.
     private const string ConveyorBarcode = "HZA301";
@@ -66,6 +73,7 @@ public class DemoDataSeeder
     {
         await SeedRolesAsync();
         var admin = await SeedAdminUserAsync();
+        await SeedIntegrationUserAsync();
 
         var conveyor = await _unitOfWork.Locations.GetByBarcodeAsync(ConveyorBarcode);
         if (conveyor == null)
@@ -89,11 +97,14 @@ public class DemoDataSeeder
         Console.WriteLine($"Admin login — username: {AdminUsername}  password: {AdminPassword}");
         Console.WriteLine("(This user is in the Admin role, which satisfies every Brigadier-or-Admin-gated");
         Console.WriteLine(" action too, so it can act as both the picker and the supervisor badge scan.)");
+        Console.WriteLine($"Integration (inbound feed) login — username: {IntegrationUsername}  password: {IntegrationPassword}");
+        Console.WriteLine(" (Scoped to creating inbound orders/receiving notices only — see /inbound and RoleNames.Integration.");
+        Console.WriteLine("  It cannot adjust stock, dispatch, approve overrides, or register users.)");
     }
 
     private async Task SeedRolesAsync()
     {
-        foreach (var roleName in new[] { RoleNames.Worker, RoleNames.Brigadier, RoleNames.Admin })
+        foreach (var roleName in new[] { RoleNames.Worker, RoleNames.Brigadier, RoleNames.Admin, RoleNames.Integration })
         {
             if (!await _roleManager.RoleExistsAsync(roleName))
             {
@@ -129,6 +140,33 @@ public class DemoDataSeeder
         await _userManager.AddToRoleAsync(admin, RoleNames.Admin);
         Console.WriteLine($"Created admin user '{AdminUsername}' (id {admin.Id}).");
         return admin;
+    }
+
+    private async Task SeedIntegrationUserAsync()
+    {
+        var existing = await _userManager.FindByNameAsync(IntegrationUsername);
+        if (existing != null)
+        {
+            Console.WriteLine($"Integration user '{IntegrationUsername}' already exists (id {existing.Id}) — leaving it as-is.");
+            return;
+        }
+
+        var integrationUser = new IdentityUser<Guid>
+        {
+            UserName = IntegrationUsername,
+            Email = "erp-feed@wms.local",
+            EmailConfirmed = true,
+        };
+
+        var createResult = await _userManager.CreateAsync(integrationUser, IntegrationPassword);
+        if (!createResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                $"Failed to create integration user: {string.Join("; ", createResult.Errors.Select(e => e.Description))}");
+        }
+
+        await _userManager.AddToRoleAsync(integrationUser, RoleNames.Integration);
+        Console.WriteLine($"Created integration user '{IntegrationUsername}' (id {integrationUser.Id}).");
     }
 
     // 5 shelf locations in the same zone, one per demo product — enough for the

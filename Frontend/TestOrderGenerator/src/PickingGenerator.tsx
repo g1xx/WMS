@@ -1,22 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import axiosClient from './api/axiosClient';
+import axiosClient, { extractErrorMessage } from './api/axiosClient';
 import { type Product, getAvailableQuantity } from './types/product';
-import type { CreatedOrder, LogEntry, LogStatus, OrderCreatePayload, OrderMode } from './types/order';
+import type { LogEntry, LogStatus, OrderCreatePayload, OrderCreateResult, OrderMode } from './types/order';
 
 const RANDOM_MAX_LINES = 5;
 
 function randomInt(minInclusive: number, maxInclusive: number): number {
     return minInclusive + Math.floor(Math.random() * (maxInclusive - minInclusive + 1));
-}
-
-function extractErrorMessage(error: unknown, fallback: string): string {
-    const data = (error as { response?: { data?: unknown } })?.response?.data;
-    if (typeof data === 'string' && data.trim()) return data;
-    if (data && typeof data === 'object' && 'message' in data) {
-        const message = (data as { message?: unknown }).message;
-        if (typeof message === 'string' && message.trim()) return message;
-    }
-    return fallback;
 }
 
 export default function PickingGenerator() {
@@ -45,7 +35,7 @@ export default function PickingGenerator() {
             setProducts(response.data);
         } catch (error) {
             console.error('Failed to load products:', error);
-            setProductsError('Failed to load products. Is the backend running on http://localhost:5124?');
+            setProductsError('Failed to load products. Is the backend reachable?');
         } finally {
             setLoadingProducts(false);
         }
@@ -58,21 +48,19 @@ export default function PickingGenerator() {
     const submitOrder = async (payload: OrderCreatePayload, mode: OrderMode) => {
         setSubmitting(true);
         try {
-            const createResponse = await axiosClient.post<CreatedOrder>('/Orders', payload);
-            const order = createResponse.data;
-            appendLog({ mode, orderNumber: order.orderNumber, status: 'created', message: `Order ${order.orderNumber} created with ${payload.items.length} line(s).` });
+            // Allocation now happens server-side as part of order creation (the feed
+            // integration has no access to the separate /allocate endpoint — see
+            // RoleNames.Integration), so one call reports both outcomes.
+            const createResponse = await axiosClient.post<OrderCreateResult>('/Orders', payload);
+            const { order, isAllocated, allocationMessage } = createResponse.data;
 
-            try {
-                const allocateResponse = await axiosClient.post(`/Orders/${order.id}/allocate`);
-                appendLog({ mode, orderNumber: order.orderNumber, status: 'allocated', message: extractErrorMessage({ response: allocateResponse }, 'Order allocated.') });
-            } catch (allocateError) {
-                appendLog({
-                    mode,
-                    orderNumber: order.orderNumber,
-                    status: 'shortage' as LogStatus,
-                    message: extractErrorMessage(allocateError, 'Allocation failed for an unknown reason.'),
-                });
-            }
+            appendLog({ mode, orderNumber: order.orderNumber, status: 'created', message: `Order ${order.orderNumber} created with ${payload.items.length} line(s).` });
+            appendLog({
+                mode,
+                orderNumber: order.orderNumber,
+                status: (isAllocated ? 'allocated' : 'shortage') as LogStatus,
+                message: allocationMessage ?? 'Order allocated.',
+            });
 
             if (mode === 'manual') {
                 setSelections({});
@@ -273,7 +261,7 @@ export default function PickingGenerator() {
                         onClick={() => void handleGenerateRandom()}
                         disabled={submitting || loadingProducts}
                     >
-                        Generate random order
+                        Simulate incoming order
                     </button>
                 </div>
 

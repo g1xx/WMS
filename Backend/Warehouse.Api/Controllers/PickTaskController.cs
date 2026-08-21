@@ -22,6 +22,11 @@ namespace Warehouse.Api.Controllers
             _pickTaskService = pickTaskService;
         }
 
+        // Every action below explicitly excludes the Integration role (see
+        // RoleNames.Integration) — bare class-level [Authorize] alone wouldn't, since
+        // it's otherwise just another authenticated role. Integration has no business
+        // anywhere in this controller.
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PickTaskResponseDto>>> GetPickTasks()
         {
@@ -31,6 +36,7 @@ namespace Warehouse.Api.Controllers
 
         // The worker's own in-flight task, regardless of sector. Called before sector
         // selection so a re-login can resume straight into an already-started task.
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveTask()
         {
@@ -42,6 +48,7 @@ namespace Warehouse.Api.Controllers
             return Ok(task);
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpGet("next")]
         public async Task<IActionResult> GetNextTask([FromQuery] string sector)
         {
@@ -56,6 +63,7 @@ namespace Warehouse.Api.Controllers
             return Ok(task);
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("{id}/start")]
         public async Task<ActionResult> StartPickTask(Guid id, StartPickTaskDto dto)
         {
@@ -66,6 +74,7 @@ namespace Warehouse.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("{id}/pick")]
         public async Task<ActionResult> PickItem(Guid id, PickItemDto dto)
         {
@@ -76,6 +85,7 @@ namespace Warehouse.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("{id}/dispatch")]
         public async Task<ActionResult> DispatchContainer(Guid id, [FromBody] DispatchContainerDto dto)
         {
@@ -87,6 +97,7 @@ namespace Warehouse.Api.Controllers
             return result.ToActionResult();
         }
 
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("{id}/cancel")]
         public async Task<ActionResult> CancelTask(Guid id)
         {

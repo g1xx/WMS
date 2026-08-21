@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axiosClient from './api/axiosClient';
+import axiosClient, { extractErrorMessage } from './api/axiosClient';
 import type { Product } from './types/product';
 import { type PutawayItemRow, type CreatePutawayPayload, type CreatedPutawayTask } from './types/putaway';
 
@@ -7,16 +7,6 @@ function randomContainerId(): string {
     const letters = Array.from({ length: 4 }, () => String.fromCharCode(65 + Math.floor(Math.random() * 26))).join('');
     const digits = Array.from({ length: 5 }, () => Math.floor(Math.random() * 10)).join('');
     return `${letters}${digits}`;
-}
-
-function extractErrorMessage(error: unknown, fallback: string): string {
-    const data = (error as { response?: { data?: unknown } })?.response?.data;
-    if (typeof data === 'string' && data.trim()) return data;
-    if (data && typeof data === 'object' && 'message' in data) {
-        const message = (data as { message?: unknown }).message;
-        if (typeof message === 'string' && message.trim()) return message;
-    }
-    return fallback;
 }
 
 function emptyRow(): PutawayItemRow {
@@ -51,7 +41,7 @@ export default function PutawayGenerator() {
             setProducts(productsResponse.data);
         } catch (error) {
             console.error('Failed to load products:', error);
-            setDataError('Failed to load products. Is the backend running on http://localhost:5124?');
+            setDataError('Failed to load products. Is the backend reachable?');
         } finally {
             setLoadingProducts(false);
         }
