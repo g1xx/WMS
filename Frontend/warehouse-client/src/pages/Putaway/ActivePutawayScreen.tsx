@@ -60,14 +60,25 @@ export default function ActivePutawayScreen({ task, onConfirmItem, onReportMissi
                 <p style={{ margin: '10px 0 5px 0', fontSize: '1.3rem', color: '#ffeb3b' }}>
                     <strong>Put away: {remaining} pcs</strong>
                 </p>
-                <p style={{ margin: '10px 0 0 0', color: '#a0a0a0', fontSize: '0.9rem' }}>
-                    <strong>Suggested locations:</strong>{' '}
-                    {suggestedLocations.length > 0 ? (
-                        <span style={{ color: '#64b5f6' }}>{suggestedLocations.join(', ')}</span>
+                <div style={{ margin: '10px 0 0 0', color: '#a0a0a0', fontSize: '0.9rem' }}>
+                    <strong>Suggested locations:</strong>
+                    {suggestedLocations.length === 0 ? (
+                        <p style={{ margin: '4px 0 0 0' }}>none yet — first time storing this product</p>
                     ) : (
-                        <span>none yet — first time storing this product</span>
+                        <ul style={{ margin: '6px 0 0 0', paddingLeft: '18px' }}>
+                            {suggestedLocations.map(loc => (
+                                <li key={loc.locationBarcode} style={{ marginBottom: '3px' }}>
+                                    <span style={{ color: '#64b5f6', fontWeight: 'bold' }}>{loc.locationBarcode}</span>
+                                    {!loc.isInCurrentSector && <span style={{ color: '#ff9800' }}> (other sector)</span>}
+                                    {' — '}
+                                    {loc.currentQuantity > 0 ? `${loc.currentQuantity} here` : 'empty home slot'}
+                                    {' · '}
+                                    {loc.distinctSkuCount}/{loc.maxDistinctSkus ?? '∞'} SKUs
+                                </li>
+                            ))}
+                        </ul>
                     )}
-                </p>
+                </div>
             </div>
 
             <div style={{ width: '100%', backgroundColor: '#2a2a2a', padding: '15px', borderRadius: '8px', boxSizing: 'border-box' }}>

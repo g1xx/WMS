@@ -1,6 +1,17 @@
 // Mirrors Warehouse.Domain.PutawayTaskStatus (serialized via JsonStringEnumConverter).
 export type PutawayTaskStatus = 'New' | 'InProgress' | 'Completed' | 'Canceled';
 
+// Mirrors Warehouse.Application.DTOs.SuggestedPutawayLocationDto. Pre-ranked by the
+// backend: same-sector-and-already-stocked, then same-sector-empty-home-slot
+// (currentQuantity 0 doesn't mean drop it), then other-sector-informational.
+export interface SuggestedPutawayLocation {
+    locationBarcode: string;
+    currentQuantity: number;
+    isInCurrentSector: boolean;
+    distinctSkuCount: number;
+    maxDistinctSkus: number | null;
+}
+
 export interface PutawayTaskItem {
     id: string;
     productName: string;
@@ -8,9 +19,9 @@ export interface PutawayTaskItem {
     expectedQuantity: number;
     putAwayQuantity: number;
     missingQuantity: number;
-    // Address barcodes of locations where this product is already physically
-    // stocked — a suggestion for the worker, not a restriction on where it can go.
-    suggestedLocationBarcodes: string[];
+    // A reference for the worker, not a restriction — they can still scan anywhere
+    // (see usePutawayWizardSteps's confirmLocation, which just asks to confirm).
+    suggestedLocations: SuggestedPutawayLocation[];
 }
 
 export interface PutawayTask {

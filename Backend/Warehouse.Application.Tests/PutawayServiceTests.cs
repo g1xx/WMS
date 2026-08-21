@@ -32,11 +32,13 @@ public class PutawayServiceTests
         _unitOfWorkMock.Setup(u => u.Locations).Returns(_locationRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.StockTransactions).Returns(_stockTransactionRepositoryMock.Object);
 
-        // MapToDtoWithSuggestionsAsync always calls this after every mutation — stub it to
-        // an empty result by default so tests that don't care about suggestions don't need
-        // to set it up individually.
-        _stockRepositoryMock.Setup(r => r.GetLocationBarcodesByProductAsync(It.IsAny<List<Guid>>()))
-            .ReturnsAsync(new Dictionary<Guid, List<string>>());
+        // MapToDtoWithSuggestionsAsync always calls these after every mutation — stub them
+        // to empty results by default so tests that don't care about suggestions don't
+        // need to set them up individually.
+        _stockRepositoryMock.Setup(r => r.GetPutawaySuggestionCandidatesByProductAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync(new Dictionary<Guid, List<PutawaySuggestionCandidate>>());
+        _stockRepositoryMock.Setup(r => r.GetDistinctSkuCountsByLocationsAsync(It.IsAny<List<Guid>>()))
+            .ReturnsAsync(new Dictionary<Guid, int>());
 
         // ConfirmItemAsync runs its work inside a transaction; default to transparently
         // running the action, same as the real UnitOfWork does on success, so most tests

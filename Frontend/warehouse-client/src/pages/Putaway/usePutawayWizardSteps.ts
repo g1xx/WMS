@@ -23,7 +23,7 @@ export function usePutawayWizardSteps({ task, onConfirmItem }: UsePutawayWizardS
 
     const currentItem = task.items.find(i => i.putAwayQuantity + i.missingQuantity < i.expectedQuantity);
     const remaining = currentItem ? currentItem.expectedQuantity - currentItem.putAwayQuantity - currentItem.missingQuantity : 0;
-    const suggestedLocations = currentItem?.suggestedLocationBarcodes ?? [];
+    const suggestedLocations = currentItem?.suggestedLocations ?? [];
 
     const resetToLocationStep = () => {
         setLocationInput('');
@@ -37,7 +37,7 @@ export function usePutawayWizardSteps({ task, onConfirmItem }: UsePutawayWizardS
         const trimmed = locationInput.trim();
         if (!trimmed) return;
 
-        const isSuggested = suggestedLocations.includes(trimmed);
+        const isSuggested = suggestedLocations.some(l => l.locationBarcode === trimmed);
         if (!isSuggested) {
             const confirmed = window.confirm(
                 'Данного адреса нет в списке рекомендованных. Уверены, что хотите положить товар сюда?'
