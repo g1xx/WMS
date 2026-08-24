@@ -67,9 +67,22 @@ public class PutawayServiceTests
             .Setup(r => r.CountDistinctProductsWithStockAtLocationAsync(It.IsAny<Guid>()))
             .ReturnsAsync(0);
 
-        // Real implementation, not a mock: route ordering is pure logic with no
-        // dependencies, and these tests don't care about item order.
-        _sut = new PutawayService(_unitOfWorkMock.Object, new RouteOptimizerService());
+        // Real implementations, not mocks: route ordering is pure logic with no
+        // dependencies of its own, and ContainerLifecycleService's only dependency is
+        // the already-mocked IUnitOfWork — using the real thing here exercises its
+        // actual lock/re-read/validate logic instead of assuming it works.
+        _sut = new PutawayService(_unitOfWorkMock.Object, new RouteOptimizerService(), new ContainerLifecycleService(_unitOfWorkMock.Object));
+    }
+
+    // Wires the container mocks ContainerLifecycleService.TransitionAsync needs for a
+    // scenario that completes the task and releases the container: LockForUpdateAsync
+    // must report the container's current (pre-transition) status, and GetByIdAsync
+    // must return the SAME tracked instance so the transition's mutation is visible to
+    // the test's own assertions afterward.
+    private void StubContainerRelease(PutawayTask task)
+    {
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(task.ContainerId)).ReturnsAsync(task.Container!.Status);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(task.ContainerId)).ReturnsAsync(task.Container);
     }
 
     // Single-item InProgress task: expected 10, put away 0, missing 0, SKU matching
@@ -127,6 +140,7 @@ public class PutawayServiceTests
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
         _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
         _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync(stock);
+        StubContainerRelease(task); // this scan completes the item (6 + 4 = 10), so it releases the container
 
         var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 4 };
 
@@ -182,6 +196,7 @@ public class PutawayServiceTests
         _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("LOC-1")).ReturnsAsync(location);
         _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(item.ProductId, location.Id)).ReturnsAsync(stock);
         _putawayTaskRepositoryMock.Setup(r => r.HasOtherActiveTasksForContainerAsync(task.ContainerId, task.Id)).ReturnsAsync(false);
+        StubContainerRelease(task);
 
         var dto = new ConfirmPutawayItemDto { LocationBarcode = "LOC-1", ProductSku = "SKU-1", Quantity = 5 };
 
@@ -420,6 +435,7 @@ public class PutawayServiceTests
         var item = task.Items.First();
 
         _putawayTaskRepositoryMock.Setup(r => r.GetByIdWithDetailsAsync(task.Id)).ReturnsAsync(task);
+        StubContainerRelease(task); // this report completes the item (6 + 4 = 10), so it releases the container
 
         var dto = new ReportPutawayMissingDto { ProductSku = "SKU-1", MissingQuantity = 4 };
 

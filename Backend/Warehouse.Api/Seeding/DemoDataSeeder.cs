@@ -286,7 +286,7 @@ public class DemoDataSeeder
             {
                 Barcode = barcode,
                 Type = ContainerType.Tote,
-                Status = ContainerStatus.New,
+                Status = ContainerTransitions.FreeStatus,
                 MaxWeightCapacityKg = 20,
             });
             created++;

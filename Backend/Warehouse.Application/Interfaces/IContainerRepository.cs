@@ -9,8 +9,14 @@ public interface IContainerRepository
     Task<Container?> GetByBarcodeAsync(string barcode);
     Task<Container?> GetByBarcodeWithLocationAsync(string barcode);
 
-    // Status == New || Available — only ever suggest containers that are actually free.
-    Task<Container?> GetFreeByBarcodeAsync(string barcode);
+    // Takes a row lock on this Container for the rest of the caller's transaction (a
+    // raw SELECT ... FOR UPDATE) and returns its CURRENT status, bypassing the change
+    // tracker entirely (AsNoTracking) — a caller-held tracked instance fetched earlier
+    // in the same request would otherwise be stale, and GetByIdAsync's FindAsync would
+    // silently return that cached value instead of hitting the database. Used by
+    // ContainerLifecycleService before deciding whether a transition is still valid.
+    // Returns null if the container doesn't exist.
+    Task<ContainerStatus?> LockForUpdateAsync(Guid containerId);
 
     Task<bool> ExistsByBarcodeAsync(string barcode);
 

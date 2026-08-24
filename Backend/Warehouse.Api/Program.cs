@@ -27,6 +27,10 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddScoped<IOrderAllocationService, OrderAllocationService>();
+// A container is a shared physical resource — its status IS the lock. This is the
+// only service allowed to assign Container.Status after creation; see
+// ContainerTransitions/ContainerLifecycleService.
+builder.Services.AddScoped<IContainerLifecycleService, ContainerLifecycleService>();
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();
