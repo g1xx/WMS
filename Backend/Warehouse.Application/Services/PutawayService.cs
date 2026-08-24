@@ -10,11 +10,13 @@ public class PutawayService : IPutawayService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRouteOptimizerService _routeOptimizer;
+    private readonly IContainerLifecycleService _containerLifecycle;
 
-    public PutawayService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer)
+    public PutawayService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer, IContainerLifecycleService containerLifecycle)
     {
         _unitOfWork = unitOfWork;
         _routeOptimizer = routeOptimizer;
+        _containerLifecycle = containerLifecycle;
     }
 
     public async Task<Result<PutawayTaskResponseDto>> CreatePutawayTaskAsync(CreatePutawayTaskDto dto)
@@ -38,7 +40,10 @@ public class PutawayService : IPutawayService
             {
                 Barcode = dto.ContainerBarcode,
                 Type = ContainerType.Tote,
-                Status = ContainerStatus.New
+                // Arrives already loaded from receiving — Ready, not Available (there's
+                // nothing to lock against yet at creation, so this is a direct
+                // initializer, not a guarded transition; see ContainerLifecycleService).
+                Status = ContainerStatus.Ready
             };
             _unitOfWork.Containers.Add(container);
         }
@@ -146,11 +151,21 @@ public class PutawayService : IPutawayService
                     $"No putaway task available for container '{containerBarcode}' in sector {sector}.",
                     ResultErrorType.Conflict);
 
-            task.Status = PutawayTaskStatus.InProgress;
-            task.AssignedWorkerId = workerId;
-            container.Status = ContainerStatus.InProgress;
-            container.AssignedSector = sector;
-            await _unitOfWork.SaveChangesAsync();
+            var startFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                var transition = await _containerLifecycle.TransitionAsync(container.Id, ContainerStatus.Ready, ContainerStatus.InProgress);
+                if (!transition.IsSuccess)
+                    return transition.Error;
+
+                task.Status = PutawayTaskStatus.InProgress;
+                task.AssignedWorkerId = workerId;
+                container.AssignedSector = sector;
+                await _unitOfWork.SaveChangesAsync();
+                return (string?)null;
+            });
+
+            if (startFailure != null)
+                return Result<PutawayTaskResponseDto>.Failure(startFailure, ResultErrorType.Conflict);
         }
 
         return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
@@ -188,10 +203,11 @@ public class PutawayService : IPutawayService
             return Result<PutawayTaskResponseDto>.Failure($"Location '{dto.LocationBarcode}' was not found.", ResultErrorType.NotFound);
 
         // Nullable string: null means "checks passed, mutation committed"; non-null is
-        // a capacity-limit rejection message. Using the generic ExecuteInTransactionAsync
-        // overload lets that rejection travel straight out of the transaction instead of
-        // being stashed in a captured outer variable.
-        var capacityRejection = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        // a rejection message — either the MaxDistinctSkus check below, or (if this scan
+        // completes the task) the container-release transition failing. Using the
+        // generic ExecuteInTransactionAsync overload lets either travel straight out of
+        // the transaction instead of being stashed in a captured outer variable.
+        var transactionFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             // Row lock on the destination first, before reading or writing anything else
             // in this transaction — without it, two concurrent confirms into the same
@@ -253,7 +269,9 @@ public class PutawayService : IPutawayService
             if (task.Items.All(i => i.PutAwayQuantity + i.MissingQuantity >= i.ExpectedQuantity))
             {
                 task.Status = PutawayTaskStatus.Completed;
-                await ReleaseContainerIfFullyProcessedAsync(task);
+                var releaseFailure = await ReleaseContainerIfFullyProcessedAsync(task);
+                if (releaseFailure != null)
+                    return releaseFailure;
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -261,8 +279,8 @@ public class PutawayService : IPutawayService
             return (string?)null;
         });
 
-        if (capacityRejection != null)
-            return Result<PutawayTaskResponseDto>.Failure(capacityRejection);
+        if (transactionFailure != null)
+            return Result<PutawayTaskResponseDto>.Failure(transactionFailure);
 
         return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }
@@ -300,34 +318,45 @@ public class PutawayService : IPutawayService
         // expected in the container never arrive at a location in the first
         // place, so there is nothing to deduct — only the expectation itself
         // (this item's remaining count) needs to be written off.
-        item.MissingQuantity += dto.MissingQuantity;
-
-        if (task.Items.All(i => i.PutAwayQuantity + i.MissingQuantity >= i.ExpectedQuantity))
+        var transactionFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            task.Status = PutawayTaskStatus.Completed;
-            await ReleaseContainerIfFullyProcessedAsync(task);
-        }
+            item.MissingQuantity += dto.MissingQuantity;
 
-        await _unitOfWork.SaveChangesAsync();
+            if (task.Items.All(i => i.PutAwayQuantity + i.MissingQuantity >= i.ExpectedQuantity))
+            {
+                task.Status = PutawayTaskStatus.Completed;
+                var releaseFailure = await ReleaseContainerIfFullyProcessedAsync(task);
+                if (releaseFailure != null)
+                    return releaseFailure;
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return (string?)null;
+        });
+
+        if (transactionFailure != null)
+            return Result<PutawayTaskResponseDto>.Failure(transactionFailure);
 
         return Result<PutawayTaskResponseDto>.Success(await MapToDtoWithSuggestionsAsync(task));
     }
 
     // A container can hold multiple PutawayTasks (one per destination zone). Only once
     // every one of them is finished is the container actually physically empty and
-    // safe to release back into the free pool.
-    private async Task ReleaseContainerIfFullyProcessedAsync(PutawayTask task)
+    // safe to release back into the free pool. Returns a failure message if the
+    // release transition was rejected — null on success, including "nothing to
+    // release yet, other tasks still pending."
+    private async Task<string?> ReleaseContainerIfFullyProcessedAsync(PutawayTask task)
     {
         var otherTasksPending = await _unitOfWork.PutawayTasks.HasOtherActiveTasksForContainerAsync(task.ContainerId, task.Id);
 
-        if (otherTasksPending) return;
+        if (otherTasksPending) return null;
 
-        var container = task.Container ?? await _unitOfWork.Containers.GetByIdAsync(task.ContainerId);
-        if (container != null)
-        {
-            container.Status = ContainerStatus.Available;
-            container.AssignedSector = null;
-        }
+        var transition = await _containerLifecycle.TransitionAsync(task.ContainerId, ContainerStatus.InProgress, ContainerTransitions.FreeStatus);
+        if (!transition.IsSuccess)
+            return transition.Error;
+
+        transition.Value!.AssignedSector = null;
+        return null;
     }
 
     private async Task<PutawayTaskResponseDto> MapToDtoWithSuggestionsAsync(PutawayTask task)

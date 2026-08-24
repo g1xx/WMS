@@ -37,11 +37,17 @@ public class ContainerRepository : IContainerRepository
             .FirstOrDefaultAsync(c => c.Barcode == barcode);
     }
 
-    public async Task<Container?> GetFreeByBarcodeAsync(string barcode)
+    public async Task<ContainerStatus?> LockForUpdateAsync(Guid containerId)
     {
-        return await _context.Containers
-            .Where(c => c.Status == ContainerStatus.New || c.Status == ContainerStatus.Available)
-            .FirstOrDefaultAsync(c => c.Barcode == barcode);
+        // Container (unlike Location) has UseXminAsConcurrencyToken() configured, and
+        // xmin is a Postgres system column — "SELECT *" doesn't include it, so EF Core
+        // can't materialize the entity without it being selected explicitly.
+        var rows = await _context.Set<Container>()
+            .FromSqlInterpolated($"SELECT *, xmin FROM \"Containers\" WHERE \"Id\" = {containerId} FOR UPDATE")
+            .AsNoTracking()
+            .ToListAsync();
+
+        return rows.FirstOrDefault()?.Status;
     }
 
     public async Task<bool> ExistsByBarcodeAsync(string barcode)
@@ -70,7 +76,7 @@ public class ContainerRepository : IContainerRepository
     public async Task<List<Container>> GetFreeWithLocationAsync()
     {
         return await _context.Containers
-            .Where(c => c.Status == ContainerStatus.New || c.Status == ContainerStatus.Available)
+            .Where(c => c.Status == ContainerTransitions.FreeStatus)
             .Include(c => c.Location)
             .AsNoTracking()
             .ToListAsync();

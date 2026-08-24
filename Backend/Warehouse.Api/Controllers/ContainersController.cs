@@ -90,7 +90,7 @@ public class ContainersController : ControllerBase
             {
                 Barcode = barcode,
                 Type = ContainerType.Tote,
-                Status = ContainerStatus.New
+                Status = ContainerTransitions.FreeStatus
             })
             .ToList();
 

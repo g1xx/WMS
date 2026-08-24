@@ -11,12 +11,18 @@ namespace Warehouse.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRouteOptimizerService _routeOptimizer;
         private readonly IUnfulfillableUnitHandler _unfulfillableUnitHandler;
+        private readonly IContainerLifecycleService _containerLifecycle;
 
-        public PickTaskService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer, IUnfulfillableUnitHandler unfulfillableUnitHandler)
+        public PickTaskService(
+            IUnitOfWork unitOfWork,
+            IRouteOptimizerService routeOptimizer,
+            IUnfulfillableUnitHandler unfulfillableUnitHandler,
+            IContainerLifecycleService containerLifecycle)
         {
             _unitOfWork = unitOfWork;
             _routeOptimizer = routeOptimizer;
             _unfulfillableUnitHandler = unfulfillableUnitHandler;
+            _containerLifecycle = containerLifecycle;
         }
 
         public async Task<IEnumerable<PickTaskResponseDto>> GetPickTasksAsync()
@@ -55,49 +61,52 @@ namespace Warehouse.Application.Services
             if (task.Status == PickTaskStatus.Completed)
                 return Result<string>.Failure("This task has already been fully picked.");
 
-            // Only ever fetch/suggest containers that are free (New or Available) — an
-            // InProgress or Ready container is already committed elsewhere.
-            var container = await _unitOfWork.Containers.GetFreeByBarcodeAsync(dto.ContainerBarcode);
-
+            // Whether it's actually free is the transition guard's job now, not this
+            // query's — a plain lookup here just distinguishes "doesn't exist" from
+            // "exists but not claimable," which the guard reports precisely below.
+            var container = await _unitOfWork.Containers.GetByBarcodeAsync(dto.ContainerBarcode);
             if (container == null)
-            {
-                // Distinguish "doesn't exist" from "exists but not free" for a clearer message
-                var containerExists = await _unitOfWork.Containers.ExistsByBarcodeAsync(dto.ContainerBarcode);
+                return Result<string>.Failure($"Container with barcode '{dto.ContainerBarcode}' not found.");
 
-                return containerExists
-                    ? Result<string>.Failure(
-                        $"Error! Container '{dto.ContainerBarcode}' is not available. Please take an empty one.",
-                        ResultErrorType.Conflict)
-                    : Result<string>.Failure($"Container with barcode '{dto.ContainerBarcode}' not found.");
-            }
-
-            task.Status = PickTaskStatus.InProgress;
-            task.AssignedWorkerId = userId;
-            task.ContainerId = container.Id;
-            container.Status = ContainerStatus.InProgress;
-            container.AssignedSector = task.Sector;
-
-            // Move the ORDER itself into the "Picking" status
-            var order = await _unitOfWork.Orders.GetByIdAsync(task.OrderId);
-            if (order != null && order.Status != OrderStatus.Picking)
-            {
-                order.Status = OrderStatus.Picking;
-            }
-
+            string? claimFailure;
             try
             {
-                await _unitOfWork.SaveChangesAsync();
+                claimFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+                {
+                    var transition = await _containerLifecycle.TransitionAsync(container.Id, ContainerTransitions.FreeStatus, ContainerStatus.InProgress);
+                    if (!transition.IsSuccess)
+                        return transition.Error;
+
+                    task.Status = PickTaskStatus.InProgress;
+                    task.AssignedWorkerId = userId;
+                    task.ContainerId = container.Id;
+                    container.AssignedSector = task.Sector;
+
+                    // Move the ORDER itself into the "Picking" status
+                    var order = await _unitOfWork.Orders.GetByIdAsync(task.OrderId);
+                    if (order != null && order.Status != OrderStatus.Picking)
+                    {
+                        order.Status = OrderStatus.Picking;
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+                    return (string?)null;
+                });
             }
             catch (ConcurrencyConflictException)
             {
-                // Another worker (or the dispatch/cancel flow) claimed this task or its
-                // container in the moment between our read and this write — the xmin
-                // token caught it. Let the caller re-request a task rather than surfacing
-                // a raw persistence error.
+                // Another worker (or the dispatch/cancel flow) claimed this task itself
+                // in the moment between our read and this write — the xmin token caught
+                // it. The container side of this exact race is now closed by the
+                // transition guard above; this remains for the task/order rows' own
+                // xmin tokens.
                 return Result<string>.Failure(
                     "This task was just claimed by another worker. Please request a new task.",
                     ResultErrorType.Conflict);
             }
+
+            if (claimFailure != null)
+                return Result<string>.Failure(claimFailure, ResultErrorType.Conflict);
 
             return Result<string>.Success("Picking successfully started. Container linked, task locked to you.");
         }
@@ -205,13 +214,21 @@ namespace Warehouse.Application.Services
             if (station == null)
                 return Result<DispatchContainerResultDto>.Failure($"Conveyor '{dto.ConveyorBarcode}' was not found.", ResultErrorType.NotFound);
 
-            var newTaskId = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            // Result<Guid?>, not a bare Guid?, so the container-transition guard's
+            // rejection (a real, reachable case — e.g. a duplicate/retried dispatch call
+            // racing itself) can travel out of this transaction cleanly instead of being
+            // silently discarded or thrown as an unhandled exception.
+            var dispatchResult = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
+                // Staged on the conveyor — still physically loaded with this order's
+                // goods, so Ready, not Available. Marking it free here is exactly what
+                // let a second worker claim an in-use container; only putaway (once a
+                // worker actually empties it) returns it to the pool.
+                var transition = await _containerLifecycle.TransitionAsync(container.Id, ContainerStatus.InProgress, ContainerStatus.Ready);
+                if (!transition.IsSuccess)
+                    return Result<Guid?>.Failure(transition.Error!, transition.ErrorType);
+
                 container.LocationId = station.Id;
-                // Nothing downstream in this system models a separate "packing station
-                // unloads the container" event, so conveyor arrival IS the release point:
-                // free the container immediately instead of leaving it stuck in Ready forever.
-                container.Status = ContainerStatus.Available;
                 container.AssignedSector = null;
 
                 // Units already written off via ReportMissingItemAsync are accounted for,
@@ -284,13 +301,16 @@ namespace Warehouse.Application.Services
                     await _unitOfWork.SaveChangesAsync();
                 }
 
-                return nextTaskId;
+                return Result<Guid?>.Success(nextTaskId);
             });
+
+            if (!dispatchResult.IsSuccess)
+                return Result<DispatchContainerResultDto>.Failure(dispatchResult.Error!, dispatchResult.ErrorType);
 
             return Result<DispatchContainerResultDto>.Success(new DispatchContainerResultDto
             {
                 Message = "Container successfully verified and sent to the conveyor.",
-                NextTaskId = newTaskId
+                NextTaskId = dispatchResult.Value
             });
         }
 
@@ -312,24 +332,31 @@ namespace Warehouse.Application.Services
             if (task.Items.Any(i => i.PickedQuantity > 0))
                 return Result<MessageResponseDto>.Failure("Cannot cancel: some items have already been picked. Report missing items or dispatch the container instead.");
 
-            // Nothing was physically picked into it, so the container is still empty —
-            // release it back to the free pool instead of leaving it stuck InProgress.
-            if (task.ContainerId.HasValue)
+            var cancelFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                var container = await _unitOfWork.Containers.GetByIdAsync(task.ContainerId.Value);
-                if (container != null)
+                // Nothing was physically picked into it, so the container is still empty —
+                // release it back to the free pool instead of leaving it stuck InProgress.
+                if (task.ContainerId.HasValue)
                 {
-                    container.Status = ContainerStatus.Available;
-                    container.AssignedSector = null;
+                    var transition = await _containerLifecycle.TransitionAsync(
+                        task.ContainerId.Value, ContainerStatus.InProgress, ContainerTransitions.FreeStatus);
+                    if (!transition.IsSuccess)
+                        return transition.Error;
+
+                    transition.Value!.AssignedSector = null;
                 }
-            }
 
-            // Return the task to its initial state: drop the worker and container
-            task.Status = PickTaskStatus.New;
-            task.AssignedWorkerId = null;
-            task.ContainerId = null;
+                // Return the task to its initial state: drop the worker and container
+                task.Status = PickTaskStatus.New;
+                task.AssignedWorkerId = null;
+                task.ContainerId = null;
 
-            await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
+                return (string?)null;
+            });
+
+            if (cancelFailure != null)
+                return Result<MessageResponseDto>.Failure(cancelFailure, ResultErrorType.Conflict);
 
             return Result<MessageResponseDto>.Success(new MessageResponseDto
             {

@@ -40,6 +40,15 @@ public class PickTaskServiceTests
         // run their work inside a transaction; default every overload to transparently
         // running the action, same as the real UnitOfWork does on success, so most tests
         // don't need to set this up individually.
+        // DispatchContainerAsync's transaction is Result<Guid?>, not a bare Guid?, so the
+        // container-transition guard's rejection can travel out cleanly (see the commit
+        // that fixed InProgress->Ready instead of ->Available). A different closed
+        // generic from the plain Guid? one above, so it needs its own stub — Moq's
+        // default for an unstubbed Task<T>-returning method silently skips the action
+        // entirely rather than throwing (the same gotcha noted in PutawayServiceTests).
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Result<Guid?>>>>()))
+            .Returns<Func<Task<Result<Guid?>>>>(action => action());
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Guid?>>>()))
             .Returns<Func<Task<Guid?>>>(action => action());
@@ -64,13 +73,22 @@ public class PickTaskServiceTests
             .Setup(r => r.GetReplacementCandidatesAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
             .ReturnsAsync(new List<Stock>());
 
-        // Real implementations, not mocks: all three are pure logic with no dependencies
+        // Defaults so tests that don't specifically exercise a container transition don't
+        // need to set these up individually: no-op lock (returns null = "not found",
+        // which every real container-bearing test overrides with its own container's
+        // actual status).
+        _containerRepositoryMock
+            .Setup(r => r.LockForUpdateAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((ContainerStatus?)null);
+
+        // Real implementations, not mocks: all four are pure logic with no dependencies
         // of their own beyond the (already-mocked) IUnitOfWork, and these tests don't care
         // about item order or replacement zone selection beyond what's asserted explicitly.
         _sut = new PickTaskService(
             _unitOfWorkMock.Object,
             new RouteOptimizerService(),
-            new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()));
+            new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()),
+            new ContainerLifecycleService(_unitOfWorkMock.Object));
     }
 
     // Builds a single-item InProgress task: required 10, picked 0, missing 0,
@@ -506,9 +524,10 @@ public class PickTaskServiceTests
 
         _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
         _containerRepositoryMock.Setup(r => r.GetByIdAsync(task.ContainerId!.Value)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(task.ContainerId.Value)).ReturnsAsync(container.Status);
         _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync("CONV-1")).ReturnsAsync(station);
         _unitOfWorkMock
-            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Guid?>>>()))
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<Result<Guid?>>>>()))
             .ThrowsAsync(new InvalidOperationException("boom"));
 
         var dto = new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" };
@@ -693,6 +712,7 @@ public class PickTaskServiceTests
 
         _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
         _containerRepositoryMock.Setup(r => r.GetByIdAsync(containerId)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(containerId)).ReturnsAsync(container.Status);
 
         // Act
         var result = await _sut.CancelPickTaskAsync(task.Id, "worker-1");
@@ -713,12 +733,12 @@ public class PickTaskServiceTests
     // ===================== StartPickTaskAsync =====================
 
     [Fact]
-    public async Task StartPickTaskAsync_ConcurrentClaimDetected_ReturnsConflictFailure()
+    public async Task StartPickTaskAsync_ContainerAlreadyTaken_ReturnsConflictFromGuard()
     {
-        // Arrange: another worker's request (or a cancel/dispatch) commits first and the
-        // xmin token trips on this save — UnitOfWork translates EF's DbUpdateConcurrencyException
-        // into ConcurrencyConflictException, which the service must turn into a Result, not
-        // let bubble up as an unhandled exception.
+        // Arrange: another worker's request already committed InProgress on this exact
+        // container in the moment between our (unlocked) barcode lookup and this call —
+        // LockForUpdateAsync's fresh, tracker-bypassing read reflects that, and the
+        // transition guard rejects rather than letting a second claim through.
         var task = new PickTask
         {
             Id = Guid.NewGuid(),
@@ -730,11 +750,55 @@ public class PickTaskServiceTests
         {
             Id = Guid.NewGuid(),
             Barcode = "CONT-1",
-            Status = ContainerStatus.New
+            Status = ContainerStatus.Available
         };
 
         _pickTaskRepositoryMock.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
-        _containerRepositoryMock.Setup(r => r.GetFreeByBarcodeAsync("CONT-1")).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.GetByBarcodeAsync("CONT-1")).ReturnsAsync(container);
+        // The fresh lock-read reports a status that has already moved on from what the
+        // caller's own (unlocked) container instance still shows — simulating the race.
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(ContainerStatus.InProgress);
+
+        var dto = new StartPickTaskDto { ContainerBarcode = "CONT-1" };
+
+        // Act
+        var result = await _sut.StartPickTaskAsync(task.Id, dto, "worker-1");
+
+        // Assert
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorType.Should().Be(ResultErrorType.Conflict);
+        result.Error.Should().Contain("currently InProgress");
+
+        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Never);
+    }
+
+    [Fact]
+    public async Task StartPickTaskAsync_TaskClaimedConcurrently_ReturnsConflictFailure()
+    {
+        // Arrange: the container claim itself succeeds (it's genuinely Available), but
+        // saving the task's own assignment hits a concurrency conflict — e.g. another
+        // request cancelled/reassigned this exact task in the same window. UnitOfWork
+        // translates EF's DbUpdateConcurrencyException into ConcurrencyConflictException,
+        // which the service must turn into a Result, not let bubble up as an unhandled
+        // exception.
+        var task = new PickTask
+        {
+            Id = Guid.NewGuid(),
+            Status = PickTaskStatus.New,
+            AssignedWorkerId = null,
+            Sector = "mp1"
+        };
+        var container = new Container
+        {
+            Id = Guid.NewGuid(),
+            Barcode = "CONT-1",
+            Status = ContainerStatus.Available
+        };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdAsync(task.Id)).ReturnsAsync(task);
+        _containerRepositoryMock.Setup(r => r.GetByBarcodeAsync("CONT-1")).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(container.Status);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
         _orderRepositoryMock.Setup(r => r.GetByIdAsync(task.OrderId)).ReturnsAsync((Order?)null);
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync())
             .ThrowsAsync(new ConcurrencyConflictException("conflict", new Exception("inner")));
@@ -817,6 +881,7 @@ public class PickTaskServiceTests
         _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
         _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
         _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(container.Status);
         _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
 
         foreach (var line in lines)
@@ -849,7 +914,10 @@ public class PickTaskServiceTests
 
         dispatchResult.IsSuccess.Should().BeTrue($"dispatch should succeed: {dispatchResult.Error}");
         task.Status.Should().Be(PickTaskStatus.Completed);
-        container.Status.Should().Be(ContainerStatus.Available);
+        // Staged on the conveyor, still physically loaded — Ready, not Available. This is
+        // the actual bug: marking it Available here is what let a second worker claim an
+        // in-use container.
+        container.Status.Should().Be(ContainerStatus.Ready);
 
         // Every line was either fully picked or written off as missing, so the order
         // always reaches SOME terminal state — but the two outcomes must stay
@@ -926,6 +994,7 @@ public class PickTaskServiceTests
         _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
         _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
         _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(container.Status);
         _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
 
         foreach (var line in lines)
