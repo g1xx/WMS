@@ -271,30 +271,40 @@ public class DemoDataSeeder
         }
     }
 
-    // "DEMO-CONT-1" is consumed by the scripted ShortShip scenario; the other two are
-    // left free (New) for you to scan in the UI when walking the live demo order.
+    // A real picking sector has a working pool of totes in circulation, not one or
+    // two — 100 gives the demo that texture instead of looking like a toy. Same
+    // "HSOD" + zero-padded-digits format ContainersController.SeedMassContainers
+    // uses for its own bulk seeding, on a disjoint range (00001-00100 vs that
+    // endpoint's default 90001+) so the two never collide.
+    //
+    // ShortShipContainerBarcode is walked through the scripted scenario below and
+    // ends up wherever that leaves it (Ready, once dispatched — see
+    // ContainerLifecycleService) rather than being forced back to Available; every
+    // other one of the 100 stays Available.
+    private const string ShortShipContainerBarcode = "HSOD00001";
+
     private async Task SeedContainersAsync()
     {
-        var barcodes = new[] { "DEMO-CONT-1", "DEMO-CONT-2", "DEMO-CONT-3" };
-        var created = 0;
+        var barcodes = Enumerable.Range(1, 100)
+            .Select(n => $"HSOD{n:D5}")
+            .ToList();
 
-        foreach (var barcode in barcodes)
+        var existing = await _unitOfWork.Containers.GetExistingBarcodesAsync(barcodes);
+        var toCreate = barcodes.Where(b => !existing.Contains(b)).ToList();
+
+        if (toCreate.Count > 0)
         {
-            if (await _unitOfWork.Containers.ExistsByBarcodeAsync(barcode)) continue;
-
-            _unitOfWork.Containers.Add(new Container
+            var newContainers = toCreate.Select(barcode => new Container
             {
                 Barcode = barcode,
                 Type = ContainerType.Tote,
                 Status = ContainerTransitions.FreeStatus,
                 MaxWeightCapacityKg = 20,
-            });
-            created++;
-        }
-        if (created > 0)
-        {
+            }).ToList();
+
+            _unitOfWork.Containers.AddRange(newContainers);
             await _unitOfWork.SaveChangesAsync();
-            Console.WriteLine($"Created {created} container(s).");
+            Console.WriteLine($"Created {newContainers.Count} container(s).");
         }
     }
 
@@ -344,7 +354,7 @@ public class DemoDataSeeder
 
         var startResult = await _pickTaskService.StartPickTaskAsync(
             task.Id,
-            new StartPickTaskDto { ContainerBarcode = "DEMO-CONT-1", WorkerId = adminId },
+            new StartPickTaskDto { ContainerBarcode = ShortShipContainerBarcode, WorkerId = adminId },
             adminId);
         ThrowIfFailed(startResult.IsSuccess, startResult.Error, "start the demo pick task");
 
@@ -372,7 +382,7 @@ public class DemoDataSeeder
 
         var dispatchResult = await _pickTaskService.DispatchContainerAsync(
             task.Id,
-            new DispatchContainerDto { ContainerBarcode = "DEMO-CONT-1", ConveyorBarcode = ConveyorBarcode },
+            new DispatchContainerDto { ContainerBarcode = ShortShipContainerBarcode, ConveyorBarcode = ConveyorBarcode },
             adminId);
         ThrowIfFailed(dispatchResult.IsSuccess, dispatchResult.Error, "dispatch the demo container");
 
