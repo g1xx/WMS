@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Warehouse.Api.Common;
 using Warehouse.Api.Middleware;
 using Warehouse.Api.Seeding;
 using Warehouse.Application.Common;
@@ -38,6 +39,9 @@ builder.Services.AddScoped<IContainerLifecycleService, ContainerLifecycleService
 // POCO's own defaults when the section is absent.
 builder.Services.AddSingleton(
     builder.Configuration.GetSection("PickTaskSettings").Get<PickTaskSettings>() ?? new PickTaskSettings());
+// Absent section => Enabled stays false => the demo help endpoint 404s. See DemoSettings.
+builder.Services.AddSingleton(
+    builder.Configuration.GetSection("DemoSettings").Get<DemoSettings>() ?? new DemoSettings());
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();

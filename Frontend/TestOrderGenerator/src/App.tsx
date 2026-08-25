@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PickingGenerator from './PickingGenerator';
 import PutawayGenerator from './PutawayGenerator';
 import Login from './Login';
+import HelpPanel from './HelpPanel';
 import { getToken, logout } from './api/axiosClient';
 import './App.css';
 
@@ -12,7 +13,14 @@ export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => getToken() !== null);
 
     if (!isLoggedIn) {
-        return <Login onLoggedIn={() => setIsLoggedIn(true)} />;
+        // The panel belongs on the sign-in screen too — this is where a reviewer needs the
+        // erp-feed credentials, and without them they cannot get past this screen at all.
+        return (
+            <>
+                <Login onLoggedIn={() => setIsLoggedIn(true)} />
+                <HelpPanel />
+            </>
+        );
     }
 
     const handleSignOut = () => {
@@ -62,6 +70,8 @@ export default function App() {
             <div style={{ display: mode === 'receiving' ? 'block' : 'none' }}>
                 <PutawayGenerator />
             </div>
+
+            <HelpPanel />
         </div>
     );
 }
