@@ -38,9 +38,14 @@ namespace Warehouse.Application.Services
         {
             // Independent of sector on purpose: a worker who gets logged out mid-pick
             // must be able to resume without going through sector selection again.
-            var inProgressTask = await _unitOfWork.PickTasks.GetActiveForUserAsync(userId);
+            //
+            // Covers a claimed-but-not-started task too, not just an in-progress one — see
+            // GetActiveForUserAsync. The client asks this BEFORE asking for a next task, so
+            // this is what stops a worker being handed a second task while they're still
+            // holding the first, and what keeps a claimed task on screen across refetches.
+            var heldTask = await _unitOfWork.PickTasks.GetActiveForUserAsync(userId);
 
-            return inProgressTask == null ? null : MapToDto(inProgressTask);
+            return heldTask == null ? null : MapToDto(heldTask);
         }
 
         public async Task<PickTaskResponseDto?> GetNextTaskAsync(string userId, string sector)

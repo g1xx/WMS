@@ -1209,6 +1209,40 @@ public class PickTaskServiceTests
     }
 
     [Fact]
+    public async Task GetActiveTaskForUserAsync_ReturnsATaskClaimedButNotYetStarted()
+    {
+        // Documents the contract: a claimed-but-not-started task must come back from the
+        // "what am I holding?" query. Claiming at show-time created a second held state
+        // (New + assigned) that GetActiveForUserAsync didn't recognise, so the worker's own
+        // claimed task was invisible to BOTH queries — /active ignored it for being New,
+        // /next skipped it for having an assignee. The client cleared the task on its next
+        // refetch, which then skipped release-on-exit, and it vanished until the sweep.
+        //
+        // NOTE: this does NOT guard the regression. The defect was in the LINQ predicate in
+        // PickTaskRepository.GetActiveForUserAsync, and this test mocks that method, so it
+        // passes against the broken version too. Repository predicates have no test coverage
+        // anywhere in this solution — every test here mocks IUnitOfWork. Catching this class
+        // of bug needs a real DbContext behind the repositories.
+        var claimed = new PickTask
+        {
+            Id = Guid.NewGuid(),
+            Sector = "mp1",
+            Status = PickTaskStatus.New,
+            AssignedWorkerId = "worker-1",
+            ClaimedAt = DateTime.UtcNow,
+            Items = new List<PickTaskItem>()
+        };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetActiveForUserAsync("worker-1")).ReturnsAsync(claimed);
+
+        var result = await _sut.GetActiveTaskForUserAsync("worker-1");
+
+        result.Should().NotBeNull("a worker must be handed back the task they already hold");
+        result!.Id.Should().Be(claimed.Id);
+        result.Status.Should().Be(PickTaskStatus.New.ToString());
+    }
+
+    [Fact]
     public async Task ReleasePickTaskAsync_SucceedsEvenWhenThereWasNothingToRelease()
     {
         var taskId = Guid.NewGuid();

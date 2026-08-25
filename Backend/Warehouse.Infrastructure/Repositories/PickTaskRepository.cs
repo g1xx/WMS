@@ -25,11 +25,25 @@ public class PickTaskRepository : IPickTaskRepository
 
     public async Task<PickTask?> GetActiveForUserAsync(string userId)
     {
+        // "Held by this worker", NOT "started by this worker". Claiming a task at show-time
+        // created a second held state — New + assigned — and this query is the ONLY way a
+        // worker can be handed back a task they already hold: GetNextForSectorAsync skips
+        // anything with an assignee, including their own.
+        //
+        // Matching InProgress alone made a claimed task invisible to both queries, so the
+        // second fetch (React Query refetches on mount and on window focus) showed "no tasks
+        // available" and cleared it client-side. That in turn skipped the release-on-exit,
+        // which only fires for a task the client still knows about — so the task stayed
+        // claimed until the inactivity sweep, i.e. it vanished for 15 minutes.
         return await _context.PickTasks
             .Include(t => t.Container)
             .Include(t => t.Items).ThenInclude(i => i.Product)
             .Include(t => t.Items).ThenInclude(i => i.Location).ThenInclude(l => l!.Stocks)
-            .FirstOrDefaultAsync(t => t.AssignedWorkerId == userId && t.Status == PickTaskStatus.InProgress);
+            // A worker shouldn't hold both at once, but if they ever do, the started task is
+            // the one with physical goods riding on it and must win.
+            .OrderByDescending(t => t.Status == PickTaskStatus.InProgress)
+            .FirstOrDefaultAsync(t => t.AssignedWorkerId == userId
+                                      && (t.Status == PickTaskStatus.InProgress || t.Status == PickTaskStatus.New));
     }
 
     public async Task<PickTask?> GetNextForSectorAsync(string sector)

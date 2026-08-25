@@ -7,6 +7,10 @@ public interface IPickTaskRepository
     // Container, Items.Product, Items.Location.Stocks — matches the GetPickTasksAsync,
     // GetActiveTaskForUserAsync and GetNextTaskAsync projection shapes.
     Task<List<PickTask>> GetAllWithDetailsAsync();
+    // The task this worker HOLDS — either started (InProgress) or claimed at show-time but
+    // not yet begun (New + assigned). Both count: GetNextForSectorAsync skips every task
+    // that has an assignee, including this worker's own, so this is the only query that can
+    // hand a worker back the task they were already given.
     Task<PickTask?> GetActiveForUserAsync(string userId);
     Task<PickTask?> GetNextForSectorAsync(string sector);
 
