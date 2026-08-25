@@ -247,6 +247,7 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
                 containerBarcode={containerBarcode}
                 setContainerBarcode={setContainerBarcode}
                 onStartTask={handleStartTask}
+                onExitToMenu={handleExitToMenu}
             />
         );
     }
