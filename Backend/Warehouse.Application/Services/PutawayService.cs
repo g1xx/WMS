@@ -34,6 +34,7 @@ public class PutawayService : IPutawayService
         // exist), this is the seeding entry point — mint a fresh container record
         // if the barcode is new, so a generator tool can hand it an arbitrary ID.
         var container = await _unitOfWork.Containers.GetByBarcodeAsync(dto.ContainerBarcode);
+        bool isNewContainer = container == null;
         if (container == null)
         {
             container = new Container
@@ -84,7 +85,33 @@ public class PutawayService : IPutawayService
 
         _unitOfWork.PutawayTasks.Add(task);
 
-        await _unitOfWork.SaveChangesAsync();
+        var createFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            // An existing container sitting in the free pool is about to be loaded at
+            // receiving, so it must stop being claimable for picking the moment the
+            // task exists — otherwise a picker can claim it out from under the putaway.
+            // Only Available needs moving: a container already Ready has been staged by
+            // an earlier putaway task (several tasks per container is normal, see
+            // GetPendingForContainerAsync), and one that's InProgress is mid-work and
+            // isn't ours to reinterpret. A brand-new container was initialized to Ready
+            // above and has no committed row to lock against yet.
+            if (!isNewContainer && container.Status == ContainerTransitions.FreeStatus)
+            {
+                // Status was read outside the lock; if a picker claimed it in between,
+                // TransitionAsync re-reads under FOR UPDATE and rejects with Conflict
+                // rather than overwriting their claim.
+                var transition = await _containerLifecycle.TransitionAsync(
+                    container.Id, ContainerTransitions.FreeStatus, ContainerStatus.Ready);
+                if (!transition.IsSuccess)
+                    return transition.Error;
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return (string?)null;
+        });
+
+        if (createFailure != null)
+            return Result<PutawayTaskResponseDto>.Failure(createFailure, ResultErrorType.Conflict);
 
         var created = await _unitOfWork.PutawayTasks.GetByIdWithDetailsAsync(task.Id);
 

@@ -69,10 +69,15 @@ public class ContainerLifecycleServiceTests
     [Fact]
     public async Task TransitionAsync_PairNotInAllowList_Throws()
     {
-        // Available -> Ready skips claiming/dispatch entirely — never a legal move.
+        // Ready -> Available frees a container that is still physically LOADED — the exact
+        // bug the Ready status exists to prevent, and the reason it can only be left via
+        // InProgress (a worker emptying it). Emptiness is never assumed, only observed.
+        //
+        // This used to assert on Available -> Ready, which became legal when putaway task
+        // creation started staging a free container at receiving.
         var containerId = Guid.NewGuid();
 
-        Func<Task> act = () => _sut.TransitionAsync(containerId, ContainerStatus.Available, ContainerStatus.Ready);
+        Func<Task> act = () => _sut.TransitionAsync(containerId, ContainerStatus.Ready, ContainerTransitions.FreeStatus);
 
         await act.Should().ThrowAsync<InvalidOperationException>();
 

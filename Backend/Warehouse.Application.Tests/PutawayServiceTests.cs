@@ -455,4 +455,93 @@ public class PutawayServiceTests
 
         _unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
+
+    // ---- Creating a task stages the container ---------------------------------------
+    // A container with putaway work planned against it is about to be loaded at receiving,
+    // so it must stop being claimable for picking the moment the task exists.
+
+    private CreatePutawayTaskDto StubCreateScenario(Container? existingContainer)
+    {
+        var productsMock = new Mock<IProductRepository>();
+        _unitOfWorkMock.Setup(u => u.Products).Returns(productsMock.Object);
+
+        var product = new Product { Id = Guid.NewGuid(), Sku = "SKU-1" };
+        productsMock
+            .Setup(r => r.GetBySkusAsync(It.IsAny<List<string>>()))
+            .ReturnsAsync(new Dictionary<string, Product> { ["SKU-1"] = product });
+
+        _containerRepositoryMock.Setup(r => r.GetByBarcodeAsync("CONT-1")).ReturnsAsync(existingContainer);
+
+        if (existingContainer != null)
+        {
+            _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(existingContainer.Id)).ReturnsAsync(existingContainer.Status);
+            _containerRepositoryMock.Setup(r => r.GetByIdAsync(existingContainer.Id)).ReturnsAsync(existingContainer);
+        }
+
+        _putawayTaskRepositoryMock
+            .Setup(r => r.GetByIdWithDetailsAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid id) => new PutawayTask { Id = id, Sector = "mp1", Items = new List<PutawayTaskItem>() });
+
+        return new CreatePutawayTaskDto
+        {
+            ContainerBarcode = "CONT-1",
+            Sector = "mp1",
+            Items = new List<CreatePutawayTaskItemDto> { new() { ProductSku = "SKU-1", ExpectedQuantity = 5 } }
+        };
+    }
+
+    [Fact]
+    public async Task CreatePutawayTaskAsync_ExistingFreeContainer_IsStagedToReady()
+    {
+        var container = new Container { Id = Guid.NewGuid(), Barcode = "CONT-1", Status = ContainerTransitions.FreeStatus };
+        var dto = StubCreateScenario(container);
+
+        var result = await _sut.CreatePutawayTaskAsync(dto);
+
+        result.IsSuccess.Should().BeTrue($"creating the task should succeed: {result.Error}");
+
+        // The bug this fixes: leaving it Available lets a picker claim a container that
+        // receiving is about to load, out from under the putaway.
+        container.Status.Should().Be(ContainerStatus.Ready);
+
+        // Proves the status above came from the guarded transition and not from some
+        // incidental default — the row lock is what makes the claim safe against a picker
+        // claiming the same container concurrently.
+        _containerRepositoryMock.Verify(r => r.LockForUpdateAsync(container.Id), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreatePutawayTaskAsync_ContainerAlreadyStaged_IsLeftAlone()
+    {
+        // Several putaway tasks per container is normal (see GetPendingForContainerAsync);
+        // the second one must not try to re-run a transition that already happened, which
+        // the lifecycle guard would reject as a conflict.
+        var container = new Container { Id = Guid.NewGuid(), Barcode = "CONT-1", Status = ContainerStatus.Ready };
+        var dto = StubCreateScenario(container);
+
+        var result = await _sut.CreatePutawayTaskAsync(dto);
+
+        result.IsSuccess.Should().BeTrue($"a second task for a staged container is legitimate: {result.Error}");
+        container.Status.Should().Be(ContainerStatus.Ready);
+        _containerRepositoryMock.Verify(r => r.LockForUpdateAsync(It.IsAny<Guid>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreatePutawayTaskAsync_NewContainer_IsCreatedReadyWithoutATransition()
+    {
+        var dto = StubCreateScenario(existingContainer: null);
+
+        Container? added = null;
+        _containerRepositoryMock.Setup(r => r.Add(It.IsAny<Container>())).Callback((Container c) => added = c);
+
+        var result = await _sut.CreatePutawayTaskAsync(dto);
+
+        result.IsSuccess.Should().BeTrue($"creating the task should succeed: {result.Error}");
+        added.Should().NotBeNull();
+
+        // Arrives already loaded from receiving. There's no committed row to lock against
+        // yet, so this is a direct initializer rather than a guarded transition.
+        added!.Status.Should().Be(ContainerStatus.Ready);
+        _containerRepositoryMock.Verify(r => r.LockForUpdateAsync(It.IsAny<Guid>()), Times.Never);
+    }
 }

@@ -41,6 +41,81 @@ public class PickTaskRepository : IPickTaskRepository
             .FirstOrDefaultAsync(t => t.Status == PickTaskStatus.New && t.AssignedWorkerId == null && t.Sector == sector);
     }
 
+    public async Task<PickTask?> ClaimNextForSectorAsync(string sector, string workerId, DateTime claimedAt)
+    {
+        // FOR UPDATE SKIP LOCKED, not a plain FOR UPDATE. The container claim
+        // (ContainerRepository.LockForUpdateAsync) deliberately blocks, because two workers
+        // contending for one SPECIFIC container must serialize and the loser must be told
+        // it's taken. Here the workers want ANY task, so blocking B behind A only to hand B
+        // a row A just claimed — forcing a retry — is strictly worse than letting B walk
+        // straight past it to the next free row. SKIP LOCKED turns the race into a queue.
+        //
+        // AsNoTracking for the same reason LockForUpdateAsync uses it: this must read the
+        // committed row, not a stale instance the change tracker is already holding. The
+        // returned id is re-fetched through the tracked path below to be mutated.
+        var locked = await _context.Set<PickTask>()
+            .FromSqlInterpolated($@"
+                SELECT *, xmin FROM ""PickTasks""
+                WHERE ""Sector"" = {sector}
+                  AND ""Status"" = {(int)PickTaskStatus.New}
+                  AND ""AssignedWorkerId"" IS NULL
+                ORDER BY ""CreatedAt""
+                LIMIT 1
+                FOR UPDATE SKIP LOCKED")
+            .AsNoTracking()
+            .ToListAsync();
+
+        var claimedId = locked.FirstOrDefault()?.Id;
+        if (claimedId == null) return null;
+
+        // Safe to mutate now: the row lock above is held until the caller's transaction
+        // commits, so nothing else can claim this task in between.
+        var task = await _context.PickTasks
+            .Include(t => t.Container)
+            .Include(t => t.Items).ThenInclude(i => i.Product)
+            .Include(t => t.Items).ThenInclude(i => i.Location).ThenInclude(l => l!.Stocks)
+            .FirstOrDefaultAsync(t => t.Id == claimedId);
+
+        if (task == null) return null;
+
+        task.AssignedWorkerId = workerId;
+        task.ClaimedAt = claimedAt;
+
+        return task;
+    }
+
+    public async Task<int> ReleaseExpiredClaimsAsync(string sector, DateTime cutoff)
+    {
+        // Status = New in the predicate is what makes "never auto-release a task the worker
+        // has actually started" structural rather than a rule someone has to remember: a
+        // container scan sets Status = InProgress, and this can't match that row at all.
+        return await _context.PickTasks
+            .Where(t => t.Sector == sector
+                        && t.Status == PickTaskStatus.New
+                        && t.AssignedWorkerId != null
+                        && t.ClaimedAt != null
+                        && t.ClaimedAt < cutoff)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(t => t.AssignedWorkerId, (string?)null)
+                .SetProperty(t => t.ClaimedAt, (DateTime?)null));
+    }
+
+    public async Task<bool> ReleaseClaimAsync(Guid taskId, string workerId)
+    {
+        // Every condition matters: Status = New so a started task is never dropped, and
+        // AssignedWorkerId = workerId so a worker whose claim already expired and was
+        // re-handed to someone else can't yank it back with a late release call.
+        var released = await _context.PickTasks
+            .Where(t => t.Id == taskId
+                        && t.Status == PickTaskStatus.New
+                        && t.AssignedWorkerId == workerId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(t => t.AssignedWorkerId, (string?)null)
+                .SetProperty(t => t.ClaimedAt, (DateTime?)null));
+
+        return released > 0;
+    }
+
     public async Task<PickTask?> GetByIdAsync(Guid id)
     {
         return await _context.PickTasks.FindAsync(id);

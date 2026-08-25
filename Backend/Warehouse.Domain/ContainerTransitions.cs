@@ -15,8 +15,9 @@ public static class ContainerTransitions
     private static readonly HashSet<(ContainerStatus From, ContainerStatus To)> Allowed = new()
     {
         (FreeStatus, ContainerStatus.InProgress),              // picking claims it
+        (FreeStatus, ContainerStatus.Ready),                   // putaway work is planned against a free container — loaded at receiving, no longer claimable for picking
         (ContainerStatus.InProgress, ContainerStatus.Ready),         // picking stages it on the conveyor — still physically loaded, not free
-        (ContainerStatus.InProgress, FreeStatus),              // picking-cancel before anything picked, AND putaway finishing — same pair, two callers
+        (ContainerStatus.InProgress, FreeStatus),              // picking-cancel before anything picked, putaway finishing, AND dispatch closing out an empty container — same pair, three callers
         (ContainerStatus.Ready, ContainerStatus.InProgress),         // putaway starts on a container that arrived staged
     };
 

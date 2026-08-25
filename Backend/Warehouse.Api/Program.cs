@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Warehouse.Api.Middleware;
 using Warehouse.Api.Seeding;
+using Warehouse.Application.Common;
 using Warehouse.Application.Services;
 using Warehouse.Infrastructure;
 
@@ -31,6 +32,12 @@ builder.Services.AddScoped<IOrderAllocationService, OrderAllocationService>();
 // only service allowed to assign Container.Status after creation; see
 // ContainerTransitions/ContainerLifecycleService.
 builder.Services.AddScoped<IContainerLifecycleService, ContainerLifecycleService>();
+// Bound here rather than injected as IOptions<T>: Warehouse.Application has no package
+// references beyond Warehouse.Domain, so PickTaskSettings is a plain POCO and the binding
+// lives in the one project that already has the configuration stack. Falls back to the
+// POCO's own defaults when the section is absent.
+builder.Services.AddSingleton(
+    builder.Configuration.GetSection("PickTaskSettings").Get<PickTaskSettings>() ?? new PickTaskSettings());
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();

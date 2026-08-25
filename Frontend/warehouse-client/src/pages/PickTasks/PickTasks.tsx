@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { alertIfSupervisorAuthError, extractErrorMessage } from '../../api/axiosClient';
 import { queryKeys } from '../../api/queryKeys';
@@ -8,6 +8,7 @@ import {
     pickItem,
     dispatchContainer,
     cancelPickTask,
+    releasePickTask,
     reportMissingItem,
     reportDefect,
 } from '../../api/pickTaskApi';
@@ -49,6 +50,20 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
         setContainerBarcode('');
     }, [task]);
 
+    // Leaving picking gives back a task that was CLAIMED for this worker when it was
+    // shown but never started, so the next worker doesn't wait out the server's
+    // inactivity timeout. Only status 'New' is releasable — an started task belongs to
+    // this worker until they dispatch or cancel it, and the server rejects the release
+    // anyway. Deliberately fire-and-forget: a failed release is corrected by the
+    // server-side sweep, and blocking the exit on it would strand the worker on a dead
+    // network in the one screen they're trying to leave.
+    const handleExitToMenu = useCallback(() => {
+        if (task && task.status === 'New') {
+            void releasePickTask(task.id).catch(() => {});
+        }
+        onExitToMenu();
+    }, [task, onExitToMenu]);
+
     // Escape returns to the terminal MENU, but ONLY when ActiveTaskScreen isn't
     // already mounted: it has its own window keydown listener for Escape (its
     // exceptions menu), and firing both on the same keypress would open that
@@ -59,12 +74,12 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
 
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key !== 'Escape') return;
-            onExitToMenu();
+            handleExitToMenu();
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [task, onExitToMenu]);
+    }, [task, handleExitToMenu]);
 
     const startTaskMutation = useMutation({
         mutationFn: () => {
@@ -209,7 +224,7 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
         return (
             <div style={{ backgroundColor: '#1e1e1e', padding: '30px', borderRadius: '8px', width: '90%', maxWidth: '400px', textAlign: 'center', position: 'relative' }}>
                 <button
-                    onClick={onExitToMenu}
+                    onClick={handleExitToMenu}
                     style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem', zIndex: 5 }}
                 >
                     ESC (Menu)

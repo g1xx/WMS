@@ -18,6 +18,13 @@ export async function fetchCurrentPickTask(sector: string): Promise<PickTask | n
     return nextResponse.data ?? null;
 }
 
+// Hands back a task the worker was shown but never started. Best-effort: the caller
+// ignores failures, because the server's 15-minute inactivity sweep covers every case
+// where this never arrives (app switch, network loss, dead battery).
+export async function releasePickTask(taskId: string): Promise<void> {
+    await axiosClient.post(`/PickTask/${taskId}/release`);
+}
+
 export async function startPickTask(taskId: string, containerBarcode: string): Promise<void> {
     await axiosClient.post<string>(`/PickTask/${taskId}/start`, { containerBarcode });
 }

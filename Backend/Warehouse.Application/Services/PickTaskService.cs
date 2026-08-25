@@ -12,17 +12,20 @@ namespace Warehouse.Application.Services
         private readonly IRouteOptimizerService _routeOptimizer;
         private readonly IUnfulfillableUnitHandler _unfulfillableUnitHandler;
         private readonly IContainerLifecycleService _containerLifecycle;
+        private readonly PickTaskSettings _settings;
 
         public PickTaskService(
             IUnitOfWork unitOfWork,
             IRouteOptimizerService routeOptimizer,
             IUnfulfillableUnitHandler unfulfillableUnitHandler,
-            IContainerLifecycleService containerLifecycle)
+            IContainerLifecycleService containerLifecycle,
+            PickTaskSettings settings)
         {
             _unitOfWork = unitOfWork;
             _routeOptimizer = routeOptimizer;
             _unfulfillableUnitHandler = unfulfillableUnitHandler;
             _containerLifecycle = containerLifecycle;
+            _settings = settings;
         }
 
         public async Task<IEnumerable<PickTaskResponseDto>> GetPickTasksAsync()
@@ -42,11 +45,47 @@ namespace Warehouse.Application.Services
 
         public async Task<PickTaskResponseDto?> GetNextTaskAsync(string userId, string sector)
         {
-            // Strictly segregated: a worker in zone "mp1" only ever sees tasks whose
-            // items physically live in "mp1" (PickTask.Sector holds the zone code).
-            var nextTask = await _unitOfWork.PickTasks.GetNextForSectorAsync(sector);
+            // Showing a task IS claiming it. Handing the same task to two workers and then
+            // rejecting the second one at the container scan is too late — the second worker
+            // has already walked to the racks. The claim moves the rejection to the only
+            // moment where it costs nothing: before anyone is told the task exists.
+            var claimedTask = await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                // Expired claims are swept first, inside this same transaction, so anything
+                // freed here is immediately visible to the claim below. This is the entire
+                // trigger mechanism for the inactivity timeout — there is no background job.
+                // A stale claim costs nothing while nobody is asking for work in that sector,
+                // and this fires exactly when it would start costing something.
+                var cutoff = DateTime.UtcNow.AddMinutes(-_settings.ClaimTimeoutMinutes);
+                await _unitOfWork.PickTasks.ReleaseExpiredClaimsAsync(sector, cutoff);
 
-            return nextTask == null ? null : MapToDto(nextTask);
+                // Strictly segregated: a worker in zone "mp1" only ever sees tasks whose
+                // items physically live in "mp1" (PickTask.Sector holds the zone code).
+                var task = await _unitOfWork.PickTasks.ClaimNextForSectorAsync(sector, userId, DateTime.UtcNow);
+
+                await _unitOfWork.SaveChangesAsync();
+                return task;
+            });
+
+            return claimedTask == null ? null : MapToDto(claimedTask);
+        }
+
+        public async Task<Result<MessageResponseDto>> ReleasePickTaskAsync(Guid id, string userId)
+        {
+            // Best-effort: fired when the worker leaves picking for the main menu, to put the
+            // task back in the queue immediately instead of making the next worker wait out
+            // the timeout. If the call is lost — dead battery, network drop, app switch — the
+            // inactivity sweep in GetNextTaskAsync is the backstop that always runs, which is
+            // why this endpoint never needs to be reliable.
+            var released = await _unitOfWork.PickTasks.ReleaseClaimAsync(id, userId);
+
+            // Not an error when nothing was released: the worker may have started the task,
+            // or their claim may already have expired and gone to someone else. Either way
+            // the desired end state — this worker no longer holds an unstarted task — holds.
+            return Result<MessageResponseDto>.Success(new MessageResponseDto
+            {
+                Message = released ? "Task returned to the queue." : "No claim to release."
+            });
         }
 
         public async Task<Result<string>> StartPickTaskAsync(Guid id, StartPickTaskDto dto, string userId)
@@ -206,6 +245,21 @@ namespace Warehouse.Application.Services
             if (task.AssignedWorkerId != userId)
                 return Result<DispatchContainerResultDto>.Failure("Task belongs to another worker.");
 
+            // Two distinct ways a task legitimately closes, and exactly one illegitimate one.
+            //   anyPicked            -> a real container of goods goes to the conveyor.
+            //   fully written off    -> nothing physical to send, but every line's shortfall
+            //                          is already recorded as ShortedQuantity, so the task
+            //                          must still close for the order to reach ShortShipped.
+            //   neither              -> the worker hit "Full container" on an empty tote with
+            //                          real work outstanding. That's the bug this guard exists
+            //                          for; the client also disables the button (ActiveTaskScreen).
+            bool anyPicked = task.Items.Any(i => i.PickedQuantity > 0);
+            bool allAccountedFor = task.Items.All(i => i.PickedQuantity + i.MissingQuantity >= i.RequiredQuantity);
+
+            if (!anyPicked && !allAccountedFor)
+                return Result<DispatchContainerResultDto>.Failure(
+                    "The container is empty — nothing has been picked into it. Cancel the task instead of closing the container.");
+
             var container = await _unitOfWork.Containers.GetByIdAsync(task.ContainerId!.Value);
             if (container == null || container.Barcode != dto.ContainerBarcode)
                 return Result<DispatchContainerResultDto>.Failure("Wrong container barcode! Scan the container linked to this task.");
@@ -220,15 +274,27 @@ namespace Warehouse.Application.Services
             // silently discarded or thrown as an unhandled exception.
             var dispatchResult = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
-                // Staged on the conveyor — still physically loaded with this order's
-                // goods, so Ready, not Available. Marking it free here is exactly what
-                // let a second worker claim an in-use container; only putaway (once a
-                // worker actually empties it) returns it to the pool.
-                var transition = await _containerLifecycle.TransitionAsync(container.Id, ContainerStatus.InProgress, ContainerStatus.Ready);
+                // Loaded goods go to the conveyor: Ready, still physically full, NOT free.
+                // Marking it free here is exactly what let a second worker claim an in-use
+                // container; only putaway (once a worker actually empties it) returns a
+                // loaded container to the pool.
+                //
+                // The close-out-empty path is the opposite case: nothing was picked, so
+                // nothing reaches the conveyor and the tote is physically empty. It goes
+                // straight back to Available — leaving it Ready would strand it waiting on
+                // a putaway that has no goods to put away and will never be created.
+                var targetStatus = anyPicked ? ContainerStatus.Ready : ContainerTransitions.FreeStatus;
+
+                var transition = await _containerLifecycle.TransitionAsync(container.Id, ContainerStatus.InProgress, targetStatus);
                 if (!transition.IsSuccess)
                     return Result<Guid?>.Failure(transition.Error!, transition.ErrorType);
 
-                container.LocationId = station.Id;
+                // Only a container that actually travelled to the conveyor takes the
+                // station's location; an empty one never moved, so its recorded position
+                // stays whatever it was rather than claiming a conveyor slot it isn't in.
+                if (anyPicked)
+                    container.LocationId = station.Id;
+
                 container.AssignedSector = null;
 
                 // Units already written off via ReportMissingItemAsync are accounted for,
@@ -329,6 +395,17 @@ namespace Warehouse.Application.Services
 
             // Once units have physically been picked into the container, cancelling would strand
             // that stock in an unassigned container — reject instead of silently resetting progress.
+            //
+            // KNOWN GAP (deliberately not fixed here): this guard only looks at PickedQuantity,
+            // so a task whose lines were ALL written off as missing has zero picks, passes, and
+            // cancels. Nothing in this method touches the Order — DispatchContainerAsync is the
+            // only place an order reaches Packed/ShortShipped — so the order stays in Picking
+            // with its shortfall already recorded in ShortedQuantity, i.e. stranded. It only
+            // recovers if someone re-takes the task from the queue and closes it out via the
+            // close-out-empty path in DispatchContainerAsync.
+            // Proposed fix: widen this to `i.PickedQuantity + i.MissingQuantity > 0`. A
+            // fully-written-off task shouldn't be cancellable at all; it should be closed out,
+            // which is what makes the order resolve.
             if (task.Items.Any(i => i.PickedQuantity > 0))
                 return Result<MessageResponseDto>.Failure("Cannot cancel: some items have already been picked. Report missing items or dispatch the container instead.");
 
@@ -346,9 +423,13 @@ namespace Warehouse.Application.Services
                     transition.Value!.AssignedSector = null;
                 }
 
-                // Return the task to its initial state: drop the worker and container
+                // Return the task to its initial state: drop the worker and container.
+                // ClaimedAt goes with AssignedWorkerId — a task back in the queue is
+                // unclaimed, and leaving a stale timestamp would make the next worker's
+                // fresh claim look already-expired to the sweep.
                 task.Status = PickTaskStatus.New;
                 task.AssignedWorkerId = null;
+                task.ClaimedAt = null;
                 task.ContainerId = null;
 
                 await _unitOfWork.SaveChangesAsync();
