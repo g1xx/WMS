@@ -5,13 +5,26 @@ interface Props {
     containerBarcode: string;
     setContainerBarcode: (val: string) => void;
     onStartTask: () => void;
-
+    // Must be PickTasks' handleExitToMenu, not Terminal's raw onExitToMenu: this screen
+    // shows a task that is CLAIMED for this worker, and leaving without releasing it would
+    // hide it from everyone until the 15-minute inactivity sweep.
+    onExitToMenu: () => void;
 }
 
-export default function NewTaskScreen({ task, containerBarcode, setContainerBarcode, onStartTask }: Props) {
+export default function NewTaskScreen({ task, containerBarcode, setContainerBarcode, onStartTask, onExitToMenu }: Props) {
     return (
-        <div style={{ backgroundColor: '#1e1e1e', padding: '20px', borderRadius: '8px', width: '90%', maxWidth: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.5)' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: '#4CAF50' }}>Task: {task.id.substring(0, 8)}...</h3>
+        <div style={{ backgroundColor: '#1e1e1e', padding: '20px', borderRadius: '8px', width: '90%', maxWidth: '400px', boxShadow: '0 4px 15px rgba(0,0,0,0.5)', position: 'relative' }}>
+            {/* Same affordance and styling as the no-tasks screen's exit, so the way out of
+                picking looks identical wherever the worker happens to be. Escape does the
+                same thing (see PickTasks), but until now this screen offered no visible way
+                back at all. */}
+            <button
+                onClick={onExitToMenu}
+                style={{ position: 'absolute', top: '15px', right: '15px', backgroundColor: '#555', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem', zIndex: 5 }}
+            >
+                ESC (Menu)
+            </button>
+            <h3 style={{ margin: '0 0 10px 0', color: '#4CAF50', paddingRight: '90px' }}>Task: {task.id.substring(0, 8)}...</h3>
             <p style={{ fontSize: '1.1rem' }}><strong>Sector:</strong> {task.sector}</p>
             <p style={{ fontSize: '1.1rem' }}><strong>Status:</strong> {task.status}</p>
             

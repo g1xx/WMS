@@ -29,8 +29,9 @@ test.describe('Picking flow', () => {
         let pickedQuantity = 0;
         let dispatched = false;
 
-        // GetActiveForUserAsync only ever returns an InProgress task assigned to
-        // this worker — an unclaimed "New" task is never "active" until started.
+        // GetActiveForUserAsync returns whatever task this worker HOLDS. This test only
+        // ever fetches once before starting, so modelling the unheld case is enough here;
+        // the claim/release test below models the held-but-not-started state properly.
         await page.route(`${API_BASE}/PickTask/active**`, (route) => {
             if (!started || dispatched) return fulfillJson(route, null);
             return fulfillJson(route, {
@@ -98,5 +99,80 @@ test.describe('Picking flow', () => {
 
         // Nothing left in the sector -> back to the empty state
         await expect(page.getByText('No tasks available in sector mp1')).toBeVisible();
+    });
+
+    // Reproduces the reported regression: open picking, go back to the menu, open picking
+    // again — the task had vanished, because it stayed claimed to the worker who left.
+    // The mocks below model the real claim contract: /next CLAIMS and hands the task over,
+    // /active serves whatever the worker currently holds (claimed-New included), and
+    // /release hands it back.
+    test('leaving the claimed-task screen releases it, so re-entering picking shows it again', async ({ page }) => {
+        await primeAuthToken(page);
+
+        const newTask = {
+            id: 'task-pick-2',
+            sector: 'mp1',
+            status: 'New',
+            containerBarcode: null,
+            items: [
+                {
+                    id: 'item-1',
+                    productName: 'Widget',
+                    productSku: 'SKU-1',
+                    locationBarcode: 'mp1000101a',
+                    requiredQuantity: 5,
+                    pickedQuantity: 0,
+                    missingQuantity: 0,
+                    availableStock: 20,
+                },
+            ],
+        };
+
+        let heldByWorker = false;
+        let releaseCount = 0;
+        let claimCount = 0;
+
+        await page.route(`${API_BASE}/PickTask/active**`, (route) =>
+            fulfillJson(route, heldByWorker ? newTask : null));
+
+        await page.route(`${API_BASE}/PickTask/next**`, (route) => {
+            // A task the worker already holds is skipped here — it has an assignee — and
+            // comes back via /active instead. This is the half that was missing server-side.
+            if (heldByWorker) return fulfillJson(route, null);
+            heldByWorker = true;
+            claimCount += 1;
+            return fulfillJson(route, newTask);
+        });
+
+        await page.route(`${API_BASE}/PickTask/*/release`, (route) => {
+            heldByWorker = false;
+            releaseCount += 1;
+            return fulfillJson(route, { message: 'Task returned to the queue.' });
+        });
+
+        await page.route(`${API_BASE}/PutawayTask/active**`, (route) => fulfillJson(route, null));
+
+        await page.goto('/');
+
+        await page.getByRole('button', { name: 'Start Picking' }).click();
+        await page.getByPlaceholder('Sector (e.g. mp1, mr1)').fill('mp1');
+        await page.getByRole('button', { name: 'Confirm Sector' }).click();
+
+        // Claimed and shown, container not yet scanned — the state the back button serves.
+        await expect(page.getByRole('heading', { name: /Picking Route/ })).toBeVisible();
+        expect(claimCount).toBe(1);
+
+        await page.getByRole('button', { name: 'ESC (Menu)' }).click();
+
+        // Back at the menu, and the claim was handed back rather than left dangling until
+        // the 15-minute inactivity sweep.
+        await expect(page.getByRole('button', { name: 'Start Picking' })).toBeVisible();
+        await expect.poll(() => releaseCount).toBe(1);
+
+        // The sector is remembered, so this goes straight back into picking — and the task
+        // must be offered again instead of having vanished.
+        await page.getByRole('button', { name: 'Start Picking' }).click();
+        await expect(page.getByRole('heading', { name: /Picking Route/ })).toBeVisible();
+        expect(claimCount).toBe(2);
     });
 });
