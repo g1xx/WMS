@@ -63,6 +63,12 @@ public class PickTaskServiceTests
         _unitOfWorkMock
             .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
             .Returns<Func<Task>>(action => action());
+        // GetNextTaskAsync's transaction returns the claimed task. Another distinct closed
+        // generic, and per the gotcha above an unstubbed one would silently skip the action
+        // and make every claim test pass for the wrong reason (null == "no work available").
+        _unitOfWorkMock
+            .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task<PickTask?>>>()))
+            .Returns<Func<Task<PickTask?>>>(action => action());
 
         // ReportMissingItemAsync now always runs a replacement search (via
         // IUnfulfillableUnitHandler) same as ReportDefectAsync always has. Default to
@@ -88,7 +94,8 @@ public class PickTaskServiceTests
             _unitOfWorkMock.Object,
             new RouteOptimizerService(),
             new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()),
-            new ContainerLifecycleService(_unitOfWorkMock.Object));
+            new ContainerLifecycleService(_unitOfWorkMock.Object),
+            new PickTaskSettings());
     }
 
     // Builds a single-item InProgress task: required 10, picked 0, missing 0,
@@ -1047,5 +1054,171 @@ public class PickTaskServiceTests
             t.ProductId == lines[1].Product.Id && t.TransactionType == StockTransactionType.Missing && t.QuantityChange == -10)), Times.Once);
         _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
             t.ProductId == lines[2].Product.Id && t.TransactionType == StockTransactionType.Pick && t.QuantityChange == -10)), Times.Once);
+    }
+
+    // ---- Closing an empty container -------------------------------------------------
+    // "Full container" must be refused on a container nothing was picked into, but the
+    // refusal keys on outstanding WORK, not on emptiness alone: a task whose lines were
+    // all written off is also empty, yet must still close or its order never leaves Picking.
+
+    [Fact]
+    public async Task DispatchContainerAsync_NothingPickedAndWorkOutstanding_IsRejected()
+    {
+        var (order, task, container, station, _) = BuildDispatchScenario(new[] { true }, quantityPerItem: 10);
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(container.Status);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
+
+        // Nothing picked, nothing written off — the line is still real outstanding work.
+        var result = await _sut.DispatchContainerAsync(
+            task.Id, new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" }, "worker-1");
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Contain("empty");
+
+        // Rejected before any state moved: the task is still the worker's to finish.
+        task.Status.Should().Be(PickTaskStatus.InProgress);
+        container.Status.Should().Be(ContainerStatus.InProgress);
+        order.Status.Should().Be(OrderStatus.Picking);
+    }
+
+    [Fact]
+    public async Task DispatchContainerAsync_AllLinesWrittenOff_ClosesOutAndFreesTheEmptyContainer()
+    {
+        var (order, task, container, station, lines) = BuildDispatchScenario(new[] { false, false }, quantityPerItem: 10);
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(container.Status);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
+
+        foreach (var line in lines)
+        {
+            _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(line.Product.Id, line.Location.Id)).ReturnsAsync(line.Stock);
+            await _sut.ReportMissingItemAsync(
+                task.Id,
+                new ReportMissingItemDto { LocationBarcode = line.Location.AddressBarcode, ProductSku = line.Product.Sku, MissingQuantity = 10 },
+                "supervisor-1");
+        }
+
+        var result = await _sut.DispatchContainerAsync(
+            task.Id, new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" }, "worker-1");
+
+        result.IsSuccess.Should().BeTrue($"a fully written-off task must still close: {result.Error}");
+        task.Status.Should().Be(PickTaskStatus.Completed);
+
+        // The whole point of allowing this path: the order's shortfall is fully recorded,
+        // so it must reach ShortShipped. Routing this to cancel instead would strand it
+        // in Picking forever.
+        order.Status.Should().Be(OrderStatus.ShortShipped);
+
+        // Physically empty and it never went to the conveyor, so it goes straight back to
+        // the free pool — NOT Ready, which would block it awaiting a putaway that has no
+        // goods to put away and will never be created.
+        container.Status.Should().Be(ContainerTransitions.FreeStatus);
+        container.LocationId.Should().NotBe(station.Id, "an empty container never travelled to the conveyor");
+        container.AssignedSector.Should().BeNull();
+
+        result.Value!.NextTaskId.Should().BeNull("every line was accounted for");
+    }
+
+    // ---- Claiming a task at show-time ------------------------------------------------
+
+    [Fact]
+    public async Task GetNextTaskAsync_ClaimsTheTaskForTheWorkerWhileLeavingItNew()
+    {
+        var task = new PickTask
+        {
+            Id = Guid.NewGuid(),
+            Sector = "mp1",
+            Status = PickTaskStatus.New,
+            Items = new List<PickTaskItem>()
+        };
+
+        _pickTaskRepositoryMock
+            .Setup(r => r.ClaimNextForSectorAsync("mp1", "worker-1", It.IsAny<DateTime>()))
+            .ReturnsAsync((string _, string workerId, DateTime claimedAt) =>
+            {
+                task.AssignedWorkerId = workerId;
+                task.ClaimedAt = claimedAt;
+                return task;
+            });
+
+        var result = await _sut.GetNextTaskAsync("worker-1", "mp1");
+
+        result.Should().NotBeNull();
+
+        // Claimed but NOT started: the container scan is what makes it InProgress, and
+        // that distinction is what keeps the task inside the inactivity sweep's reach
+        // until the worker actually begins.
+        task.Status.Should().Be(PickTaskStatus.New);
+        task.AssignedWorkerId.Should().Be("worker-1");
+        task.ClaimedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetNextTaskAsync_SweepsExpiredClaimsBeforeClaiming()
+    {
+        var sequence = new List<string>();
+
+        _pickTaskRepositoryMock
+            .Setup(r => r.ReleaseExpiredClaimsAsync("mp1", It.IsAny<DateTime>()))
+            .ReturnsAsync(1)
+            .Callback(() => sequence.Add("sweep"));
+        _pickTaskRepositoryMock
+            .Setup(r => r.ClaimNextForSectorAsync("mp1", "worker-1", It.IsAny<DateTime>()))
+            .ReturnsAsync((PickTask?)null)
+            .Callback(() => sequence.Add("claim"));
+
+        await _sut.GetNextTaskAsync("worker-1", "mp1");
+
+        // Order matters: a task freed by the sweep has to be visible to the claim that
+        // follows it in the same transaction, which is the entire trigger mechanism for
+        // the inactivity timeout — there is no background job.
+        sequence.Should().Equal("sweep", "claim");
+    }
+
+    [Fact]
+    public async Task GetNextTaskAsync_UsesTheConfiguredClaimTimeoutForTheSweepCutoff()
+    {
+        var sut = new PickTaskService(
+            _unitOfWorkMock.Object,
+            new RouteOptimizerService(),
+            new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()),
+            new ContainerLifecycleService(_unitOfWorkMock.Object),
+            new PickTaskSettings { ClaimTimeoutMinutes = 45 });
+
+        DateTime? capturedCutoff = null;
+        _pickTaskRepositoryMock
+            .Setup(r => r.ReleaseExpiredClaimsAsync("mp1", It.IsAny<DateTime>()))
+            .ReturnsAsync(0)
+            .Callback((string _, DateTime cutoff) => capturedCutoff = cutoff);
+        _pickTaskRepositoryMock
+            .Setup(r => r.ClaimNextForSectorAsync("mp1", "worker-1", It.IsAny<DateTime>()))
+            .ReturnsAsync((PickTask?)null);
+
+        await sut.GetNextTaskAsync("worker-1", "mp1");
+
+        capturedCutoff.Should().NotBeNull();
+        capturedCutoff!.Value.Should().BeCloseTo(DateTime.UtcNow.AddMinutes(-45), TimeSpan.FromMinutes(1));
+    }
+
+    [Fact]
+    public async Task ReleasePickTaskAsync_SucceedsEvenWhenThereWasNothingToRelease()
+    {
+        var taskId = Guid.NewGuid();
+        _pickTaskRepositoryMock.Setup(r => r.ReleaseClaimAsync(taskId, "worker-1")).ReturnsAsync(false);
+
+        var result = await _sut.ReleasePickTaskAsync(taskId, "worker-1");
+
+        // Not an error: the worker may have started the task, or their claim may already
+        // have expired and gone to someone else. Either way the desired end state holds,
+        // and this is a best-effort call the client fires while walking away from it.
+        result.IsSuccess.Should().BeTrue();
     }
 }

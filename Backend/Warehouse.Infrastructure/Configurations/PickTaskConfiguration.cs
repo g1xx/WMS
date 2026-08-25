@@ -27,5 +27,11 @@ public class PickTaskConfiguration : IEntityTypeConfiguration<PickTask>
         builder.HasIndex(t => t.ContainerId)
                .IsUnique()
                .HasFilter($"\"Status\" = {(int)PickTaskStatus.InProgress}");
+
+        // Serves both halves of the claim transaction (see PickTaskRepository):
+        // the expiry sweep and the SELECT ... FOR UPDATE SKIP LOCKED that follows it.
+        // Both filter on Sector + Status = New and order by CreatedAt, and both run on
+        // every "next task" request, so this is the hot path for every picking terminal.
+        builder.HasIndex(t => new { t.Sector, t.Status, t.CreatedAt });
     }
 }

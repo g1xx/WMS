@@ -63,6 +63,20 @@ namespace Warehouse.Api.Controllers
             return Ok(task);
         }
 
+        // Called when the worker leaves picking for the main menu, returning a task they
+        // were shown but never started. Best-effort by design — the inactivity sweep in
+        // GetNextTask covers every case where this call never arrives.
+        [Authorize(Roles = RoleNames.AnyStaff)]
+        [HttpPost("{id}/release")]
+        public async Task<ActionResult> ReleaseTask(Guid id)
+        {
+            var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId)) return Unauthorized("Unable to determine user.");
+
+            var result = await _pickTaskService.ReleasePickTaskAsync(id, userId);
+            return result.ToActionResult();
+        }
+
         [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("{id}/start")]
         public async Task<ActionResult> StartPickTask(Guid id, StartPickTaskDto dto)

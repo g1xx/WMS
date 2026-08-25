@@ -39,6 +39,15 @@ export default function ActiveTaskScreen({
     const currentItem = task.items.find(item => item.pickedQuantity + item.missingQuantity < item.requiredQuantity);
     const hasPickedItems = task.items.some(item => item.pickedQuantity > 0);
 
+    // "Full container" closes the container out. That's valid when there's something in
+    // it, and also when every line is fully accounted for with nothing picked (all written
+    // off as missing) — that task still has to close so the order can reach ShortShipped,
+    // and the server sends the empty tote straight back to Available rather than to the
+    // conveyor. What's never valid is closing an empty container with real work still
+    // outstanding, which is the disabled case here. Mirrors the server guard in
+    // PickTaskService.DispatchContainerAsync.
+    const canDispatch = hasPickedItems || !currentItem;
+
     // The exact container the worker must scan to close this task out.
     // Trimmed defensively: scanner input and the backend value may carry a trailing space.
     const expectedContainer = task.containerBarcode?.trim();
@@ -270,8 +279,8 @@ export default function ActiveTaskScreen({
                         <>
                             <h3 style={{ color: '#ff5252', marginBottom: '25px', textAlign: 'center' }}>Exceptions menu</h3>
 
-                            <button onClick={() => { setIsDispatchMode(true); setIsMenuOpen(false); }} style={{ width: '100%', padding: '15px', backgroundColor: '#ff9800', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>
-                                📦 Full Container
+                            <button onClick={() => { setIsDispatchMode(true); setIsMenuOpen(false); }} disabled={!canDispatch} style={{ width: '100%', padding: '15px', backgroundColor: canDispatch ? '#ff9800' : '#333', color: canDispatch ? 'white' : '#777', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '12px', cursor: canDispatch ? 'pointer' : 'not-allowed' }}>
+                                📦 Full Container {!canDispatch && '(Empty)'}
                             </button>
 
                             <button onClick={() => { setIsOverviewOpen(true); setIsMenuOpen(false); }} style={{ width: '100%', padding: '15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '6px', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '12px', cursor: 'pointer' }}>
