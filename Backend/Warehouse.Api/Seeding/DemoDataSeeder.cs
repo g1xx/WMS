@@ -26,15 +26,19 @@ namespace Warehouse.Api.Seeding;
 // consistent with everything those services actually enforce.
 public class DemoDataSeeder
 {
-    private const string AdminUsername = "admin";
-    private const string AdminPassword = "AdminDemo123!";
+    // Public because DemoController serves these to the in-app help panel. Deliberately
+    // NOT re-typed there: the credentials the panel shows and the credentials this seeder
+    // actually creates must be the same strings, or the demo tells reviewers a password
+    // that doesn't work.
+    public const string AdminUsername = "admin";
+    public const string AdminPassword = "AdminDemo123!";
 
     // A separate, deliberately narrow identity for the simulated upstream ERP/marketplace
     // feed (see RoleNames.Integration) — not the admin account, so the demo actually shows
     // the two identities are different: this one can create inbound orders and register
     // receiving notices, and nothing else.
-    private const string IntegrationUsername = "erp-feed";
-    private const string IntegrationPassword = "IntegrationDemo123!";
+    public const string IntegrationUsername = "erp-feed";
+    public const string IntegrationPassword = "IntegrationDemo123!";
 
     // Reuses one of LocationConfiguration.cs's existing HasData conveyor drops —
     // see the class comment above for why this isn't seeded again here.
