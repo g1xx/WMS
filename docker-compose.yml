@@ -69,6 +69,15 @@ services:
       JwtSettings__Secret: ${JWT_SECRET:?JWT_SECRET must be set — copy .env.example to .env and set a real value}
       JwtSettings__Issuer: ${JWT_ISSUER:-WarehouseApi}
       JwtSettings__Audience: ${JWT_AUDIENCE:-WarehouseClient}
+      # Turns on /api/Demo/help and the in-app help panel for the public review demo.
+      # An environment variable specifically, because it has to win over
+      # appsettings.json's committed `false` without that override living in git — env
+      # vars outrank every appsettings file in ASP.NET Core's provider order, so this
+      # works under ASPNETCORE_ENVIRONMENT=Production without switching the app to
+      # Development (which would also expose Swagger — see Program.cs's IsDevelopment
+      # check). Defaults to false, so this line enables nothing until a deployment's
+      # own .env opts in.
+      DemoSettings__Enabled: ${DEMO_MODE:-false}
     ports:
       # Loopback-only (127.0.0.1, not 0.0.0.0) — not required for the app itself,
       # since the browser reaches the backend through nginx's /api proxy (same

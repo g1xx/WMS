@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Warehouse.Api.Common;
 using Warehouse.Api.Controllers;
 
@@ -32,5 +33,41 @@ public class DemoControllerTests
         // section (any real deployment) must leave the endpoint inert. Turning it on has to
         // be a deliberate act.
         new DemoSettings().Enabled.Should().BeFalse();
+    }
+
+    [Fact]
+    public void DemoSettings_EnvironmentVariableOverridesAppsettingsFalse()
+    {
+        // This is the exact mechanism the deployed demo is switched on with: compose sets
+        // DemoSettings__Enabled=true (see docker-compose.yml / DEMO_MODE in .env), which has
+        // to beat the `false` committed in appsettings.json — under ASPNETCORE_ENVIRONMENT=
+        // Production, without editing any appsettings file.
+        //
+        // Worth pinning rather than assuming, because both halves are silent when wrong:
+        // renaming DemoSettings or Enabled, or losing the double underscore that maps to the
+        // nested key, leaves the server quietly disabled with no error to notice.
+        const string key = "DemoSettings__Enabled";
+        var original = Environment.GetEnvironmentVariable(key);
+        try
+        {
+            Environment.SetEnvironmentVariable(key, "true");
+
+            var configuration = new ConfigurationBuilder()
+                // Stands in for appsettings.json, which ships Enabled=false.
+                .AddInMemoryCollection(new Dictionary<string, string?> { ["DemoSettings:Enabled"] = "false" })
+                // Added after, exactly as the default host builder orders them — later
+                // providers win.
+                .AddEnvironmentVariables()
+                .Build();
+
+            var settings = configuration.GetSection("DemoSettings").Get<DemoSettings>();
+
+            settings.Should().NotBeNull();
+            settings!.Enabled.Should().BeTrue("the environment variable must outrank appsettings.json");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(key, original);
+        }
     }
 }
