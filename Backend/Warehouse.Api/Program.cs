@@ -44,7 +44,11 @@ builder.Services.AddSingleton(
     builder.Configuration.GetSection("DemoSettings").Get<DemoSettings>() ?? new DemoSettings());
 builder.Services.AddScoped<IPickTaskService, PickTaskService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+// The destination half of every stock movement (lock, MaxDistinctSkus, find-or-create,
+// audit row). Shared by putaway and relocation so the capacity rule has one implementation.
+builder.Services.AddScoped<IStockPlacementService, StockPlacementService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();
+builder.Services.AddScoped<IRelocationService, RelocationService>();
 builder.Services.AddSingleton<IRouteOptimizerService, RouteOptimizerService>();
 builder.Services.AddSingleton<IDefectReplacementPlanner, DefectReplacementPlanner>();
 // Scoped, not Singleton: it depends on IUnitOfWork (tied to the per-request DbContext).

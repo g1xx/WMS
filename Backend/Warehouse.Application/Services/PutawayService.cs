@@ -11,12 +11,18 @@ public class PutawayService : IPutawayService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IRouteOptimizerService _routeOptimizer;
     private readonly IContainerLifecycleService _containerLifecycle;
+    private readonly IStockPlacementService _stockPlacement;
 
-    public PutawayService(IUnitOfWork unitOfWork, IRouteOptimizerService routeOptimizer, IContainerLifecycleService containerLifecycle)
+    public PutawayService(
+        IUnitOfWork unitOfWork,
+        IRouteOptimizerService routeOptimizer,
+        IContainerLifecycleService containerLifecycle,
+        IStockPlacementService stockPlacement)
     {
         _unitOfWork = unitOfWork;
         _routeOptimizer = routeOptimizer;
         _containerLifecycle = containerLifecycle;
+        _stockPlacement = stockPlacement;
     }
 
     public async Task<Result<PutawayTaskResponseDto>> CreatePutawayTaskAsync(CreatePutawayTaskDto dto)
@@ -236,62 +242,16 @@ public class PutawayService : IPutawayService
         // the transaction instead of being stashed in a captured outer variable.
         var transactionFailure = await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            // Row lock on the destination first, before reading or writing anything else
-            // in this transaction — without it, two concurrent confirms into the same
-            // near-full location could both read "room for one more" before either
-            // commits. A second concurrent caller targeting the same location blocks
-            // here until this transaction commits or rolls back.
-            await _unitOfWork.Locations.LockForUpdateAsync(location.Id);
+            // Destination-side movement (lock, capacity check, find-or-create, audit row)
+            // lives in StockPlacementService so relocation's putaway leg runs this exact
+            // code rather than a second copy of the MaxDistinctSkus rule.
+            var placementFailure = await _stockPlacement.PlaceAsync(
+                item.Product!, location, dto.Quantity, workerId, StockTransactionType.Putaway);
 
-            // Find-or-create respects the unique (ProductId, LocationId) index on Stock —
-            // this may be a brand-new pairing if the worker picked a location the
-            // product wasn't suggested for.
-            var stock = await _unitOfWork.Stocks.GetByProductAndLocationAsync(item.ProductId, location.Id);
-
-            // A SKU already present here with a non-zero quantity doesn't newly occupy a
-            // slot — including one whose Stock row is currently at 0 (previously here,
-            // now empty): that's checked exactly like a brand-new SKU would be, not
-            // silently exempted.
-            var alreadyOccupiesSlot = stock != null && stock.PhysicalQuantity > 0;
-
-            if (!alreadyOccupiesSlot)
-            {
-                var limit = location.MaxDistinctSkus ?? LocationCapacityDefaults.GetDefaultMaxDistinctSkus(location.Type);
-                if (limit.HasValue)
-                {
-                    var currentDistinctSkuCount = await _unitOfWork.Stocks.CountDistinctProductsWithStockAtLocationAsync(location.Id);
-                    if (currentDistinctSkuCount >= limit.Value)
-                    {
-                        return $"Location '{location.AddressBarcode}' already stocks {currentDistinctSkuCount}/{limit.Value} distinct SKUs " +
-                               $"and doesn't currently stock {dto.ProductSku} — choose a different location.";
-                    }
-                }
-            }
+            if (placementFailure != null)
+                return placementFailure;
 
             item.PutAwayQuantity += dto.Quantity;
-
-            if (stock == null)
-            {
-                stock = new Stock
-                {
-                    ProductId = item.ProductId,
-                    LocationId = location.Id,
-                    PhysicalQuantity = 0,
-                    ReservedQuantity = 0
-                };
-                _unitOfWork.Stocks.Add(stock);
-            }
-
-            stock.PhysicalQuantity += dto.Quantity;
-
-            _unitOfWork.StockTransactions.Add(new StockTransaction
-            {
-                ProductId = item.ProductId,
-                LocationId = location.Id,
-                QuantityChange = dto.Quantity,
-                TransactionType = StockTransactionType.Putaway,
-                UserId = workerId
-            });
 
             if (task.Items.All(i => i.PutAwayQuantity + i.MissingQuantity >= i.ExpectedQuantity))
             {

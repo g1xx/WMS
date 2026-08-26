@@ -6,6 +6,22 @@ public interface IStockRepository
 {
     Task<Stock?> GetByProductAndLocationAsync(Guid productId, Guid locationId);
 
+    // Takes a row lock on this product/location Stock row for the rest of the caller's
+    // transaction (a raw SELECT ... FOR UPDATE) and returns its CURRENT committed
+    // quantities, bypassing the change tracker. Used before deciding whether there is
+    // enough available stock to take, where a plain read is not enough: two workers
+    // taking from the same shelf would both read the same availability and the loser
+    // would only be stopped by Stock's xmin token, surfacing as a generic "changed by
+    // someone else" instead of an accurate "only N left". A concurrent caller locking the
+    // same row blocks here until this transaction commits, then reads the true remainder.
+    // Returns null if no stock row exists for the pairing.
+    Task<(int PhysicalQuantity, int ReservedQuantity)?> LockForUpdateAsync(Guid productId, Guid locationId);
+
+    // Every product with a physical presence at this location, Product included — feeds
+    // the relocation flow's "list everything here and let me pick from it" prompt, and
+    // the carried-stock list for the putaway leg.
+    Task<List<Stock>> GetWithProductAtLocationAsync(Guid locationId);
+
     // Batched (one query for every product) — feeds OrderAllocationService's
     // per-product-id dictionary lookup, avoiding the N+1 this replaced.
     Task<List<Stock>> GetAvailableForProductsAsync(List<Guid> productIds);

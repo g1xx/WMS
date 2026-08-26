@@ -6,8 +6,9 @@ import MainMenu from './MainMenu';
 import SectorSelect from './SectorSelect';
 import PickTasks from '../PickTasks/PickTasks';
 import PutawayFlow from '../Putaway/PutawayFlow';
+import RelocationFlow from '../Relocation/RelocationFlow';
 
-type Screen = 'LOADING' | 'MENU' | 'SECTOR_SELECT' | 'PICKING' | 'PUTAWAY';
+type Screen = 'LOADING' | 'MENU' | 'SECTOR_SELECT' | 'PICKING' | 'PUTAWAY' | 'RELOCATION';
 type PendingFlow = 'PICKING' | 'PUTAWAY' | null;
 
 export default function Terminal() {
@@ -104,6 +105,9 @@ export default function Terminal() {
                     <MainMenu
                         onStartPicking={() => startFlow('PICKING')}
                         onStartPutaway={() => startFlow('PUTAWAY')}
+                        // Straight in, no sector step: relocation is driven entirely by
+                        // scanned location barcodes rather than scoped to a picking zone.
+                        onStartRelocation={() => setScreen('RELOCATION')}
                         onChangeSector={handleChangeSector}
                     />
                 )}
@@ -118,6 +122,10 @@ export default function Terminal() {
 
                 {screen === 'PUTAWAY' && (
                     <PutawayFlow sector={sector} onExitToMenu={returnToMenu} onSectorChange={setSector} />
+                )}
+
+                {screen === 'RELOCATION' && (
+                    <RelocationFlow onExitToMenu={returnToMenu} />
                 )}
             </div>
         </div>
