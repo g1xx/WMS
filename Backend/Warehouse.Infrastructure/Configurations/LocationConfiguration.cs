@@ -9,10 +9,21 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
     public void Configure(EntityTypeBuilder<Location> builder)
     {
         builder.Property(l => l.AddressBarcode).HasMaxLength(100);
+        builder.Property(l => l.AssignedWorkerId).HasMaxLength(100);
 
         builder.ToTable(t => t.HasCheckConstraint(
             "CK_Location_MaxDistinctSkus_PositiveOrNull",
             "\"MaxDistinctSkus\" IS NULL OR \"MaxDistinctSkus\" > 0"));
+
+        // One transit location per worker. This is not just tidiness — it's what makes
+        // the get-or-create in RelocationService safe: two concurrent first-uses by the
+        // same worker race, and the loser's INSERT is rejected here rather than quietly
+        // producing a second transit location that half their carried stock ends up in.
+        // Filtered so the column stays free for every physical location, which leaves it
+        // null. Same pattern as PickTaskConfiguration's ContainerId index.
+        builder.HasIndex(l => l.AssignedWorkerId)
+               .IsUnique()
+               .HasFilter($"\"Type\" = {(int)LocationType.Transit}");
 
         builder.HasData(
             new Location

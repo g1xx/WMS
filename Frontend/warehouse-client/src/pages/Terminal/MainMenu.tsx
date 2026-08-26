@@ -4,10 +4,11 @@ import { logout } from '../../api/axiosClient';
 interface Props {
     onStartPicking: () => void;
     onStartPutaway: () => void;
+    onStartRelocation: () => void;
     onChangeSector: () => void;
 }
 
-export default function MainMenu({ onStartPicking, onStartPutaway, onChangeSector }: Props) {
+export default function MainMenu({ onStartPicking, onStartPutaway, onStartRelocation, onChangeSector }: Props) {
     const navigate = useNavigate();
 
     return (
@@ -26,6 +27,15 @@ export default function MainMenu({ onStartPicking, onStartPutaway, onChangeSecto
                 style={{ width: '100%', padding: '18px', fontSize: '1.2rem', backgroundColor: '#ff9800', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '12px' }}
             >
                 Start Putaway
+            </button>
+
+            {/* No sector prompt: relocation is addressed entirely by scanned location
+                barcodes, so unlike picking and putaway it isn't scoped to a zone. */}
+            <button
+                onClick={onStartRelocation}
+                style={{ width: '100%', padding: '18px', fontSize: '1.2rem', backgroundColor: '#9c27b0', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '12px' }}
+            >
+                Relokacja
             </button>
 
             <button

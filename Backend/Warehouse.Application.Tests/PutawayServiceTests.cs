@@ -71,7 +71,14 @@ public class PutawayServiceTests
         // dependencies of its own, and ContainerLifecycleService's only dependency is
         // the already-mocked IUnitOfWork — using the real thing here exercises its
         // actual lock/re-read/validate logic instead of assuming it works.
-        _sut = new PutawayService(_unitOfWorkMock.Object, new RouteOptimizerService(), new ContainerLifecycleService(_unitOfWorkMock.Object));
+        // Real StockPlacementService, not a mock: the MaxDistinctSkus tests in this file
+        // exist to validate that capacity rule, and it now lives there. Stubbing it would
+        // leave those tests asserting against a fake and the real rule uncovered.
+        _sut = new PutawayService(
+            _unitOfWorkMock.Object,
+            new RouteOptimizerService(),
+            new ContainerLifecycleService(_unitOfWorkMock.Object),
+            new StockPlacementService(_unitOfWorkMock.Object));
     }
 
     // Wires the container mocks ContainerLifecycleService.TransitionAsync needs for a

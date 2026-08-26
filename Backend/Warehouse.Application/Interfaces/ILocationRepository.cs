@@ -12,7 +12,21 @@ public interface ILocationRepository
     Task<Dictionary<string, Location>> GetByBarcodesAsync(List<string> barcodes);
 
     // Ordered by Aisle then Rack — matches LocationsController's catalog listing.
+    // EXCLUDES transit locations: they're per-worker bookkeeping, not physical places.
     Task<List<Location>> GetAllOrderedAsync();
+
+    // This worker's transit location, or null if they've never started a relocation.
+    Task<Location?> GetTransitForWorkerAsync(string workerId);
+
+    // This worker's transit location, creating it on first use. Lives in the repository
+    // rather than the service because losing the create race has to be caught as a
+    // unique-constraint violation, and the Application layer has no EF Core reference to
+    // catch one with.
+    //
+    // MUST be called OUTSIDE a transaction. It saves, and in Postgres a failed INSERT
+    // aborts the surrounding transaction — the re-read after losing the race would then
+    // fail too. Callers do this once, up front, before opening their own transaction.
+    Task<Location> GetOrCreateTransitForWorkerAsync(string workerId, string displayName);
 
     void Add(Location location);
     void AddRange(IEnumerable<Location> locations);

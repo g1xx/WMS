@@ -6,7 +6,15 @@ public enum StockTransactionType
     Putaway,
     Defect,
     Missing,
-    ManualAdjustment
+    ManualAdjustment,
+
+    // Both legs of a stock relocation — source -> transit, then transit -> target. One
+    // type rather than two: the legs are already distinguishable by the sign of
+    // QuantityChange and by which of the two locations the row names, and calling them
+    // Pick/Putaway would pollute those counts with movements that never touched an order.
+    //
+    // Appended, never inserted — persisted as int, same reasoning as LocationType.Transit.
+    Relocation
 }
 
 // Immutable audit trail entry for every change to Stock.PhysicalQuantity.
