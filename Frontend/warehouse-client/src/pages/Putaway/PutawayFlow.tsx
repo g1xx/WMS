@@ -12,6 +12,7 @@ import {
 import type { PutawayTask } from '../../types/putaway';
 import ContainerScanScreen from './ContainerScanScreen';
 import ActivePutawayScreen from './ActivePutawayScreen';
+import RelocationFlow from '../Relocation/RelocationFlow';
 
 type Phase = 'LOADING' | 'SCAN' | 'LOOP' | 'DONE';
 
@@ -27,6 +28,10 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
     const [phase, setPhase] = useState<Phase>('LOADING');
     const [task, setTask] = useState<PutawayTask | null>(null);
     const [finishedContainerBarcode, setFinishedContainerBarcode] = useState<string>('');
+
+    // Relocation entered from the putaway Esc menu. Overlays the task rather than
+    // replacing it, so the wizard's in-progress step survives the round trip.
+    const [isRelocating, setIsRelocating] = useState<boolean>(false);
 
     // Resume-on-load, same reasoning as the picking flow: a worker who gets
     // logged out (or hits Escape and comes back) mid-putaway must be able to
@@ -148,18 +153,43 @@ export default function PutawayFlow({ sector, onExitToMenu, onSectorChange }: Pr
     }
 
     if (phase === 'LOOP' && task) {
+        // ActivePutawayScreen is HIDDEN, never unmounted, while relocating. That is the
+        // whole resume mechanism: usePutawayWizardSteps holds the sub-step (which location
+        // is locked in, the typed SKU and quantity) in component state, so unmounting would
+        // discard it and drop the worker back at the location step. Which ITEM they're on
+        // is derived from the server task and needs nothing preserved.
+        //
+        // Same technique, and same reason, as TestOrderGenerator's App.tsx keeping both
+        // generators mounted behind a display toggle.
         return (
-            <ActivePutawayScreen
-                task={task}
-                onConfirmItem={async (locationBarcode, productSku, quantity) => {
-                    await confirmItemMutation.mutateAsync({ locationBarcode, productSku, quantity }).catch(() => {});
-                }}
-                onReportMissing={async (missingQuantity, supervisorBadge) => {
-                    const currentItem = task.items.find(i => i.putAwayQuantity + i.missingQuantity < i.expectedQuantity);
-                    if (!currentItem) return;
-                    await reportMissingMutation.mutateAsync({ productSku: currentItem.productSku, missingQuantity, supervisorBadge }).catch(() => {});
-                }}
-            />
+            <>
+                <div style={{ display: isRelocating ? 'none' : 'contents' }}>
+                    <ActivePutawayScreen
+                        task={task}
+                        menuEnabled={!isRelocating}
+                        onOpenRelocation={() => setIsRelocating(true)}
+                        onExitToMenu={onExitToMenu}
+                        onConfirmItem={async (locationBarcode, productSku, quantity) => {
+                            await confirmItemMutation.mutateAsync({ locationBarcode, productSku, quantity }).catch(() => {});
+                        }}
+                        onReportMissing={async (missingQuantity, supervisorBadge) => {
+                            const currentItem = task.items.find(i => i.putAwayQuantity + i.missingQuantity < i.expectedQuantity);
+                            if (!currentItem) return;
+                            await reportMissingMutation.mutateAsync({ productSku: currentItem.productSku, missingQuantity, supervisorBadge }).catch(() => {});
+                        }}
+                    />
+                </div>
+
+                {isRelocating && (
+                    <RelocationFlow
+                        exitLabel="Back to putaway"
+                        // Goes through RelocationFlow's own guard, so returning to putaway
+                        // is blocked while transit still holds stock — exactly as leaving
+                        // to the main menu is.
+                        onExit={() => setIsRelocating(false)}
+                    />
+                )}
+            </>
         );
     }
 
