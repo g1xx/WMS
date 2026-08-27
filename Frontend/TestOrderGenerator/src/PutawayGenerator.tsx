@@ -38,7 +38,7 @@ export default function PutawayGenerator() {
         setLoadingProducts(true);
         setDataError('');
         try {
-            const productsResponse = await axiosClient.get<Product[]>('/Products');
+            const productsResponse = await axiosClient.get<Product[]>('/Products/for-ordering');
             setProducts(productsResponse.data);
         } catch (error) {
             console.error('Failed to load products:', error);
