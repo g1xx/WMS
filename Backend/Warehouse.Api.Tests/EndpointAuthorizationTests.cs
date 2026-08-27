@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Api.Controllers;
+using Warehouse.Domain;
 
 namespace Warehouse.Api.Tests;
 
@@ -60,6 +61,61 @@ public class EndpointAuthorizationTests
         anonymous.Should().BeEquivalentTo(ExpectedAnonymousEndpoints,
             "every anonymous endpoint is a deliberate hole in the perimeter, so the set must "
             + "be reviewed as a whole rather than grown one attribute at a time");
+    }
+
+    // Every endpoint the Inbound Order Feed can reach. The feed signs in as erp-feed
+    // (RoleNames.Integration), which is deliberately excluded from AnyStaff, so a gate
+    // change on anything it calls takes it offline — which is exactly what happened when
+    // GET /api/Products was locked to AnyStaff and the feed's product picker went 403.
+    //
+    // This is the assertion that would have caught it. The e2e suites cannot: they stub the
+    // API with page.route, so a mocked call returns 200 regardless of the real gate.
+    private static readonly HashSet<string> ExpectedIntegrationReachable = new()
+    {
+        // Anonymous, so reachable by anyone including the feed.
+        "AuthController.Login",
+        "DemoController.GetHelp",
+
+        // The feed's narrow catalogue view — sku, name, id and an available total, with no
+        // per-location breakdown. See ProductsController.GetProductsForOrdering.
+        "ProductsController.GetProductsForOrdering",
+
+        // Placing the order, and registering an inbound receiving notice.
+        "OrdersController.CreateOrder",
+        "PutawayTaskController.CreatePutawayTask",
+    };
+
+    // Mirrors how ASP.NET Core combines attributes: every [Authorize] that applies must be
+    // satisfied, so class-level and action-level role lists are AND-ed, not OR-ed. A
+    // class-level Roles = AnyStaff over an action-level Roles = Integration yields an
+    // endpoint reachable by nobody — which is why ProductsController uses a bare class
+    // attribute with roles per action.
+    private static bool IsReachableByRole(Type controller, MethodInfo action, string role)
+    {
+        if (IsAnonymous(controller, action)) return true;
+
+        var attributes = controller.GetCustomAttributes<AuthorizeAttribute>()
+            .Concat(action.GetCustomAttributes<AuthorizeAttribute>())
+            .ToList();
+
+        if (attributes.Count == 0) return false; // fallback policy: authenticated only
+
+        return attributes.All(a =>
+            string.IsNullOrWhiteSpace(a.Roles)
+            || a.Roles.Split(',').Select(r => r.Trim()).Contains(role));
+    }
+
+    [Fact]
+    public void TheInboundFeedReachesExactlyTheEndpointsItNeeds()
+    {
+        var reachable = AllActions()
+            .Where(x => IsReachableByRole(x.Controller, x.Action, RoleNames.Integration))
+            .Select(x => $"{x.Controller.Name}.{x.Action.Name}")
+            .ToHashSet();
+
+        reachable.Should().BeEquivalentTo(ExpectedIntegrationReachable,
+            "the feed is a separate client with its own identity — narrowing this set breaks it "
+            + "in production, and widening it hands an external system warehouse internals");
     }
 
     [Fact]

@@ -32,7 +32,7 @@ export default function PickingGenerator() {
         setLoadingProducts(true);
         setProductsError('');
         try {
-            const response = await axiosClient.get<Product[]>('/Products');
+            const response = await axiosClient.get<Product[]>('/Products/for-ordering');
             setProducts(response.data);
         } catch (error) {
             console.error('Failed to load products:', error);
