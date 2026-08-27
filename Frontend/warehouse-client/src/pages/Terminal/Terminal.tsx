@@ -125,7 +125,7 @@ export default function Terminal() {
                 )}
 
                 {screen === 'RELOCATION' && (
-                    <RelocationFlow onExitToMenu={returnToMenu} />
+                    <RelocationFlow onExit={returnToMenu} />
                 )}
             </div>
         </div>

@@ -4,7 +4,13 @@ import { fetchLocationContents, fetchRelocationState, putAwayStock, takeStock } 
 import type { LocationContents, RelocationState, RelocationStockLine } from '../../types/relocation';
 
 interface Props {
-    onExitToMenu: () => void;
+    // The single way out, whatever "out" means for the caller — the main menu when
+    // relocation was entered from there, the putaway flow when it was entered mid-task.
+    // Deliberately one callback rather than one per destination: the "transit must be
+    // empty" guard sits in front of it, so every exit route is covered by construction
+    // and a new one can't be added that quietly skips the check.
+    onExit: () => void;
+    exitLabel?: string;
 }
 
 // Taking: scan a source location, scan (or pick from a list) a product, confirm a quantity.
@@ -27,7 +33,7 @@ const primaryButton: React.CSSProperties = {
     color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold',
 };
 
-export default function RelocationFlow({ onExitToMenu }: Props) {
+export default function RelocationFlow({ onExit, exitLabel = 'Exit relocation' }: Props) {
     const [state, setState] = useState<RelocationState | null>(null);
     const [mode, setMode] = useState<Mode>('TAKE');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,12 +75,15 @@ export default function RelocationFlow({ onExitToMenu }: Props) {
 
     const handleExit = () => {
         // Belt and braces — the exit button is already hidden while carrying, but the
-        // rule is what matters, not the button.
+        // rule is what matters, not the button. Every route out of relocation goes through
+        // here, including "back to putaway": a worker who returned to their putaway task
+        // still holding stock would finish it, leave to the menu by that flow's own exit,
+        // and strand the carried stock with nobody aware of it.
         if (state && !state.canExit) {
             alert('You are still carrying stock. Put it away before leaving relocation.');
             return;
         }
-        onExitToMenu();
+        onExit();
     };
 
     // Step 1 -> 2. An empty product scan at step 2 lists what's here instead.
@@ -325,7 +334,7 @@ export default function RelocationFlow({ onExitToMenu }: Props) {
                         is worth stating, and a dead button doesn't state it. */}
                     {state.canExit ? (
                         <button style={{ ...primaryButton, backgroundColor: '#f44336', marginBottom: '12px' }} onClick={handleExit}>
-                            Exit relocation
+                            {exitLabel}
                         </button>
                     ) : (
                         <p style={{ color: '#ff9800', fontSize: '0.85rem', textAlign: 'center' }}>

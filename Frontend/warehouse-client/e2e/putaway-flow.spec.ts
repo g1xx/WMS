@@ -148,4 +148,100 @@ test.describe('Putaway flow', () => {
         await expect(page.getByText('Putaway of container TOTE-2 finished.')).toBeVisible();
         expect(capturedAuthHeader).toBe('Bearer elevated-jwt');
     });
+
+    test('relocation from the putaway Esc menu returns to the same item and step', async ({ page }) => {
+        await primeAuthToken(page);
+
+        const putawayTask = {
+            id: 'putaway-2',
+            containerBarcode: 'TOTE-2',
+            sector: 'mp1',
+            status: 'InProgress',
+            items: [
+                {
+                    id: 'pitem-1', productName: 'Widget', productSku: 'SKU-1',
+                    expectedQuantity: 5, putAwayQuantity: 0, missingQuantity: 0,
+                    suggestedLocations: [
+                        { locationBarcode: 'mp1000101a', currentQuantity: 3, isInCurrentSector: true, distinctSkuCount: 1, maxDistinctSkus: 3 },
+                    ],
+                },
+            ],
+        };
+
+        let carried: { productSku: string; productName: string; physicalQuantity: number; reservedQuantity: number; availableQuantity: number }[] = [];
+        const relocationState = () => ({
+            transitBarcode: 'TRANSIT-admin', carriedItems: carried, canExit: carried.length === 0,
+        });
+
+        await page.route(`${API_BASE}/PickTask/active**`, (route) => fulfillJson(route, null));
+        await page.route(`${API_BASE}/PutawayTask/active**`, (route) => fulfillJson(route, null));
+        await page.route(`${API_BASE}/PutawayTask/validate-container`, (route) =>
+            fulfillJson(route, { isValid: true, containerSector: 'mp1' }));
+        await page.route(`${API_BASE}/PutawayTask/start`, (route) => fulfillJson(route, putawayTask));
+        await page.route(`${API_BASE}/Relocation/state**`, (route) => fulfillJson(route, relocationState()));
+        await page.route(`${API_BASE}/Relocation/location/**`, (route) => fulfillJson(route, {
+            locationBarcode: 'mp1000505e',
+            items: [{ productSku: 'SKU-9', productName: 'Other', physicalQuantity: 4, reservedQuantity: 0, availableQuantity: 4 }],
+        }));
+        await page.route(`${API_BASE}/Relocation/take`, (route) => {
+            const body = route.request().postDataJSON();
+            carried = [{ productSku: body.productSku, productName: 'Other', physicalQuantity: body.quantity, reservedQuantity: 0, availableQuantity: body.quantity }];
+            return fulfillJson(route, relocationState());
+        });
+        await page.route(`${API_BASE}/Relocation/putaway`, (route) => {
+            carried = [];
+            return fulfillJson(route, relocationState());
+        });
+
+        await page.goto('/');
+        await page.getByRole('button', { name: 'Start Putaway' }).click();
+        await page.getByPlaceholder('Sector (e.g. mp1, mr1)').fill('mp1');
+        await page.getByRole('button', { name: 'Confirm Sector' }).click();
+        await page.getByPlaceholder('Scan Container Barcode').fill('TOTE-2');
+        await page.getByRole('button', { name: 'Scan Container' }).click();
+
+        // Advance INTO step 2: lock in a suggested location so no confirm dialog fires.
+        await page.getByPlaceholder('Location barcode...').fill('mp1000101a');
+        await page.getByRole('button', { name: 'Confirm location' }).click();
+        await expect(page.getByPlaceholder('Product SKU...')).toBeVisible();
+        // Half-entered work that must survive the round trip.
+        await page.getByPlaceholder('Product SKU...').fill('SKU-1');
+
+        // Esc menu -> Relokacja
+        await page.keyboard.press('Escape');
+        await page.getByRole('button', { name: '📦 Relokacja' }).click();
+        await expect(page.getByRole('heading', { name: 'Relokacja' })).toBeVisible();
+
+        // Take stock, then try to go back while still carrying it.
+        await page.getByPlaceholder('Scan source location').fill('mp1000505e');
+        await page.getByRole('button', { name: 'Check location' }).click();
+        await page.getByRole('button', { name: /SKU-9/ }).click();
+        await page.getByRole('button', { name: 'Confirm' }).click();
+        await expect(page.getByText('4 pcs.')).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        // Blocked: returning to putaway carrying stock would let the worker finish the
+        // task and leave by putaway's own exit, stranding it.
+        await expect(page.getByRole('button', { name: 'Back to putaway' })).toHaveCount(0);
+        await expect(page.getByText('You are carrying stock — put it away before leaving.')).toBeVisible();
+
+        // Put it away, then return.
+        await page.getByRole('button', { name: /Start putting away/ }).click();
+        await page.getByPlaceholder('Scan target location').fill('mp1000606f');
+        await page.getByRole('button', { name: 'Next' }).click();
+        page.once('dialog', (dialog) => void dialog.accept());
+        await page.getByRole('button', { name: 'Confirm' }).click();
+        await expect(page.getByText('nothing')).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await page.getByRole('button', { name: 'Back to putaway' }).click();
+
+        // Back at the SAME item and the SAME step — location still locked in and the
+        // half-typed SKU still there, not reset to the location prompt.
+        await expect(page.getByRole('heading', { name: 'Container: TOTE-2' })).toBeVisible();
+        await expect(page.getByPlaceholder('Product SKU...')).toHaveValue('SKU-1');
+        // The locked-in location specifically, not the same barcode in the suggestions list.
+        await expect(page.getByRole('strong').filter({ hasText: 'mp1000101a' })).toBeVisible();
+        await expect(page.getByPlaceholder('Location barcode...')).toHaveCount(0);
+    });
 });
