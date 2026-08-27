@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
@@ -5,7 +6,12 @@ using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
-
+    // Had NO authorization at all until now — every action here was anonymous, and
+    // GetProduct returns the raw Product entity including Price, so the full catalog was
+    // readable from the internet without a token. Warehouse staff only; Integration is
+    // excluded explicitly (AnyStaff, not a bare [Authorize]) because it's otherwise just
+    // another authenticated role and has no business browsing the catalog.
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase

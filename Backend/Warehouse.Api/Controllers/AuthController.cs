@@ -28,6 +28,12 @@ namespace Warehouse.Api.Controllers
             _configuration = configuration;
         }
 
+        // Admin-only, exactly like RegisterBrigadier below. This was open self-registration
+        // until now, which made locking down the read endpoints mostly theatre: anyone on
+        // the internet could create a Worker account and then read everything those
+        // controllers protect. On a publicly reachable deployment, creating an account is
+        // an administrative act, not a self-service one. Neither frontend calls this.
+        [Authorize(Roles = RoleNames.Admin)]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
@@ -73,6 +79,10 @@ namespace Warehouse.Api.Controllers
             return BadRequest(result.Errors);
         }
 
+        // The one endpoint that can never require a token: it's where tokens come from.
+        // Explicit under the fallback policy in Program.cs, which otherwise makes every
+        // unattributed endpoint authenticated — including this one, locking everybody out.
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDto dto)
         {
@@ -91,6 +101,13 @@ namespace Warehouse.Api.Controllers
         // Brigadier/Admin-gated action (report-defect, report-missing) by having the
         // supervisor scan their own badge on the device, without logging the worker out
         // of their own session. The badge barcode is the supervisor's IdentityUser Id.
+        // Staff only. This was previously unattributed, i.e. anonymous: anyone who learned a
+        // supervisor's badge id could mint an elevated Brigadier/Admin token without logging
+        // in at all — and the demo help panel publishes that badge by design. Elevation now
+        // requires an existing staff session to elevate FROM, which is how the terminal
+        // already calls it (fetchSupervisorAuthHeader goes through axiosClient, so the
+        // worker's own token is attached). Integration is excluded and must never elevate.
+        [Authorize(Roles = RoleNames.AnyStaff)]
         [HttpPost("supervisor-override")]
         public async Task<ActionResult> SupervisorOverride(SupervisorOverrideDto dto)
         {

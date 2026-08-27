@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
@@ -5,6 +6,10 @@ using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers;
 
+// Had no authorization at all until now — the container fleet and its live statuses were
+// readable anonymously, and CreateContainer writable. See ProductsController for why this
+// is AnyStaff rather than a bare [Authorize].
+[Authorize(Roles = RoleNames.AnyStaff)]
 [ApiController]
 [Route("api/[controller]")]
 public class ContainersController : ControllerBase
