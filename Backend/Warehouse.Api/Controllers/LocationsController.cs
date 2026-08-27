@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Application.DTOs;
 using Warehouse.Application.Interfaces;
@@ -5,6 +6,10 @@ using Warehouse.Domain;
 
 namespace Warehouse.Api.Controllers
 {
+    // Had no authorization at all until now — the whole warehouse layout was readable
+    // anonymously, and the create/seed actions writable. See ProductsController for why
+    // this is AnyStaff rather than a bare [Authorize].
+    [Authorize(Roles = RoleNames.AnyStaff)]
     [ApiController]
     [Route("api/[controller]")]
     public class LocationsController : ControllerBase

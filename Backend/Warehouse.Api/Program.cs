@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -107,6 +108,23 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(secretKey)
     };
+});
+
+// Deny by default. UseAuthorization() on its own only enforces [Authorize] attributes
+// that someone remembered to write, so a controller with none was simply public —
+// which is exactly how ProductsController, LocationsController and ContainersController
+// ended up serving the whole product catalog (raw entities, Price included), location
+// list and container list to the internet with no token at all.
+//
+// With a fallback policy, an endpoint is authenticated unless it OPTS OUT with
+// [AllowAnonymous]. Forgetting to think about auth now fails closed instead of open, so
+// the next controller cannot be born public. The opt-outs are deliberately few — see
+// AuthController.Login and DemoController — and each says why it's anonymous.
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 // http://localhost:5173 / :5175 are the Vite dev servers (warehouse-client,
