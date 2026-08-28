@@ -48,6 +48,44 @@ public class ContainerLinkedTaskDto
     public string Sector { get; set; } = string.Empty;
 }
 
+public class ContainerContentLineDto
+{
+    public string ProductSku { get; set; } = string.Empty;
+    public string ProductName { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+}
+
+// Container contents are DERIVED, not stored — Stock has no ContainerId (see the comment
+// on Container.Stocks), so everything here is reconstructed from task lines. Different
+// reconstructions carry very different confidence, so each is reported as its own section
+// with its own provenance rather than merged into one number.
+//
+// In particular a container that was picked into, dispatched, and is now partly put away
+// yields TWO sections — what went in at dispatch, and what is still to come out. They are
+// never subtracted from each other: PutawayTaskItem.ExpectedQuantity is supplied by
+// whoever created the task, not derived from what was picked, so the two figures are not
+// guaranteed to describe the same physical units. Subtracting them would manufacture a
+// number that looks authoritative and can be arbitrarily wrong.
+public class ContainerContentSectionDto
+{
+    // Empty | BeingPickedInto | ToBePutAway | AsDispatched | Unknown
+    public string Kind { get; set; } = string.Empty;
+
+    public List<ContainerContentLineDto> Lines { get; set; } = new();
+
+    // Which task this section was reconstructed from, where there is one.
+    public Guid? SourceTaskId { get; set; }
+    public string? Sector { get; set; }
+
+    // True only for AsDispatched. That section is a statement about the PAST — these units
+    // were picked into this container — and not a claim about what is inside it now.
+    // Nothing invalidates it: only a completing putaway returns the container to Available,
+    // so if it was emptied any other way (tipped out, shipped off the conveyor, corrected
+    // by a cycle count) this keeps reporting the same lines indefinitely. Clients must
+    // render it as history, visibly distinct from the live sections.
+    public bool IsHistorical { get; set; }
+}
+
 public class ContainerInfoDto
 {
     public string Barcode { get; set; } = string.Empty;
@@ -60,14 +98,15 @@ public class ContainerInfoDto
     // The picking or putaway zone it's committed to, if any.
     public string? AssignedSector { get; set; }
 
-    // Null when nothing currently holds it.
-    public ContainerLinkedTaskDto? LinkedTask { get; set; }
+    // Every task currently holding this container, not just one. A container can have
+    // several pending putaway tasks at once — PutawayTask documents one per zone when its
+    // expected items span multiple zones — so reporting a single "the" task would pick
+    // arbitrarily among them and present the choice as fact.
+    public List<ContainerLinkedTaskDto> LinkedTasks { get; set; } = new();
 
-    // Always false for now. Container contents are not modelled as Stock (see the comment
-    // on Container.Stocks — that navigation is always empty), so answering "what's inside"
-    // means deriving it from task lines, which is deferred. The flag exists so the client
-    // can say "not available yet" rather than render an empty list that reads as "empty".
-    public bool ContentsAvailable { get; set; }
+    // One or more independently-sourced views of what's inside. See
+    // ContainerContentSectionDto for why this is a list rather than one answer.
+    public List<ContainerContentSectionDto> ContentSections { get; set; } = new();
 }
 
 public class LocationStockLineDto

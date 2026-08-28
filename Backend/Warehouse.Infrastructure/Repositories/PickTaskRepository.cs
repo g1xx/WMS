@@ -137,6 +137,16 @@ public class PickTaskRepository : IPickTaskRepository
             .FirstOrDefaultAsync(t => t.ContainerId == containerId && t.Status == PickTaskStatus.InProgress);
     }
 
+    public async Task<PickTask?> GetMostRecentCompletedForContainerAsync(Guid containerId)
+    {
+        return await _context.PickTasks
+            .AsNoTracking()
+            .Include(t => t.Items).ThenInclude(i => i.Product)
+            .Where(t => t.ContainerId == containerId && t.Status == PickTaskStatus.Completed)
+            .OrderByDescending(t => t.CreatedAt)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<PickTask?> GetByIdAsync(Guid id)
     {
         return await _context.PickTasks.FindAsync(id);

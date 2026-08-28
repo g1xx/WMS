@@ -39,6 +39,17 @@ public interface IPickTaskRepository
     // lifetime and "the task for this container" is only well-defined while one is active.
     Task<PickTask?> GetInProgressForContainerAsync(Guid containerId);
 
+    // The most recently CREATED completed pick task that referenced this container, with
+    // items and products. Backs the "as dispatched" history line on the lookup screen.
+    //
+    // Ordering is approximate and knowingly so: there is no dispatch or completion
+    // timestamp anywhere in the model, only CreatedAt, which orders task CREATION. Two
+    // tasks for one container created in one order and dispatched in another select the
+    // wrong one. The filtered unique index means only one holds a container at a time, so
+    // this is unlikely rather than impossible — and it is one of the reasons callers must
+    // present the result as history, never as current contents.
+    Task<PickTask?> GetMostRecentCompletedForContainerAsync(Guid containerId);
+
     Task<PickTask?> GetByIdAsync(Guid id);
 
     // Items.Product, Items.Location — used by PickItemAsync, ReportMissingItemAsync, ReportDefectAsync.

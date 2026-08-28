@@ -43,6 +43,16 @@ public class PutawayTaskRepository : IPutawayTaskRepository
                                       && t.Status == PutawayTaskStatus.New);
     }
 
+    public async Task<List<PutawayTask>> GetPendingWithItemsForContainerAsync(Guid containerId)
+    {
+        return await WithDetails()
+            .AsNoTracking()
+            .Where(t => t.ContainerId == containerId &&
+                        (t.Status == PutawayTaskStatus.New || t.Status == PutawayTaskStatus.InProgress))
+            .OrderBy(t => t.CreatedAt)
+            .ToListAsync();
+    }
+
     public async Task<List<PutawayTask>> GetPendingForContainerAsync(Guid containerId)
     {
         return await _context.PutawayTasks
