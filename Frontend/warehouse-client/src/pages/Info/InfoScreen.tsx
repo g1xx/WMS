@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { extractErrorMessage } from '../../api/axiosClient';
 import { fetchContainerInfo, fetchLocationInfo, fetchProductInfo } from '../../api/infoApi';
-import type { ContainerInfo, LocationInfo, ProductInfo } from '../../types/info';
+import type { ContainerContentSection, ContainerInfo, LocationInfo, ProductInfo } from '../../types/info';
 
 interface Props {
     onExitToMenu: () => void;
@@ -51,6 +51,89 @@ function Quantities({ physical, reserved, available }: { physical: number; reser
             <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>{available} available</span>
             {' · '}{physical} physical
             {reserved > 0 && <span style={{ color: '#ff9800' }}>{' · '}{reserved} reserved</span>}
+        </div>
+    );
+}
+
+// Container contents are derived from task lines, and the sections differ in how much they
+// can be trusted. That difference has to be visible, not just worded: a worker glancing at
+// the screen must not mistake a historical reconstruction for a live count.
+//
+// Live sections (BeingPickedInto, ToBePutAway) get the solid card the rest of the screen
+// uses. AsDispatched gets a dashed amber frame, a muted body and an explicit caveat, so it
+// reads as a record of something that happened rather than a statement of what is there.
+function ContentSection({ section }: { section: ContainerContentSection }) {
+    if (section.kind === 'Empty') {
+        return (
+            <div style={{ ...card, borderLeft: '4px solid #4CAF50' }}>
+                <strong style={{ color: '#81c784', fontSize: '0.9rem' }}>Empty</strong>
+                <p style={{ margin: '6px 0 0 0', color: '#aaa', fontSize: '0.85rem' }}>
+                    Released back to the free pool, so its putaway finished.
+                </p>
+            </div>
+        );
+    }
+
+    if (section.kind === 'Unknown') {
+        // Never "empty": nothing has ever been recorded against this container, which is a
+        // different statement from "there is nothing in it".
+        return (
+            <div style={{ ...card, borderLeft: '4px solid #ff9800' }}>
+                <strong style={{ color: '#ffb74d', fontSize: '0.9rem' }}>Contents unknown</strong>
+                <p style={{ margin: '6px 0 0 0', color: '#aaa', fontSize: '0.85rem' }}>
+                    No task has recorded anything for this container. That is not the same as it being empty.
+                </p>
+            </div>
+        );
+    }
+
+    const isHistory = section.isHistorical;
+    const title = section.kind === 'BeingPickedInto' ? 'Being picked into'
+        : section.kind === 'ToBePutAway' ? 'To be put away'
+        : 'As dispatched';
+
+    return (
+        <div
+            style={{
+                ...card,
+                backgroundColor: isHistory ? 'transparent' : '#2a2a2a',
+                border: isHistory ? '1px dashed #8d6e63' : '1px solid transparent',
+            }}
+        >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <strong style={{ color: isHistory ? '#a1887f' : '#64b5f6', fontSize: '0.9rem' }}>
+                    {isHistory && '🕓 '}{title}
+                </strong>
+                {section.sector && <span style={{ color: '#888', fontSize: '0.75rem' }}>{section.sector}</span>}
+            </div>
+
+            {isHistory && (
+                // The caveat that matters to someone standing in front of the container:
+                // nothing ever invalidates this line.
+                <p style={{ margin: '6px 0', color: '#a1887f', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                    What was picked into it at dispatch — not verified since. Only a completed putaway
+                    clears this, so if it was emptied any other way, this keeps saying the same thing.
+                </p>
+            )}
+
+            {section.lines.length === 0 ? (
+                <p style={{ margin: '6px 0 0 0', color: '#888', fontSize: '0.85rem' }}>Nothing outstanding.</p>
+            ) : (
+                section.lines.map(line => (
+                    <div key={line.productSku} style={{ marginTop: '6px', fontSize: '0.9rem', color: isHistory ? '#bcaaa4' : '#e0e0e0' }}>
+                        <strong>{line.productSku}</strong> — {line.productName}
+                        <span style={{ color: isHistory ? '#a1887f' : '#ffeb3b', fontWeight: 'bold' }}>
+                            {' · '}{line.quantity} pcs
+                        </span>
+                    </div>
+                ))
+            )}
+
+            {section.sourceTaskId && (
+                <div style={{ marginTop: '8px', color: '#777', fontSize: '0.72rem' }}>
+                    from task {section.sourceTaskId.substring(0, 8)}...
+                </div>
+            )}
         </div>
     );
 }
@@ -206,32 +289,28 @@ export default function InfoScreen({ onExitToMenu }: Props) {
                     </div>
 
                     <div style={card}>
-                        <strong style={{ color: '#64b5f6', fontSize: '0.9rem' }}>Linked task</strong>
-                        {container.linkedTask ? (
-                            <div style={{ marginTop: '6px' }}>
-                                <Row label="Flow" value={container.linkedTask.kind} />
-                                <Row label="Status" value={container.linkedTask.status} />
-                                <Row label="Sector" value={container.linkedTask.sector} />
-                                <Row label="Task" value={container.linkedTask.taskId.substring(0, 8) + '...'} />
-                            </div>
-                        ) : (
+                        <strong style={{ color: '#64b5f6', fontSize: '0.9rem' }}>
+                            Linked tasks ({container.linkedTasks.length})
+                        </strong>
+                        {container.linkedTasks.length === 0 ? (
                             <p style={{ margin: '6px 0 0 0', color: '#888', fontSize: '0.85rem' }}>
                                 Not held by any task.
                             </p>
+                        ) : (
+                            container.linkedTasks.map(task => (
+                                <div key={task.taskId} style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #3a3a3a' }}>
+                                    <Row label="Flow" value={task.kind} />
+                                    <Row label="Status" value={task.status} />
+                                    <Row label="Sector" value={task.sector} />
+                                    <Row label="Task" value={task.taskId.substring(0, 8) + '...'} />
+                                </div>
+                            ))
                         )}
                     </div>
 
-                    {!container.contentsAvailable && (
-                        // Explicitly "not available", never an empty list — an empty list
-                        // would read as "the container is empty", which is a different and
-                        // possibly wrong statement.
-                        <div style={{ ...card, borderLeft: '4px solid #ff9800' }}>
-                            <strong style={{ color: '#ffb74d', fontSize: '0.9rem' }}>Contents</strong>
-                            <p style={{ margin: '6px 0 0 0', color: '#aaa', fontSize: '0.85rem' }}>
-                                Not available yet — this screen cannot list what is inside a container.
-                            </p>
-                        </div>
-                    )}
+                    {container.contentSections.map((section, index) => (
+                        <ContentSection key={`${section.kind}-${section.sourceTaskId ?? index}`} section={section} />
+                    ))}
                 </div>
             )}
 

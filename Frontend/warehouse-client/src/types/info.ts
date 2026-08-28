@@ -29,16 +29,40 @@ export interface ContainerLinkedTask {
     sector: string;
 }
 
+export type ContainerContentKind =
+    | 'Empty'
+    | 'BeingPickedInto'
+    | 'ToBePutAway'
+    | 'AsDispatched'
+    | 'Unknown';
+
+export interface ContainerContentLine {
+    productSku: string;
+    productName: string;
+    quantity: number;
+}
+
+export interface ContainerContentSection {
+    kind: ContainerContentKind;
+    lines: ContainerContentLine[];
+    sourceTaskId: string | null;
+    sector: string | null;
+    // True only for AsDispatched. That section describes the PAST and nothing invalidates
+    // it, so it must be styled as history — never as a live inventory line.
+    isHistorical: boolean;
+}
+
 export interface ContainerInfo {
     barcode: string;
     type: string;
     status: string;
     locationBarcode: string | null;
     assignedSector: string | null;
-    linkedTask: ContainerLinkedTask | null;
-    // Always false for now — container contents aren't modelled as Stock. Render "not
-    // available yet", never an empty list, which a worker would read as "it's empty".
-    contentsAvailable: boolean;
+    // Every task holding it — a container can have one putaway task per zone.
+    linkedTasks: ContainerLinkedTask[];
+    // Independently-sourced views, never merged into one number. See the backend's
+    // ContainerContentSectionDto for why.
+    contentSections: ContainerContentSection[];
 }
 
 export interface LocationStockLine {

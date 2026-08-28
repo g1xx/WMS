@@ -150,71 +150,183 @@ public class InfoServiceTests
         result.Value!.MaxDistinctSkus.Should().BeNull();
     }
 
-    [Fact]
-    public async Task GetContainerInfoAsync_ReportsTheHoldingPickTaskAndFlagsContentsUnavailable()
+    // ---- Container contents ---------------------------------------------------------
+    // Derived state, reconstructed from task lines because Stock carries no ContainerId.
+    // Each rule is pinned separately, because each carries different confidence and the
+    // failure mode of getting one wrong is reporting a falsehood as inventory.
+
+    private static Container ContainerWith(ContainerStatus status) => new()
     {
-        var container = new Container
+        Id = Guid.NewGuid(), Barcode = "HSOD00015", Type = ContainerType.Tote, Status = status
+    };
+
+    private void StubContainer(Container container)
+    {
+        _containerRepositoryMock.Setup(r => r.GetByBarcodeWithLocationAsync(container.Barcode)).ReturnsAsync(container);
+        _pickTaskRepositoryMock.Setup(r => r.GetInProgressForContainerAsync(container.Id)).ReturnsAsync((PickTask?)null);
+        _pickTaskRepositoryMock.Setup(r => r.GetMostRecentCompletedForContainerAsync(container.Id)).ReturnsAsync((PickTask?)null);
+        _putawayTaskRepositoryMock.Setup(r => r.GetPendingWithItemsForContainerAsync(container.Id)).ReturnsAsync(new List<PutawayTask>());
+    }
+
+    private PickTask CompletedPick(Guid containerId, int picked) => new()
+    {
+        Id = Guid.NewGuid(), ContainerId = containerId, Sector = "mp1", Status = PickTaskStatus.Completed,
+        Items = new List<PickTaskItem>
         {
-            Id = Guid.NewGuid(), Barcode = "CONT-1", Type = ContainerType.Tote,
-            Status = ContainerStatus.InProgress, AssignedSector = "mp1",
-            Location = new Location { AddressBarcode = "HZA301", Type = LocationType.ConveyorDrop }
-        };
-        var pickTask = new PickTask
-        {
-            Id = Guid.NewGuid(), Sector = "mp1", Status = PickTaskStatus.InProgress, ContainerId = container.Id
-        };
+            new() { ProductId = _product.Id, Product = _product, RequiredQuantity = picked, PickedQuantity = picked }
+        }
+    };
 
-        _containerRepositoryMock.Setup(r => r.GetByBarcodeWithLocationAsync("CONT-1")).ReturnsAsync(container);
-        _pickTaskRepositoryMock.Setup(r => r.GetInProgressForContainerAsync(container.Id)).ReturnsAsync(pickTask);
+    [Fact]
+    public async Task ContainerContents_AvailableMeansEmpty_FromStatusNotFromLines()
+    {
+        // Emptiness is stored: ReleaseContainerIfFullyProcessedAsync sets Available exactly
+        // when all putaway work finished. Deriving it from task lines instead would also
+        // read a brand-new container's ABSENCE of lines as emptiness, a different claim.
+        var container = ContainerWith(ContainerStatus.Available);
+        StubContainer(container);
 
-        var result = await _sut.GetContainerInfoAsync("CONT-1");
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
 
-        result.IsSuccess.Should().BeTrue();
-        result.Value!.Status.Should().Be("InProgress");
-        result.Value.LocationBarcode.Should().Be("HZA301");
-        result.Value.LinkedTask!.Kind.Should().Be("Picking");
-        result.Value.LinkedTask.TaskId.Should().Be(pickTask.Id);
-
-        // Contents aren't modelled as Stock (Container.Stocks is always empty), so the
-        // client must be able to say "not available yet" rather than render an empty list
-        // that a worker would read as "the container is empty".
-        result.Value.ContentsAvailable.Should().BeFalse();
+        result.Value!.ContentSections.Should().ContainSingle().Which.Kind.Should().Be("Empty");
     }
 
     [Fact]
-    public async Task GetContainerInfoAsync_FallsBackToAPendingPutawayTask()
+    public async Task ContainerContents_AvailableWinsOverLeftoverDispatchHistory()
     {
-        var container = new Container
-        {
-            Id = Guid.NewGuid(), Barcode = "CONT-2", Type = ContainerType.Tote, Status = ContainerStatus.Ready
-        };
-        var putawayTask = new PutawayTask
-        {
-            Id = Guid.NewGuid(), Sector = "mp1", Status = PutawayTaskStatus.New, ContainerId = container.Id
-        };
+        // Released to the free pool means a putaway emptied it, so whatever a previous
+        // dispatch put in is gone.
+        var container = ContainerWith(ContainerStatus.Available);
+        StubContainer(container);
+        _pickTaskRepositoryMock
+            .Setup(r => r.GetMostRecentCompletedForContainerAsync(container.Id))
+            .ReturnsAsync(CompletedPick(container.Id, 6));
 
-        _containerRepositoryMock.Setup(r => r.GetByBarcodeWithLocationAsync("CONT-2")).ReturnsAsync(container);
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
+
+        result.Value!.ContentSections.Should().ContainSingle().Which.Kind.Should().Be("Empty");
+    }
+
+    [Fact]
+    public async Task ContainerContents_UnknownWhenNothingWasEverRecorded()
+    {
+        // Ready with no task history at all. Absence of data is not emptiness — saying
+        // "empty" here would be inventing a fact.
+        var container = ContainerWith(ContainerStatus.Ready);
+        StubContainer(container);
+
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
+
+        result.Value!.ContentSections.Should().ContainSingle().Which.Kind.Should().Be("Unknown");
+    }
+
+    [Fact]
+    public async Task ContainerContents_DispatchedContainerReportsPickedLinesAsHistory()
+    {
+        // The HSOD00015 case: Ready, held by no task, its pick task completed at dispatch.
+        var container = ContainerWith(ContainerStatus.Ready);
+        StubContainer(container);
+        var dispatched = CompletedPick(container.Id, 6);
+        _pickTaskRepositoryMock
+            .Setup(r => r.GetMostRecentCompletedForContainerAsync(container.Id))
+            .ReturnsAsync(dispatched);
+
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
+
+        var section = result.Value!.ContentSections.Should().ContainSingle().Subject;
+        section.Kind.Should().Be("AsDispatched");
+        section.SourceTaskId.Should().Be(dispatched.Id);
+        section.Lines.Should().ContainSingle().Which.Quantity.Should().Be(6);
+
+        // Load-bearing: the client must render this differently from a live line, because
+        // it is a statement about the past that nothing ever invalidates.
+        section.IsHistorical.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ContainerContents_PickedThenPartlyPutAway_ReportsTwoFactsAndNeverSubtracts()
+    {
+        // The case that cannot be answered with one number: PutawayTaskItem.ExpectedQuantity
+        // is supplied by whoever created the task, not derived from what was picked, so the
+        // two figures are not guaranteed to describe the same physical units.
+        var container = ContainerWith(ContainerStatus.InProgress);
+        StubContainer(container);
+        _pickTaskRepositoryMock
+            .Setup(r => r.GetMostRecentCompletedForContainerAsync(container.Id))
+            .ReturnsAsync(CompletedPick(container.Id, 6));
+
+        var other = new Product { Id = Guid.NewGuid(), Sku = "SKU-2", Name = "Gadget" };
         _putawayTaskRepositoryMock
-            .Setup(r => r.GetPendingForContainerAsync(container.Id))
-            .ReturnsAsync(new List<PutawayTask> { putawayTask });
+            .Setup(r => r.GetPendingWithItemsForContainerAsync(container.Id))
+            .ReturnsAsync(new List<PutawayTask>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(), ContainerId = container.Id, Sector = "mp1",
+                    Status = PutawayTaskStatus.InProgress,
+                    Items = new List<PutawayTaskItem>
+                    {
+                        new() { ProductId = other.Id, Product = other, ExpectedQuantity = 10, PutAwayQuantity = 4 }
+                    }
+                }
+            });
 
-        var result = await _sut.GetContainerInfoAsync("CONT-2");
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
 
-        result.Value!.LinkedTask!.Kind.Should().Be("Putaway");
-        result.Value.LocationBarcode.Should().BeNull("this container isn't recorded at any location");
+        result.Value!.ContentSections.Select(s => s.Kind)
+            .Should().BeEquivalentTo(new[] { "ToBePutAway", "AsDispatched" });
+
+        // Each stands on its own; neither is reconciled against the other.
+        result.Value.ContentSections.Single(s => s.Kind == "AsDispatched")
+            .Lines.Should().ContainSingle().Which.Quantity.Should().Be(6);
+        result.Value.ContentSections.Single(s => s.Kind == "ToBePutAway")
+            .Lines.Should().ContainSingle().Which.Quantity.Should().Be(6, "10 expected minus 4 already put away");
     }
 
     [Fact]
-    public async Task GetContainerInfoAsync_UnheldContainerHasNoLinkedTask()
+    public async Task ContainerContents_ActivePickTaskSupersedesDispatchHistory()
     {
-        var container = new Container
+        var container = ContainerWith(ContainerStatus.InProgress);
+        StubContainer(container);
+        var active = new PickTask
         {
-            Id = Guid.NewGuid(), Barcode = "CONT-3", Type = ContainerType.Tote, Status = ContainerStatus.Available
+            Id = Guid.NewGuid(), ContainerId = container.Id, Sector = "mp1", Status = PickTaskStatus.InProgress,
+            Items = new List<PickTaskItem>
+            {
+                new() { ProductId = _product.Id, Product = _product, RequiredQuantity = 5, PickedQuantity = 2 }
+            }
         };
-        _containerRepositoryMock.Setup(r => r.GetByBarcodeWithLocationAsync("CONT-3")).ReturnsAsync(container);
+        _pickTaskRepositoryMock.Setup(r => r.GetInProgressForContainerAsync(container.Id)).ReturnsAsync(active);
+        _pickTaskRepositoryMock
+            .Setup(r => r.GetMostRecentCompletedForContainerAsync(container.Id))
+            .ReturnsAsync(CompletedPick(container.Id, 99));
 
-        var result = await _sut.GetContainerInfoAsync("CONT-3");
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
 
-        result.Value!.LinkedTask.Should().BeNull();
+        // A live claim beats a historical one — stale lines from a previous task must not
+        // sit beside what is being picked into it right now.
+        result.Value!.ContentSections.Should().ContainSingle().Which.Kind.Should().Be("BeingPickedInto");
+        result.Value.ContentSections.Single().Lines.Single().Quantity.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task ContainerInfo_ListsEveryPendingPutawayTaskNotJustTheFirst()
+    {
+        // A container legitimately has one putaway task per zone. Reporting a single "the"
+        // task picks arbitrarily among them and presents that choice as fact.
+        var container = ContainerWith(ContainerStatus.Ready);
+        StubContainer(container);
+        _putawayTaskRepositoryMock
+            .Setup(r => r.GetPendingWithItemsForContainerAsync(container.Id))
+            .ReturnsAsync(new List<PutawayTask>
+            {
+                new() { Id = Guid.NewGuid(), ContainerId = container.Id, Sector = "mp1", Status = PutawayTaskStatus.New, Items = new List<PutawayTaskItem>() },
+                new() { Id = Guid.NewGuid(), ContainerId = container.Id, Sector = "mr1", Status = PutawayTaskStatus.New, Items = new List<PutawayTaskItem>() },
+            });
+
+        var result = await _sut.GetContainerInfoAsync(container.Barcode);
+
+        result.Value!.LinkedTasks.Should().HaveCount(2);
+        result.Value.LinkedTasks.Select(t => t.Sector).Should().BeEquivalentTo(new[] { "mp1", "mr1" });
     }
 }
