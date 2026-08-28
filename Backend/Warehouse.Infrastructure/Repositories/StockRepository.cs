@@ -40,6 +40,16 @@ public class StockRepository : IStockRepository
         return row == null ? null : (row.PhysicalQuantity, row.ReservedQuantity);
     }
 
+    public async Task<List<Stock>> GetByProductWithLocationAsync(Guid productId)
+    {
+        return await _context.Stocks
+            .AsNoTracking()
+            .Include(s => s.Location)
+            .Where(s => s.ProductId == productId)
+            .OrderBy(s => s.Location!.AddressBarcode)
+            .ToListAsync();
+    }
+
     public async Task<List<Stock>> GetWithProductAtLocationAsync(Guid locationId)
     {
         return await _context.Stocks

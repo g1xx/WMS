@@ -22,6 +22,13 @@ public interface IStockRepository
     // the carried-stock list for the putaway leg.
     Task<List<Stock>> GetWithProductAtLocationAsync(Guid locationId);
 
+    // Every location this product sits in, Location included. Deliberately NO
+    // PhysicalQuantity > 0 filter: a zero-quantity row is a slot the SKU has been stored in
+    // before — its home slot, currently empty — and the lookup screen exists to show that.
+    // Zero rows are never deleted (nothing in the codebase removes a Stock row), so this is
+    // answerable; it just requires a query that declines to filter.
+    Task<List<Stock>> GetByProductWithLocationAsync(Guid productId);
+
     // Batched (one query for every product) — feeds OrderAllocationService's
     // per-product-id dictionary lookup, avoiding the N+1 this replaced.
     Task<List<Stock>> GetAvailableForProductsAsync(List<Guid> productIds);
