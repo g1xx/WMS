@@ -33,6 +33,12 @@ public interface IPickTaskRepository
     // and handed to someone else) is left untouched. Returns whether anything was released.
     Task<bool> ReleaseClaimAsync(Guid taskId, string workerId);
 
+    // The pick task currently holding this container, or null. Restricted to InProgress on
+    // purpose: PickTask.ContainerId is only unique under that status (see the filtered index
+    // in PickTaskConfiguration), so completed tasks share a container id freely over its
+    // lifetime and "the task for this container" is only well-defined while one is active.
+    Task<PickTask?> GetInProgressForContainerAsync(Guid containerId);
+
     Task<PickTask?> GetByIdAsync(Guid id);
 
     // Items.Product, Items.Location — used by PickItemAsync, ReportMissingItemAsync, ReportDefectAsync.

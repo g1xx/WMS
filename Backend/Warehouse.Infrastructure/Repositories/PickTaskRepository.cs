@@ -130,6 +130,13 @@ public class PickTaskRepository : IPickTaskRepository
         return released > 0;
     }
 
+    public async Task<PickTask?> GetInProgressForContainerAsync(Guid containerId)
+    {
+        return await _context.PickTasks
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.ContainerId == containerId && t.Status == PickTaskStatus.InProgress);
+    }
+
     public async Task<PickTask?> GetByIdAsync(Guid id)
     {
         return await _context.PickTasks.FindAsync(id);

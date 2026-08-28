@@ -50,6 +50,8 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IStockPlacementService, StockPlacementService>();
 builder.Services.AddScoped<IPutawayService, PutawayService>();
 builder.Services.AddScoped<IRelocationService, RelocationService>();
+// Read-only lookup screen; staff terminal only, never the Integration feed.
+builder.Services.AddScoped<IInfoService, InfoService>();
 builder.Services.AddSingleton<IRouteOptimizerService, RouteOptimizerService>();
 builder.Services.AddSingleton<IDefectReplacementPlanner, DefectReplacementPlanner>();
 // Scoped, not Singleton: it depends on IUnitOfWork (tied to the per-request DbContext).

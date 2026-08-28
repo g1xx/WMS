@@ -5,10 +5,11 @@ interface Props {
     onStartPicking: () => void;
     onStartPutaway: () => void;
     onStartRelocation: () => void;
+    onOpenInfo: () => void;
     onChangeSector: () => void;
 }
 
-export default function MainMenu({ onStartPicking, onStartPutaway, onStartRelocation, onChangeSector }: Props) {
+export default function MainMenu({ onStartPicking, onStartPutaway, onStartRelocation, onOpenInfo, onChangeSector }: Props) {
     const navigate = useNavigate();
 
     return (
@@ -36,6 +37,15 @@ export default function MainMenu({ onStartPicking, onStartPutaway, onStartReloca
                 style={{ width: '100%', padding: '18px', fontSize: '1.2rem', backgroundColor: '#9c27b0', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '12px' }}
             >
                 Relokacja
+            </button>
+
+            {/* Read-only lookup. Like relocation it needs no sector — every mode is
+                addressed by a scanned code. */}
+            <button
+                onClick={onOpenInfo}
+                style={{ width: '100%', padding: '18px', fontSize: '1.2rem', backgroundColor: '#00bcd4', color: '#0b0b0b', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '12px' }}
+            >
+                Informacja o...
             </button>
 
             <button

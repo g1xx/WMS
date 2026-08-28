@@ -34,6 +34,20 @@ public class Container
 
     public Guid? LocationId { get; set; }
     public Location? Location { get; set; }
+
+    // ALWAYS EMPTY — do not use this to answer "what is in this container".
+    //
+    // Stock is keyed by (ProductId, LocationId) and has no ContainerId of its own. This
+    // navigation has no configured relationship, so EF Core inferred one by convention and
+    // created a shadow nullable ContainerId column (plus an index) on Stocks. Nothing in
+    // the codebase ever writes it, so the column is uniformly NULL and this collection
+    // always materialises as zero rows — silently, with no error to notice.
+    //
+    // Container contents have to be derived from tasks instead: picked lines on the
+    // PickTask holding the container, or outstanding lines on its PutawayTasks.
+    //
+    // Dropping the shadow column is queued as its own change (a migration with its own
+    // risk profile), which is why this stays here for now rather than being deleted.
     public ICollection<Stock> Stocks { get; set; } = new List<Stock>();
 
     // The picking/putaway zone this container is currently committed to, if any.
