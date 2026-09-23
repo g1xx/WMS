@@ -86,6 +86,7 @@ public class UnfulfillableUnitHandler : IUnfulfillableUnitHandler
 
             _unitOfWork.PickTasks.Add(newTask);
             result.NewPickTaskIds.Add(newTask.Id);
+            result.NewPickTaskSectors.Add(newTask.Sector);
         }
 
         // Whatever is still short only exists outside active picking zones (or

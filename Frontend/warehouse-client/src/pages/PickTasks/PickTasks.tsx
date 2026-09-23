@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { alertIfSupervisorAuthError, extractErrorMessage } from '../../api/axiosClient';
 import { queryKeys } from '../../api/queryKeys';
+import { usePickTaskRealtime } from '../../hooks/usePickTaskRealtime';
 import {
     fetchCurrentPickTask,
     startPickTask,
@@ -42,6 +43,11 @@ export default function PickTasks({ sector, onExitToMenu }: Props) {
     });
 
     const invalidateTask = () => queryClient.invalidateQueries({ queryKey: queryKeys.pickTask.current(sector) });
+
+    // A new task becoming claimable in this sector (or this worker's own task
+    // returning to the queue on another device) pushes a refetch here instead of
+    // waiting for the worker to hit "Check again".
+    usePickTaskRealtime(sector, invalidateTask);
 
     // Clears any half-scanned container barcode whenever the resolved task changes
     // (new task loaded, task cleared, etc.) — mirrors the original's unconditional

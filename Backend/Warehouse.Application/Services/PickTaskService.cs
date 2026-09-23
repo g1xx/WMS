@@ -13,19 +13,22 @@ namespace Warehouse.Application.Services
         private readonly IUnfulfillableUnitHandler _unfulfillableUnitHandler;
         private readonly IContainerLifecycleService _containerLifecycle;
         private readonly PickTaskSettings _settings;
+        private readonly IPickTaskNotifier _pickTaskNotifier;
 
         public PickTaskService(
             IUnitOfWork unitOfWork,
             IRouteOptimizerService routeOptimizer,
             IUnfulfillableUnitHandler unfulfillableUnitHandler,
             IContainerLifecycleService containerLifecycle,
-            PickTaskSettings settings)
+            PickTaskSettings settings,
+            IPickTaskNotifier pickTaskNotifier)
         {
             _unitOfWork = unitOfWork;
             _routeOptimizer = routeOptimizer;
             _unfulfillableUnitHandler = unfulfillableUnitHandler;
             _containerLifecycle = containerLifecycle;
             _settings = settings;
+            _pickTaskNotifier = pickTaskNotifier;
         }
 
         public async Task<IEnumerable<PickTaskResponseDto>> GetPickTasksAsync()
@@ -378,6 +381,11 @@ namespace Warehouse.Application.Services
             if (!dispatchResult.IsSuccess)
                 return Result<DispatchContainerResultDto>.Failure(dispatchResult.Error!, dispatchResult.ErrorType);
 
+            // A leftover task rolled forward into the same sector (see the
+            // ExecuteInTransactionAsync block above) is immediately claimable.
+            if (dispatchResult.Value.HasValue)
+                await _pickTaskNotifier.NotifySectorChangedAsync(task.Sector);
+
             return Result<DispatchContainerResultDto>.Success(new DispatchContainerResultDto
             {
                 Message = "Container successfully verified and sent to the conveyor.",
@@ -444,6 +452,8 @@ namespace Warehouse.Application.Services
             if (cancelFailure != null)
                 return Result<MessageResponseDto>.Failure(cancelFailure, ResultErrorType.Conflict);
 
+            await _pickTaskNotifier.NotifySectorChangedAsync(task.Sector);
+
             return Result<MessageResponseDto>.Success(new MessageResponseDto
             {
                 Message = "Pick task cancelled and returned to the queue."
@@ -489,6 +499,10 @@ namespace Warehouse.Application.Services
             // dispatch the container (see DispatchContainerAsync), which is the only place
             // stock actually moves for this task's other picked items and the container
             // gets released back to the free pool.
+            // Populated inside the transaction below, read after it commits — see the
+            // notifier calls that follow.
+            var affectedSectors = new List<string>();
+
             var message = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
                 taskItem.MissingQuantity += dto.MissingQuantity;
@@ -511,11 +525,17 @@ namespace Warehouse.Application.Services
                 // for a replacement pick in an active picking zone before giving up on it.
                 var handlerResult = await _unfulfillableUnitHandler.HandleAsync(
                     task, taskItem.ProductId, taskItem.LocationId, dto.MissingQuantity);
+                affectedSectors.AddRange(handlerResult.NewPickTaskSectors);
 
                 await _unitOfWork.SaveChangesAsync();
 
                 return BuildUnfulfillableMessage($"{taskItem.MissingQuantity} unit(s) marked missing for this item.", handlerResult);
             });
+
+            foreach (var sector in affectedSectors.Distinct())
+            {
+                await _pickTaskNotifier.NotifySectorChangedAsync(sector);
+            }
 
             return Result<MessageResponseDto>.Success(new MessageResponseDto { Message = message });
         }
@@ -548,6 +568,10 @@ namespace Warehouse.Application.Services
 
             if (sourceStock == null)
                 return Result<ReportDefectResultDto>.Failure("No stock record found at this location for this product.");
+
+            // Populated inside the transaction below, read after it commits — see the
+            // notifier calls that follow.
+            var affectedSectors = new List<string>();
 
             var defectResult = await _unitOfWork.ExecuteInTransactionAsync(async () =>
             {
@@ -585,6 +609,7 @@ namespace Warehouse.Application.Services
                 var handlerResult = replacementNeeded > 0
                     ? await _unfulfillableUnitHandler.HandleAsync(task, taskItem.ProductId, taskItem.LocationId, replacementNeeded)
                     : new UnfulfillableUnitResult();
+                affectedSectors.AddRange(handlerResult.NewPickTaskSectors);
 
                 var result = new ReportDefectResultDto
                 {
@@ -599,6 +624,11 @@ namespace Warehouse.Application.Services
                 result.Message = BuildUnfulfillableMessage($"{result.DefectiveQuantityDeducted} defective unit(s) written off.", handlerResult);
                 return result;
             });
+
+            foreach (var sector in affectedSectors.Distinct())
+            {
+                await _pickTaskNotifier.NotifySectorChangedAsync(sector);
+            }
 
             return Result<ReportDefectResultDto>.Success(defectResult);
         }

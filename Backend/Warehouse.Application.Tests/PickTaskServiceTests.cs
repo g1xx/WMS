@@ -17,6 +17,7 @@ public class PickTaskServiceTests
     private readonly Mock<IOrderRepository> _orderRepositoryMock;
     private readonly Mock<ILocationRepository> _locationRepositoryMock;
     private readonly Mock<IStockTransactionRepository> _stockTransactionRepositoryMock;
+    private readonly Mock<IPickTaskNotifier> _pickTaskNotifierMock;
     private readonly PickTaskService _sut;
 
     public PickTaskServiceTests()
@@ -28,6 +29,7 @@ public class PickTaskServiceTests
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _locationRepositoryMock = new Mock<ILocationRepository>();
         _stockTransactionRepositoryMock = new Mock<IStockTransactionRepository>();
+        _pickTaskNotifierMock = new Mock<IPickTaskNotifier>();
 
         _unitOfWorkMock.Setup(u => u.PickTasks).Returns(_pickTaskRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Stocks).Returns(_stockRepositoryMock.Object);
@@ -95,7 +97,8 @@ public class PickTaskServiceTests
             new RouteOptimizerService(),
             new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()),
             new ContainerLifecycleService(_unitOfWorkMock.Object),
-            new PickTaskSettings());
+            new PickTaskSettings(),
+            _pickTaskNotifierMock.Object);
     }
 
     // Builds a single-item InProgress task: required 10, picked 0, missing 0,
@@ -1191,7 +1194,8 @@ public class PickTaskServiceTests
             new RouteOptimizerService(),
             new UnfulfillableUnitHandler(_unitOfWorkMock.Object, new DefectReplacementPlanner()),
             new ContainerLifecycleService(_unitOfWorkMock.Object),
-            new PickTaskSettings { ClaimTimeoutMinutes = 45 });
+            new PickTaskSettings { ClaimTimeoutMinutes = 45 },
+            _pickTaskNotifierMock.Object);
 
         DateTime? capturedCutoff = null;
         _pickTaskRepositoryMock

@@ -16,6 +16,7 @@ The app is deployed on an Azure VM behind Docker Compose and an nginx reverse pr
 - .NET 10 / ASP.NET Core Web API
 - EF Core 10 + Npgsql (PostgreSQL)
 - ASP.NET Core Identity + JWT bearer auth
+- SignalR — pushes a refetch to workers in a sector when a pick task becomes claimable there, instead of requiring a manual "Check again"
 
 **Frontend**
 - React 19 + TypeScript

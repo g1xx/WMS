@@ -10,6 +10,11 @@ public class UnfulfillableUnitResult
     // One entry per new PickTask created in a different active picking zone.
     public List<Guid> NewPickTaskIds { get; set; } = new();
 
+    // The sector of each task in NewPickTaskIds, in the same order — callers use
+    // this after their own SaveChangesAsync to notify only the sectors that
+    // actually got a new claimable task (see PickTaskService's notifier calls).
+    public List<string> NewPickTaskSectors { get; set; } = new();
+
     // Units that could not be sourced from any active picking zone (only bulk/reserve
     // stock left, or none at all) — written off against the order as ShortedQuantity.
     public int ShortageQuantity { get; set; }

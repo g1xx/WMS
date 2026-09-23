@@ -6,10 +6,12 @@ namespace Warehouse.Application.Services;
 public class OrderAllocationService : IOrderAllocationService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPickTaskNotifier _pickTaskNotifier;
 
-    public OrderAllocationService(IUnitOfWork unitOfWork)
+    public OrderAllocationService(IUnitOfWork unitOfWork, IPickTaskNotifier pickTaskNotifier)
     {
         _unitOfWork = unitOfWork;
+        _pickTaskNotifier = pickTaskNotifier;
     }
 
     public async Task<(bool IsAllocated, string? Message)> AllocateOrderAsync(Guid orderId)
@@ -92,6 +94,8 @@ public class OrderAllocationService : IOrderAllocationService
             pick.Stock.ReservedQuantity += pick.Quantity;
         }
 
+        var sectorsWithNewTasks = plannedPicks.Select(p => p.ZoneCode).Distinct().ToList();
+
         foreach (var zoneGroup in plannedPicks.GroupBy(p => p.ZoneCode))
         {
             var pickTask = new PickTask
@@ -113,6 +117,13 @@ public class OrderAllocationService : IOrderAllocationService
 
         order.Status = OrderStatus.Picking;
         await _unitOfWork.SaveChangesAsync();
+
+        // After the commit, not before: a picker who refetches on this signal must
+        // find the task actually there, not race the transaction that creates it.
+        foreach (var sector in sectorsWithNewTasks)
+        {
+            await _pickTaskNotifier.NotifySectorChangedAsync(sector);
+        }
 
         return (true, null);
     }
