@@ -6,9 +6,11 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using Warehouse.Api.Common;
+using Warehouse.Api.Hubs;
 using Warehouse.Api.Middleware;
 using Warehouse.Api.Seeding;
 using Warehouse.Application.Common;
+using Warehouse.Application.Interfaces;
 using Warehouse.Application.Services;
 using Warehouse.Infrastructure;
 
@@ -58,6 +60,9 @@ builder.Services.AddSingleton<IDefectReplacementPlanner, DefectReplacementPlanne
 builder.Services.AddScoped<IUnfulfillableUnitHandler, UnfulfillableUnitHandler>();
 // Only ever resolved by the --seed-demo-data path below, never during normal requests.
 builder.Services.AddScoped<DemoDataSeeder>();
+
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IPickTaskNotifier, SignalRPickTaskNotifier>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -109,6 +114,26 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+    };
+
+    // The browser's SignalR client can't attach an Authorization header to the
+    // WebSocket handshake itself, so it sends the token as ?access_token=... on
+    // the negotiate/connect requests instead (see PickTasks.tsx). Scoped to this
+    // hub's own path only — every other endpoint still requires a real header.
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/picktasks"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -195,5 +220,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<PickTaskHub>("/hubs/picktasks");
 
 app.Run();

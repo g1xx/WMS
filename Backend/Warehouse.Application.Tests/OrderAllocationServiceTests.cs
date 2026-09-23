@@ -12,6 +12,7 @@ public class OrderAllocationServiceTests
     private readonly Mock<IOrderRepository> _orderRepositoryMock;
     private readonly Mock<IStockRepository> _stockRepositoryMock;
     private readonly Mock<IPickTaskRepository> _pickTaskRepositoryMock;
+    private readonly Mock<IPickTaskNotifier> _pickTaskNotifierMock;
     private readonly OrderAllocationService _sut;
 
     public OrderAllocationServiceTests()
@@ -20,12 +21,13 @@ public class OrderAllocationServiceTests
         _orderRepositoryMock = new Mock<IOrderRepository>();
         _stockRepositoryMock = new Mock<IStockRepository>();
         _pickTaskRepositoryMock = new Mock<IPickTaskRepository>();
+        _pickTaskNotifierMock = new Mock<IPickTaskNotifier>();
 
         _unitOfWorkMock.Setup(u => u.Orders).Returns(_orderRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.Stocks).Returns(_stockRepositoryMock.Object);
         _unitOfWorkMock.Setup(u => u.PickTasks).Returns(_pickTaskRepositoryMock.Object);
 
-        _sut = new OrderAllocationService(_unitOfWorkMock.Object);
+        _sut = new OrderAllocationService(_unitOfWorkMock.Object, _pickTaskNotifierMock.Object);
     }
 
     // WarehouseCode + Sector + Floor drive the computed ZoneCode ("mp1") the service
