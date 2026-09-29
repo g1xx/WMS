@@ -51,6 +51,7 @@ public class DemoController : ControllerBase
         // around the demo, and a hardcoded list goes stale the moment someone claims one.
         var freeContainers = await _unitOfWork.Containers.GetFreeWithLocationAsync();
         var locations = await _unitOfWork.Locations.GetAllOrderedAsync();
+        var putawayContainers = await _unitOfWork.PutawayTasks.GetUnclaimedContainerSectorsAsync(SampleSize);
 
         // The supervisor badge barcode is the supervisor's IdentityUser Id (see
         // AuthController.SupervisorOverride), which is generated at seed time and is
@@ -98,6 +99,13 @@ public class DemoController : ControllerBase
                 .Take(SampleSize)
                 .ToList(),
 
+            // Containers with an unclaimed putaway task, each with the sector it has to be
+            // started from — a container scanned at Start Putaway in any other sector is
+            // rejected, so the sector is as much a part of the answer as the barcode.
+            PutawayContainers = putawayContainers
+                .Select(c => new { Barcode = c.ContainerBarcode, c.Sector })
+                .ToList(),
+
             ConveyorBarcodes = locations
                 .Where(l => l.Type == LocationType.ConveyorDrop)
                 .Select(l => l.AddressBarcode)
@@ -132,9 +140,22 @@ public class DemoController : ControllerBase
                     Steps = new[]
                     {
                         "Putaway needs a container with inbound work against it — create one from the Inbound Order Feed app, signed in as erp-feed.",
-                        "Back in the terminal, choose Start Putaway and enter sector mp1.",
-                        "Scan the container barcode from the receiving notice you just created.",
+                        "Back in the terminal, choose Start Putaway and enter the sector listed next to the container under 'Containers awaiting putaway'.",
+                        "Scan that container barcode (e.g. HSOD00042) — or the one from the receiving notice you just created.",
                         "For each line, enter a destination shelf location, then the product SKU. The panel lists valid shelf barcodes, and the screen suggests ranked destinations."
+                    }
+                },
+                new
+                {
+                    Title = "Relocate stock (Relokacja)",
+                    Steps = new[]
+                    {
+                        "From the main menu choose Relokacja — no sector is needed, everything is addressed by scanned location barcodes. It is also reachable mid-putaway from the Esc menu.",
+                        "Scan a source shelf location from the list above and press Check location.",
+                        "Scan a product SKU, or press Enter with the field empty to list what is stocked there and pick from it. Confirm the quantity — reserved units cannot be taken.",
+                        "Taken stock moves onto your personal TRANSIT location. Take more from the same shelf, or press Escape and choose 'Take from another location'.",
+                        "Press Escape and choose 'Start putting away'. For each carried SKU scan a target shelf location and confirm the quantity; a SKU can be split across several shelves.",
+                        "You cannot leave relocation while still carrying stock — put everything away first, then exit from the Escape menu."
                     }
                 },
                 new
