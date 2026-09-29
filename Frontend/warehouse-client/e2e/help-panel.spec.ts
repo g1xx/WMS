@@ -13,6 +13,7 @@ const helpPayload = {
         description: 'Paste this at the supervisor badge prompt.',
     },
     availableContainers: ['CONT-0001', 'CONT-0002'],
+    putawayContainers: [{ barcode: 'HSOD01231', sector: 'mp1' }],
     conveyorBarcodes: ['HZA301', 'HZA302'],
     shelfLocations: ['mp1000101a'],
     walkthroughs: [{ title: 'Run a pick task end to end', steps: ['Log in as admin.', 'Scan a container.'] }],
@@ -41,6 +42,7 @@ test.describe('Demo help panel', () => {
         await expect(page.getByRole('button', { name: '11111111-2222-3333-4444-555555555555' })).toBeVisible();
 
         await expect(page.getByRole('button', { name: 'CONT-0001' })).toBeVisible();
+        await expect(page.getByRole('button', { name: 'HSOD01231' })).toBeVisible();
         await expect(page.getByRole('button', { name: 'HZA302' })).toBeVisible();
         await expect(page.getByText('Run a pick task end to end')).toBeVisible();
 

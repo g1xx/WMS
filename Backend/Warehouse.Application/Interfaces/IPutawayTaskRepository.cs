@@ -24,5 +24,10 @@ public interface IPutawayTaskRepository
     // that haven't reached a terminal state yet?
     Task<bool> HasOtherActiveTasksForContainerAsync(Guid containerId, Guid excludeTaskId);
 
+    // Distinct (container barcode, sector) pairs that still have an unclaimed (New) task —
+    // i.e. exactly what a worker can scan at Start Putaway right now. Backs the demo help
+    // panel; InProgress is excluded because those belong to whoever claimed them.
+    Task<List<(string ContainerBarcode, string Sector)>> GetUnclaimedContainerSectorsAsync(int take);
+
     void Add(PutawayTask task);
 }

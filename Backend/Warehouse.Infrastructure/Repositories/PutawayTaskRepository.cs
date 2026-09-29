@@ -68,6 +68,20 @@ public class PutawayTaskRepository : IPutawayTaskRepository
                            && t.Status != PutawayTaskStatus.Completed && t.Status != PutawayTaskStatus.Canceled);
     }
 
+    public async Task<List<(string ContainerBarcode, string Sector)>> GetUnclaimedContainerSectorsAsync(int take)
+    {
+        var rows = await _context.PutawayTasks
+            .AsNoTracking()
+            .Where(t => t.Status == PutawayTaskStatus.New)
+            .Select(t => new { t.Container!.Barcode, t.Sector })
+            .Distinct()
+            .OrderBy(r => r.Barcode).ThenBy(r => r.Sector)
+            .Take(take)
+            .ToListAsync();
+
+        return rows.Select(r => (r.Barcode, r.Sector)).ToList();
+    }
+
     public void Add(PutawayTask task)
     {
         _context.PutawayTasks.Add(task);

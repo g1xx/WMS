@@ -24,10 +24,16 @@ interface Walkthrough {
     steps: string[];
 }
 
+interface PutawayContainer {
+    barcode: string;
+    sector: string;
+}
+
 interface DemoHelp {
     logins: DemoLogin[];
     supervisorBadge: { barcode: string | null; description: string };
     availableContainers: string[];
+    putawayContainers: PutawayContainer[];
     conveyorBarcodes: string[];
     shelfLocations: string[];
     walkthroughs: Walkthrough[];
@@ -151,6 +157,23 @@ export default function HelpPanel() {
                             values={help.availableContainers}
                             emptyNote="None free right now — every container is mid-task. Finish or cancel a task to release one."
                         />
+                    </Section>
+
+                    <Section title="Containers awaiting putaway">
+                        {help.putawayContainers.length === 0 ? (
+                            <p style={{ margin: 0, color: '#888', fontSize: '0.85rem' }}>
+                                None right now — create a receiving notice in the Inbound Order Feed app.
+                            </p>
+                        ) : (
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {help.putawayContainers.map(c => (
+                                    <span key={`${c.barcode}-${c.sector}`} style={{ whiteSpace: 'nowrap' }}>
+                                        <Copyable value={c.barcode} />
+                                        <span style={{ fontSize: '0.75rem', color: '#888', marginRight: '10px' }}>{c.sector}</span>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </Section>
 
                     <Section title="Conveyor barcodes">
