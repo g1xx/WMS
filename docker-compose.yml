@@ -45,6 +45,8 @@ services:
       retries: 10
 
   backend:
+    # Gotowy obraz z CI (GitHub Container Registry); `build` zostaje do lokalnego developmentu.
+    image: ghcr.io/g1xx/wms-backend:latest
     build:
       context: ./Backend
       dockerfile: Dockerfile
@@ -86,6 +88,8 @@ services:
       - "127.0.0.1:5124:8080"
 
   frontend:
+    # Gotowy obraz z CI (GitHub Container Registry); `build` zostaje do lokalnego developmentu.
+    image: ghcr.io/g1xx/wms-frontend:latest
     build:
       # Parent of both warehouse-client and TestOrderGenerator (the simulated inbound
       # order feed, served at /inbound/) — see Frontend/Dockerfile for why the context
