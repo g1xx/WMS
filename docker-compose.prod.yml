@@ -1,0 +1,10 @@
+# Nadpisanie dla serwera produkcyjnego (HTTPS). Włączane przez zmienną w .env na serwerze:
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
+# Lokalnie (bez tej zmiennej) docker compose używa tylko docker-compose.yml i działa po HTTP.
+services:
+  frontend:
+    ports:
+      - "443:443"   # dopisywane do "80:80" z docker-compose.yml (80 zostaje dla przekierowania na HTTPS)
+    volumes:
+      - ./Frontend/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
