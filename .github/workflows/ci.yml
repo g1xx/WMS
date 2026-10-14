@@ -1,0 +1,55 @@
+# CI: przy każdym push i pull requeście buduje backend i frontend,
+# uruchamia testy jednostkowe (xUnit) oraz sprawdza, czy obrazy Docker się budują.
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend – build i testy (.NET 10)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore WarehouseSystem.slnx
+      - name: Build
+        run: dotnet build WarehouseSystem.slnx --no-restore --configuration Release
+      - name: Testy (xUnit)
+        run: dotnet test WarehouseSystem.slnx --no-build --configuration Release --verbosity normal
+
+  frontend:
+    name: Frontend – lint i build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Frontend/warehouse-client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Frontend/warehouse-client/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  docker:
+    name: Obrazy Docker
+    runs-on: ubuntu-latest
+    needs: [ backend, frontend ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build backend image
+        run: docker build -t wms-backend ./Backend
+      - name: Build frontend image
+        run: docker build -t wms-frontend ./Frontend
