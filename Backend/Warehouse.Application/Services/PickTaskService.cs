@@ -276,6 +276,12 @@ namespace Warehouse.Application.Services
             if (station == null)
                 return Result<DispatchContainerResultDto>.Failure($"Conveyor '{dto.ConveyorBarcode}' was not found.", ResultErrorType.NotFound);
 
+            // A mis-scanned shelf or dock door must not complete the task — the loaded
+            // container would be recorded as sitting at that location instead of the conveyor.
+            if (station.Type != LocationType.ConveyorDrop)
+                return Result<DispatchContainerResultDto>.Failure(
+                    $"Location '{dto.ConveyorBarcode}' is not a conveyor (it is a {station.Type}). Scan a conveyor barcode.");
+
             // Result<Guid?>, not a bare Guid?, so the container-transition guard's
             // rejection (a real, reachable case — e.g. a duplicate/retried dispatch call
             // racing itself) can travel out of this transaction cleanly instead of being
@@ -507,7 +513,12 @@ namespace Warehouse.Application.Services
             {
                 taskItem.MissingQuantity += dto.MissingQuantity;
 
-                stock.PhysicalQuantity -= dto.MissingQuantity;
+                // The full shortfall is recorded on the task above, but only what the system
+                // still holds can come off the shelf — same cap as ReportDefectAsync. A cycle
+                // count may already have written these units off, and going negative violates
+                // CK_Stock_PhysicalQuantity_NonNegative.
+                var deductedQuantity = Math.Min(dto.MissingQuantity, stock.PhysicalQuantity);
+                stock.PhysicalQuantity -= deductedQuantity;
                 // Clamped like ReportDefectAsync's equivalent decrement — see PickItemAsync
                 // for why this must not go negative.
                 stock.ReservedQuantity = Math.Max(0, stock.ReservedQuantity - dto.MissingQuantity);
@@ -516,7 +527,7 @@ namespace Warehouse.Application.Services
                 {
                     ProductId = taskItem.ProductId,
                     LocationId = taskItem.LocationId,
-                    QuantityChange = -dto.MissingQuantity,
+                    QuantityChange = -deductedQuantity,
                     TransactionType = StockTransactionType.Missing,
                     UserId = workerId
                 });

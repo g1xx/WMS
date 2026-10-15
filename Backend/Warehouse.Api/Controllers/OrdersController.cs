@@ -50,9 +50,28 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateOrder(OrderCreateDto dto)
     {
+        // An order with no lines would be "allocated" straight into Picking with no pick
+        // tasks, and nothing could ever move it out of that status again.
+        if (dto.Items == null || dto.Items.Count == 0)
+        {
+            return BadRequest("An order must contain at least one item.");
+        }
+
         if (dto.Items.Any(i => i.RequiredQuantity <= 0))
         {
             return BadRequest("Required quantity must be greater than zero for every item.");
+        }
+
+        // Checked up front so the caller (typically the Integration feed) learns exactly
+        // which ids are wrong — otherwise the insert hits FK_OrderItems_Products_ProductId
+        // and surfaces as an unexplained 500.
+        var requestedProductIds = dto.Items.Select(i => i.ProductId).Distinct().ToList();
+        var existingProductIds = await _unitOfWork.Products.GetExistingIdsAsync(requestedProductIds);
+        var unknownProductIds = requestedProductIds.Where(id => !existingProductIds.Contains(id)).ToList();
+
+        if (unknownProductIds.Count > 0)
+        {
+            return BadRequest($"Unknown product id(s): {string.Join(", ", unknownProductIds)}.");
         }
 
         var newOrder = new Order
