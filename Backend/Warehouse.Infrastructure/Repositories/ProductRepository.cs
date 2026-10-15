@@ -30,6 +30,16 @@ public class ProductRepository : IProductRepository
             .ToDictionaryAsync(p => p.Sku);
     }
 
+    public async Task<HashSet<Guid>> GetExistingIdsAsync(List<Guid> ids)
+    {
+        var existing = await _context.Products
+            .Where(p => ids.Contains(p.Id))
+            .Select(p => p.Id)
+            .ToListAsync();
+
+        return existing.ToHashSet();
+    }
+
     public async Task<List<Product>> GetAllWithStocksAsync(DateTime? updatedSince = null)
     {
         var query = _context.Products

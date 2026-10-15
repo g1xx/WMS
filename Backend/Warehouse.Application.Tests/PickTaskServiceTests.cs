@@ -196,6 +196,34 @@ public class PickTaskServiceTests
     }
 
     [Fact]
+    public async Task ReportMissingItemAsync_SystemStockBelowMissingQuantity_CapsDeductionAtPhysicalStock()
+    {
+        // Arrange: BUG-01. A cycle count already took this shelf down to 1 unit while the
+        // task still needs 3. Reporting all 3 missing must record the full shortfall on the
+        // task, but only deduct what the system actually holds — taking PhysicalQuantity
+        // negative violates CK_Stock_PhysicalQuantity_NonNegative and surfaced as a 500.
+        var task = BuildTaskWithOneItem(requiredQuantity: 3);
+        var taskItem = task.Items.First();
+        var stock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 1, ReservedQuantity = 1 };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(stock);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, BuildMissingItemDto(3), "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        taskItem.MissingQuantity.Should().Be(3);
+        stock.PhysicalQuantity.Should().Be(0);
+        stock.ReservedQuantity.Should().Be(0);
+
+        _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
+            t.QuantityChange == -1 &&
+            t.TransactionType == StockTransactionType.Missing)), Times.Once);
+    }
+
+    [Fact]
     public async Task ReportMissingItemAsync_AllItemsFullyAccountedFor_DoesNotCompleteTask()
     {
         // Arrange: one item, required 10, already picked 7 — reporting the last 3 as
@@ -530,7 +558,7 @@ public class PickTaskServiceTests
         var task = BuildTaskWithOneItem(assignedWorkerId: "worker-1", pickedQuantity: 1);
         task.ContainerId = Guid.NewGuid();
         var container = new Container { Id = task.ContainerId.Value, Barcode = "CONT-1", Status = ContainerStatus.InProgress };
-        var station = new Location { Id = Guid.NewGuid(), AddressBarcode = "CONV-1" };
+        var station = new Location { Id = Guid.NewGuid(), AddressBarcode = "CONV-1", Type = LocationType.ConveyorDrop };
 
         _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
         _containerRepositoryMock.Setup(r => r.GetByIdAsync(task.ContainerId!.Value)).ReturnsAsync(container);
@@ -878,7 +906,7 @@ public class PickTaskServiceTests
 
         var order = new Order { Id = orderId, Status = OrderStatus.Picking, Items = orderItems };
         var container = new Container { Id = task.ContainerId!.Value, Barcode = "CONT-1", Status = ContainerStatus.InProgress };
-        var station = new Location { Id = Guid.NewGuid(), AddressBarcode = "CONV-1" };
+        var station = new Location { Id = Guid.NewGuid(), AddressBarcode = "CONV-1", Type = LocationType.ConveyorDrop };
 
         return (order, task, container, station, lines);
     }
@@ -1085,6 +1113,34 @@ public class PickTaskServiceTests
         // Rejected before any state moved: the task is still the worker's to finish.
         task.Status.Should().Be(PickTaskStatus.InProgress);
         container.Status.Should().Be(ContainerStatus.InProgress);
+        order.Status.Should().Be(OrderStatus.Picking);
+    }
+
+    [Fact]
+    public async Task DispatchContainerAsync_StationIsNotAConveyor_IsRejectedWithoutMovingAnything()
+    {
+        // BUG-04: any existing location barcode used to be accepted as the conveyor, so a
+        // mis-scanned shelf completed the task and recorded the loaded tote on that shelf.
+        var (order, task, container, station, _) = BuildDispatchScenario(new[] { true }, quantityPerItem: 10);
+        task.Items.First().PickedQuantity = 10;
+        station.Type = LocationType.Shelf;
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.Id)).ReturnsAsync(task);
+        _orderRepositoryMock.Setup(r => r.GetByIdWithItemsAsync(task.OrderId)).ReturnsAsync(order);
+        _containerRepositoryMock.Setup(r => r.GetByIdAsync(container.Id)).ReturnsAsync(container);
+        _containerRepositoryMock.Setup(r => r.LockForUpdateAsync(container.Id)).ReturnsAsync(container.Status);
+        _locationRepositoryMock.Setup(r => r.GetByBarcodeAsync(station.AddressBarcode)).ReturnsAsync(station);
+
+        var result = await _sut.DispatchContainerAsync(
+            task.Id, new DispatchContainerDto { ContainerBarcode = "CONT-1", ConveyorBarcode = "CONV-1" }, "worker-1");
+
+        result.IsSuccess.Should().BeFalse();
+        result.ErrorType.Should().Be(ResultErrorType.BadRequest);
+        result.Error.Should().Be("Location 'CONV-1' is not a conveyor (it is a Shelf). Scan a conveyor barcode.");
+
+        task.Status.Should().Be(PickTaskStatus.InProgress);
+        container.Status.Should().Be(ContainerStatus.InProgress);
+        container.LocationId.Should().BeNull();
         order.Status.Should().Be(OrderStatus.Picking);
     }
 
