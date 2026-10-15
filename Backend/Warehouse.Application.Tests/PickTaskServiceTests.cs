@@ -196,6 +196,34 @@ public class PickTaskServiceTests
     }
 
     [Fact]
+    public async Task ReportMissingItemAsync_SystemStockBelowMissingQuantity_CapsDeductionAtPhysicalStock()
+    {
+        // Arrange: BUG-01. A cycle count already took this shelf down to 1 unit while the
+        // task still needs 3. Reporting all 3 missing must record the full shortfall on the
+        // task, but only deduct what the system actually holds — taking PhysicalQuantity
+        // negative violates CK_Stock_PhysicalQuantity_NonNegative and surfaced as a 500.
+        var task = BuildTaskWithOneItem(requiredQuantity: 3);
+        var taskItem = task.Items.First();
+        var stock = new Stock { ProductId = taskItem.ProductId, LocationId = taskItem.LocationId, PhysicalQuantity = 1, ReservedQuantity = 1 };
+
+        _pickTaskRepositoryMock.Setup(r => r.GetByIdWithItemsAndProductLocationAsync(task.Id)).ReturnsAsync(task);
+        _stockRepositoryMock.Setup(r => r.GetByProductAndLocationAsync(taskItem.ProductId, taskItem.LocationId)).ReturnsAsync(stock);
+
+        // Act
+        var result = await _sut.ReportMissingItemAsync(task.Id, BuildMissingItemDto(3), "supervisor-1");
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        taskItem.MissingQuantity.Should().Be(3);
+        stock.PhysicalQuantity.Should().Be(0);
+        stock.ReservedQuantity.Should().Be(0);
+
+        _stockTransactionRepositoryMock.Verify(r => r.Add(It.Is<StockTransaction>(t =>
+            t.QuantityChange == -1 &&
+            t.TransactionType == StockTransactionType.Missing)), Times.Once);
+    }
+
+    [Fact]
     public async Task ReportMissingItemAsync_AllItemsFullyAccountedFor_DoesNotCompleteTask()
     {
         // Arrange: one item, required 10, already picked 7 — reporting the last 3 as

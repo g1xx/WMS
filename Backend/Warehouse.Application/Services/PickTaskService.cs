@@ -507,7 +507,12 @@ namespace Warehouse.Application.Services
             {
                 taskItem.MissingQuantity += dto.MissingQuantity;
 
-                stock.PhysicalQuantity -= dto.MissingQuantity;
+                // The full shortfall is recorded on the task above, but only what the system
+                // still holds can come off the shelf — same cap as ReportDefectAsync. A cycle
+                // count may already have written these units off, and going negative violates
+                // CK_Stock_PhysicalQuantity_NonNegative.
+                var deductedQuantity = Math.Min(dto.MissingQuantity, stock.PhysicalQuantity);
+                stock.PhysicalQuantity -= deductedQuantity;
                 // Clamped like ReportDefectAsync's equivalent decrement — see PickItemAsync
                 // for why this must not go negative.
                 stock.ReservedQuantity = Math.Max(0, stock.ReservedQuantity - dto.MissingQuantity);
@@ -516,7 +521,7 @@ namespace Warehouse.Application.Services
                 {
                     ProductId = taskItem.ProductId,
                     LocationId = taskItem.LocationId,
-                    QuantityChange = -dto.MissingQuantity,
+                    QuantityChange = -deductedQuantity,
                     TransactionType = StockTransactionType.Missing,
                     UserId = workerId
                 });
