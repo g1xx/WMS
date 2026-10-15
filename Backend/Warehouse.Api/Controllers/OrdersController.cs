@@ -62,6 +62,18 @@ public class OrdersController : ControllerBase
             return BadRequest("Required quantity must be greater than zero for every item.");
         }
 
+        // Checked up front so the caller (typically the Integration feed) learns exactly
+        // which ids are wrong — otherwise the insert hits FK_OrderItems_Products_ProductId
+        // and surfaces as an unexplained 500.
+        var requestedProductIds = dto.Items.Select(i => i.ProductId).Distinct().ToList();
+        var existingProductIds = await _unitOfWork.Products.GetExistingIdsAsync(requestedProductIds);
+        var unknownProductIds = requestedProductIds.Where(id => !existingProductIds.Contains(id)).ToList();
+
+        if (unknownProductIds.Count > 0)
+        {
+            return BadRequest($"Unknown product id(s): {string.Join(", ", unknownProductIds)}.");
+        }
+
         var newOrder = new Order
         {
             OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 6).ToUpper()}",
