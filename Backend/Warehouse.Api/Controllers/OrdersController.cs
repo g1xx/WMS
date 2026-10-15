@@ -50,6 +50,13 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> CreateOrder(OrderCreateDto dto)
     {
+        // An order with no lines would be "allocated" straight into Picking with no pick
+        // tasks, and nothing could ever move it out of that status again.
+        if (dto.Items == null || dto.Items.Count == 0)
+        {
+            return BadRequest("An order must contain at least one item.");
+        }
+
         if (dto.Items.Any(i => i.RequiredQuantity <= 0))
         {
             return BadRequest("Required quantity must be greater than zero for every item.");
