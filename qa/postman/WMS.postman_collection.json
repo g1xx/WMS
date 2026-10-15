@@ -1,0 +1,2771 @@
+{
+  "info": {
+    "name": "WMS API checks",
+    "description": "API checks for the Warehouse Management System. Set adminUsername/adminPassword, integrationUsername/integrationPassword, testUserPassword and baseUrl, then run the collection in order (Collection Runner). Each run creates its own users, product, shelf, containers and pick zone. See qa/README.md and qa/api-tests.md.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "00 Setup & Auth",
+      "item": [
+        {
+          "name": "PM-01 Login (Admin) - saves token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// New run id on every collection run, so SKUs, users, barcodes and the pick zone are unique",
+                  "// and runs do not collide with each other or with seeded demo data.",
+                  "const runId = Math.random().toString(36).substring(2, 8);",
+                  "pm.collectionVariables.set(\"runId\", runId);",
+                  "pm.collectionVariables.set(\"sector\", \"q\" + runId);                 // Location.Sector",
+                  "pm.collectionVariables.set(\"zone\", \"mq\" + runId + \"9\");             // ZoneCode = WarehouseCode + Sector + Floor",
+                  "pm.collectionVariables.set(\"shelfBarcode\", \"qa-shelf-\" + runId);",
+                  "pm.collectionVariables.set(\"productSku\", \"QA-SKU-\" + runId.toUpperCase());",
+                  "pm.collectionVariables.set(\"containerBarcode\", \"QA-C-\" + runId.toUpperCase());",
+                  "pm.collectionVariables.set(\"putawayContainer\", \"QA-PA-\" + runId.toUpperCase());",
+                  "pm.collectionVariables.set(\"workerUsername\", \"qa_w_\" + runId);",
+                  "pm.collectionVariables.set(\"brigadierUsername\", \"qa_b_\" + runId);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Response has a JWT token\", function () {",
+                  "    pm.expect(json.token).to.be.a(\"string\");",
+                  "    pm.expect(json.token.split(\".\").length).to.eql(3);",
+                  "});",
+                  "pm.collectionVariables.set(\"token\", json.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-02 Login - wrong password (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"wrong-password-123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Body contains: Invalid username or password.\", function () { pm.expect(pm.response.text()).to.include(\"Invalid username or password.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-03 Login - unknown user (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"qa_nobody_{{runId}}\",\n  \"password\": \"Whatever123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Body contains: Invalid username or password.\", function () { pm.expect(pm.response.text()).to.include(\"Invalid username or password.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-04 Register Worker (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{workerUsername}}\",\n  \"email\": \"{{workerUsername}}@test.local\",\n  \"password\": \"{{testUserPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Message confirms Worker creation\", function () { pm.expect(json.message).to.eql(\"Worker successfully created\"); });",
+                  "pm.test(\"userBarcode is returned\", function () { pm.expect(json.userBarcode).to.be.a(\"string\").and.not.empty; });",
+                  "pm.collectionVariables.set(\"workerBadge\", json.userBarcode);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-04b Login (Worker) - saves workerToken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{workerUsername}}\",\n  \"password\": \"{{testUserPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set(\"workerToken\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-05 Register Brigadier (Admin) - saves brigadierBadge",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/register-brigadier",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "register-brigadier"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{brigadierUsername}}\",\n  \"email\": \"{{brigadierUsername}}@test.local\",\n  \"password\": \"{{testUserPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Message confirms Brigadier creation\", function () { pm.expect(json.message).to.eql(\"Brigadier successfully created\"); });",
+                  "pm.collectionVariables.set(\"brigadierBadge\", json.userBarcode);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-05b Login (Integration) - saves integrationToken",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{integrationUsername}}\",\n  \"password\": \"{{integrationPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.collectionVariables.set(\"integrationToken\", pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Run first. PM-01 generates a new runId and logs in as Admin; the Admin token is the collection-level Bearer token."
+    },
+    {
+      "name": "01 Products & Stock",
+      "item": [
+        {
+          "name": "PM-06 Create product with location (saves productId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Inventory/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Inventory",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA product {{runId}}\",\n  \"sku\": \"{{productSku}}\",\n  \"price\": 10.0,\n  \"weightKg\": 1.0,\n  \"lengthCm\": 10,\n  \"widthCm\": 10,\n  \"heightCm\": 10,\n  \"baseUnit\": 0,\n  \"itemPerPackage\": 1,\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"sector\": \"{{sector}}\",\n  \"warehouseCode\": \"m\",\n  \"floor\": 9,\n  \"initialQuantity\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Product id returned\", function () { pm.expect(json.id).to.be.a(\"string\").and.not.empty; });",
+                  "pm.test(\"SKU matches\", function () { pm.expect(json.sku).to.eql(pm.collectionVariables.get(\"productSku\")); });",
+                  "pm.test(\"sizeCategory present\", function () { pm.expect(json).to.have.property(\"sizeCategory\"); });",
+                  "pm.collectionVariables.set(\"productId\", json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-06b Create free container",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Containers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Containers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"barcode\": \"{{containerBarcode}}\",\n  \"type\": \"Tote\",\n  \"status\": \"Available\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Container is Available\", function () { pm.expect(json.status).to.eql(\"Available\"); });",
+                  "pm.test(\"Barcode matches\", function () { pm.expect(json.barcode).to.eql(pm.collectionVariables.get(\"containerBarcode\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-07 Create product - duplicate SKU (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Inventory/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Inventory",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"QA product {{runId}}\",\n  \"sku\": \"{{productSku}}\",\n  \"price\": 10.0,\n  \"weightKg\": 1.0,\n  \"lengthCm\": 10,\n  \"widthCm\": 10,\n  \"heightCm\": 10,\n  \"baseUnit\": 0,\n  \"itemPerPackage\": 1,\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"sector\": \"{{sector}}\",\n  \"warehouseCode\": \"m\",\n  \"floor\": 9,\n  \"initialQuantity\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });",
+                  "pm.test(\"Body contains: already exists\", function () { pm.expect(pm.response.text()).to.include(\"already exists\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-08 Create product - empty name (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Inventory/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Inventory",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"sku\": \"QA-EMPTY-{{runId}}\",\n  \"price\": 10.0,\n  \"weightKg\": 1.0,\n  \"lengthCm\": 10,\n  \"widthCm\": 10,\n  \"heightCm\": 10,\n  \"baseUnit\": 0,\n  \"itemPerPackage\": 1,\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"sector\": \"{{sector}}\",\n  \"warehouseCode\": \"m\",\n  \"floor\": 9,\n  \"initialQuantity\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Name and SKU are required.\", function () { pm.expect(pm.response.text()).to.include(\"Name and SKU are required.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-09 Get products (staff view)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Products"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Response is an array\", function () { pm.expect(json).to.be.an(\"array\"); });",
+                  "const p = json.find(x => x.sku === pm.collectionVariables.get(\"productSku\"));",
+                  "pm.test(\"Created product is listed with stock at the shelf\", function () {",
+                  "    pm.expect(p).to.not.be.undefined;",
+                  "    pm.expect(p.stocks.map(s => s.locationBarcode)).to.include(pm.collectionVariables.get(\"shelfBarcode\"));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-10 Get products for ordering (Integration)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Products/for-ordering",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Products",
+                "for-ordering"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{integrationToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const p = json.find(x => x.sku === pm.collectionVariables.get(\"productSku\"));",
+                  "pm.test(\"Product listed with availableQuantity\", function () {",
+                  "    pm.expect(p).to.not.be.undefined;",
+                  "    pm.expect(p.availableQuantity).to.be.a(\"number\");",
+                  "});",
+                  "pm.test(\"No location data exposed\", function () { pm.expect(p).to.not.have.property(\"stocks\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-11 Receive stock - quantity 0 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Stocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Stocks"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"quantity\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Quantity must be greater than zero.\", function () { pm.expect(pm.response.text()).to.include(\"Quantity must be greater than zero.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-12 Receive stock - unknown location (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Stocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Stocks"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"locationBarcode\": \"QA-NOPE-{{runId}}\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: was not found in the system.\", function () { pm.expect(pm.response.text()).to.include(\"was not found in the system.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-13 Adjust stock - delta 0 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Inventory/adjust-stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Inventory",
+                "adjust-stock"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"quantityDelta\": 0,\n  \"reason\": \"QA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Quantity delta must not be zero.\", function () { pm.expect(pm.response.text()).to.include(\"Quantity delta must not be zero.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-14 Adjust stock - +5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Inventory/adjust-stock",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Inventory",
+                "adjust-stock"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"quantityDelta\": 5,\n  \"reason\": \"QA cycle count\",\n  \"confirmReservationImpact\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"New physical quantity is 15\", function () { pm.expect(json.newPhysicalQuantity).to.eql(15); });",
+                  "pm.test(\"No reservation reduced\", function () { pm.expect(json.reservedQuantityReduced).to.eql(0); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 Orders",
+      "item": [
+        {
+          "name": "PM-15 Create order - allocated (saves orderId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"QA customer\",\n  \"destinationAddress\": \"QA street 1\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"requiredQuantity\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Order is allocated\", function () { pm.expect(json.isAllocated).to.eql(true); });",
+                  "pm.test(\"Order status is Picking\", function () { pm.expect(json.order.status).to.eql(\"Picking\"); });",
+                  "pm.test(\"Order number format ORD-yyyyMMdd-XXXXXX\", function () { pm.expect(json.order.orderNumber).to.match(/^ORD-\\d{8}-[0-9A-F]{6}$/); });",
+                  "pm.collectionVariables.set(\"orderId\", json.order.id);",
+                  "pm.collectionVariables.set(\"orderNumber\", json.order.orderNumber);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-16 Create order - quantity 0 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"QA\",\n  \"destinationAddress\": \"QA\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"requiredQuantity\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Required quantity must be greater than zero for every item.\", function () { pm.expect(pm.response.text()).to.include(\"Required quantity must be greater than zero for every item.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-17 Create order - shortage (AwaitingReplenishment)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"QA\",\n  \"destinationAddress\": \"QA\",\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"requiredQuantity\": 100000\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Order is NOT allocated\", function () { pm.expect(json.isAllocated).to.eql(false); });",
+                  "pm.test(\"Status is AwaitingReplenishment\", function () { pm.expect(json.order.status).to.eql(\"AwaitingReplenishment\"); });",
+                  "pm.test(\"Allocation message reports shortage\", function () { pm.expect(json.allocationMessage).to.include(\"Shortage detected.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-18 Get order by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders",
+                "{{orderId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Id matches\", function () { pm.expect(json.id).to.eql(pm.collectionVariables.get(\"orderId\")); });",
+                  "pm.test(\"Has one item with requiredQuantity 2\", function () {",
+                  "    pm.expect(json.items).to.have.lengthOf(1);",
+                  "    pm.expect(json.items[0].requiredQuantity).to.eql(2);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-19 Get order - unknown id (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders/00000000-0000-0000-0000-000000000001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders",
+                "00000000-0000-0000-0000-000000000001"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Body contains: not found\", function () { pm.expect(pm.response.text()).to.include(\"not found\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Picking",
+      "item": [
+        {
+          "name": "PM-20 Next task - no sector (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/next",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "next"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: A sector is required to request the next task.\", function () { pm.expect(pm.response.text()).to.include(\"A sector is required to request the next task.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-21 Next task in test zone (saves pickTaskId)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/next?sector={{zone}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "next"
+              ],
+              "query": [
+                {
+                  "key": "sector",
+                  "value": "{{zone}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Task is New and in the test zone\", function () {",
+                  "    pm.expect(json.status).to.eql(\"New\");",
+                  "    pm.expect(json.sector).to.eql(pm.collectionVariables.get(\"zone\"));",
+                  "});",
+                  "pm.test(\"Task has one line for 2 units\", function () {",
+                  "    pm.expect(json.items).to.have.lengthOf(1);",
+                  "    pm.expect(json.items[0].productSku).to.eql(pm.collectionVariables.get(\"productSku\"));",
+                  "    pm.expect(json.items[0].requiredQuantity).to.eql(2);",
+                  "});",
+                  "pm.collectionVariables.set(\"pickTaskId\", json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-22 Start task - unknown container (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "start"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"QA-NOPE-{{runId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: not found\", function () { pm.expect(pm.response.text()).to.include(\"not found\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-23 Start task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "start"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"{{containerBarcode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Body contains: Picking successfully started\", function () { pm.expect(pm.response.text()).to.include(\"Picking successfully started\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-24 Pick - quantity 0 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/pick",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "pick"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Quantity must be greater than zero.\", function () { pm.expect(pm.response.text()).to.include(\"Quantity must be greater than zero.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25a Pick - over-pick 3 of 2 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/pick",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "pick"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Over-pick! You only need to pick 2 more units\", function () { pm.expect(pm.response.text()).to.include(\"Over-pick! You only need to pick 2 more units\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25b Pick - 1 unit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/pick",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "pick"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Body contains: Successfully picked: 1 units.\", function () { pm.expect(pm.response.text()).to.include(\"Successfully picked: 1 units.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25c Report missing - over-report (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/report-missing",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "report-missing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"missingQuantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Over-report! Only 1 more unit(s) are outstanding on this item.\", function () { pm.expect(pm.response.text()).to.include(\"Over-report! Only 1 more unit(s) are outstanding on this item.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25d Report missing - 1 unit (Admin = supervisor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/report-missing",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "report-missing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"missingQuantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Message confirms write-off\", function () {",
+                  "    pm.expect(pm.response.json().message).to.include(\"1 unit(s) marked missing for this item.\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25e Dispatch - wrong container (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/dispatch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "dispatch"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"QA-OTHER-{{runId}}\",\n  \"conveyorBarcode\": \"{{conveyorBarcode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Wrong container barcode!\", function () { pm.expect(pm.response.text()).to.include(\"Wrong container barcode!\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25f Dispatch - unknown conveyor (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/dispatch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "dispatch"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"{{containerBarcode}}\",\n  \"conveyorBarcode\": \"QA-NOPE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Body contains: Conveyor 'QA-NOPE' was not found.\", function () { pm.expect(pm.response.text()).to.include(\"Conveyor 'QA-NOPE' was not found.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25g Dispatch - valid",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/dispatch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "dispatch"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"{{containerBarcode}}\",\n  \"conveyorBarcode\": \"{{conveyorBarcode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Dispatch message\", function () {",
+                  "    pm.expect(pm.response.json().message).to.eql(\"Container successfully verified and sent to the conveyor.\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-25h Order is ShortShipped after dispatch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders/{{orderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders",
+                "{{orderId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Order status is ShortShipped\", function () { pm.expect(json.status).to.eql(\"ShortShipped\"); });",
+                  "pm.test(\"1 picked, 1 shorted\", function () {",
+                  "    pm.expect(json.items[0].pickedQuantity).to.eql(1);",
+                  "    pm.expect(json.items[0].shortedQuantity).to.eql(1);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-26 Allocate order not in New status (409)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders/{{orderId}}/allocate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders",
+                "{{orderId}}",
+                "allocate"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () { pm.response.to.have.status(409); });",
+                  "pm.test(\"Body contains: expected New\", function () { pm.expect(pm.response.text()).to.include(\"expected New\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Runs one complete pick task in the run's own zone: start, pick, shortage write-off, dispatch."
+    },
+    {
+      "name": "04 Security (401 / 403)",
+      "item": [
+        {
+          "name": "PM-27 Orders without token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-28 Orders with tampered token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Orders"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tamperedToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Change the FIRST character of the signature (the last character may only carry padding bits).",
+                  "const parts = (pm.collectionVariables.get(\"token\") || \"a.b.c\").split(\".\");",
+                  "const sig = parts[2] || \"A\";",
+                  "parts[2] = (sig[0] === \"A\" ? \"B\" : \"A\") + sig.slice(1);",
+                  "pm.collectionVariables.set(\"tamperedToken\", parts.join(\".\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-29 Products for-ordering as Admin (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Products/for-ordering",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Products",
+                "for-ordering"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-30 Register as Worker (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"qa_x_{{runId}}\",\n  \"email\": \"qa_x_{{runId}}@test.local\",\n  \"password\": \"{{testUserPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-31 Pick tasks as Integration (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{integrationToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-32 Stocks as Integration (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Stocks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Stocks"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{integrationToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-33 Create putaway task as Admin (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"QA-X-{{runId}}\",\n  \"sector\": \"{{zone}}\",\n  \"items\": [\n    {\n      \"productSku\": \"{{productSku}}\",\n      \"expectedQuantity\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-34 Supervisor override - Worker with Brigadier badge (200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/supervisor-override",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "supervisor-override"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"badgeBarcode\": \"{{brigadierBadge}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const token = pm.response.json().token;",
+                  "pm.test(\"Elevated token returned\", function () { pm.expect(token).to.be.a(\"string\").and.not.empty; });",
+                  "let b64 = token.split(\".\")[1].replace(/-/g, \"+\").replace(/_/g, \"/\");",
+                  "while (b64.length % 4) { b64 += \"=\"; }",
+                  "const payload = JSON.parse(atob(b64));",
+                  "const roleClaim = payload[\"http://schemas.microsoft.com/ws/2008/06/identity/claims/role\"] || payload.role;",
+                  "pm.test(\"Token carries the Brigadier role\", function () { pm.expect([].concat(roleClaim)).to.include(\"Brigadier\"); });",
+                  "pm.test(\"Token lifetime is about 2 minutes\", function () {",
+                  "    const secondsLeft = payload.exp - Math.floor(Date.now() / 1000);",
+                  "    pm.expect(secondsLeft).to.be.within(60, 130);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-35 Supervisor override - invalid badge (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/supervisor-override",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "supervisor-override"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"badgeBarcode\": \"not-a-guid\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Body contains: Invalid badge or missing permissions.\", function () { pm.expect(pm.response.text()).to.include(\"Invalid badge or missing permissions.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-36 Report missing as Worker (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PickTask/{{pickTaskId}}/report-missing",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PickTask",
+                "{{pickTaskId}}",
+                "report-missing"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"missingQuantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", function () { pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 Putaway",
+      "item": [
+        {
+          "name": "PM-37 Create receiving notice (Integration, saves putawayTaskId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"{{putawayContainer}}\",\n  \"sector\": \"{{zone}}\",\n  \"items\": [\n    {\n      \"productSku\": \"{{productSku}}\",\n      \"expectedQuantity\": 3\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{integrationToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Task is New\", function () { pm.expect(json.status).to.eql(\"New\"); });",
+                  "pm.test(\"Expected quantity is 3\", function () { pm.expect(json.items[0].expectedQuantity).to.eql(3); });",
+                  "pm.collectionVariables.set(\"putawayTaskId\", json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-38 Create receiving notice - no items (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"QA-PA2-{{runId}}\",\n  \"sector\": \"{{zone}}\",\n  \"items\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{integrationToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: At least one expected item is required.\", function () { pm.expect(pm.response.text()).to.include(\"At least one expected item is required.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-39 Validate container - other sector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask/validate-container",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask",
+                "validate-container"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"{{putawayContainer}}\",\n  \"sector\": \"mp1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Not valid in mp1\", function () { pm.expect(json.isValid).to.eql(false); });",
+                  "pm.test(\"Points to the real sector\", function () { pm.expect(json.containerSector).to.eql(pm.collectionVariables.get(\"zone\")); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-40 Start putaway",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask",
+                "start"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"containerBarcode\": \"{{putawayContainer}}\",\n  \"sector\": \"{{zone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Task is InProgress\", function () { pm.expect(pm.response.json().status).to.eql(\"InProgress\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-41 Confirm item - over-scan (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask/{{putawayTaskId}}/confirm-item",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask",
+                "{{putawayTaskId}}",
+                "confirm-item"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                  "pm.test(\"Body contains: Over-scan! Only 3 more unit(s) are expected here.\", function () { pm.expect(pm.response.text()).to.include(\"Over-scan! Only 3 more unit(s) are expected here.\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-42 Confirm item - 3 units",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/PutawayTask/{{putawayTaskId}}/confirm-item",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "PutawayTask",
+                "{{putawayTaskId}}",
+                "confirm-item"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"Task is Completed\", function () { pm.expect(json.status).to.eql(\"Completed\"); });",
+                  "pm.test(\"3 units put away\", function () { pm.expect(json.items[0].putAwayQuantity).to.eql(3); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 Relocation",
+      "item": [
+        {
+          "name": "PM-43 Relocation state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Relocation/state",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Relocation",
+                "state"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"State has transitBarcode, carriedItems, canExit\", function () {",
+                  "    pm.expect(json).to.have.property(\"transitBarcode\");",
+                  "    pm.expect(json.carriedItems).to.be.an(\"array\");",
+                  "    pm.expect(json.canExit).to.be.a(\"boolean\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-44 Take 1 unit from shelf",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Relocation/take",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Relocation",
+                "take"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sourceLocationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const line = json.carriedItems.find(x => x.productSku === pm.collectionVariables.get(\"productSku\"));",
+                  "pm.test(\"SKU is carried\", function () { pm.expect(line).to.not.be.undefined; pm.expect(line.physicalQuantity).to.eql(1); });",
+                  "pm.test(\"Cannot exit while carrying\", function () { pm.expect(json.canExit).to.eql(false); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-45 Put 1 unit back on shelf",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Relocation/putaway",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Relocation",
+                "putaway"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetLocationBarcode\": \"{{shelfBarcode}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "const line = json.carriedItems.find(x => x.productSku === pm.collectionVariables.get(\"productSku\") && x.physicalQuantity > 0);",
+                  "pm.test(\"SKU no longer carried\", function () { pm.expect(line).to.be.undefined; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-46 Take from unknown location (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Relocation/take",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Relocation",
+                "take"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sourceLocationBarcode\": \"QA-NOPE-{{runId}}\",\n  \"productSku\": \"{{productSku}}\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Body contains: was not found.\", function () { pm.expect(pm.response.text()).to.include(\"was not found.\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 Info lookup",
+      "item": [
+        {
+          "name": "PM-47 Product info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Info/product/{{productSku}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Info",
+                "product",
+                "{{productSku}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"SKU matches\", function () { pm.expect(json.sku).to.eql(pm.collectionVariables.get(\"productSku\")); });",
+                  "pm.test(\"Has locations and carriedByWorkersQuantity\", function () {",
+                  "    pm.expect(json.locations).to.be.an(\"array\");",
+                  "    pm.expect(json.carriedByWorkersQuantity).to.be.a(\"number\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PM-48 Product info - unknown SKU (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Info/product/QA-NOPE-{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Info",
+                "product",
+                "QA-NOPE-{{runId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                  "pm.test(\"Body contains: was not found.\", function () { pm.expect(pm.response.text()).to.include(\"was not found.\"); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5124",
+      "type": "string"
+    },
+    {
+      "key": "adminUsername",
+      "value": "<ADMIN_USER>",
+      "type": "string"
+    },
+    {
+      "key": "adminPassword",
+      "value": "<ADMIN_PASSWORD>",
+      "type": "string"
+    },
+    {
+      "key": "integrationUsername",
+      "value": "<INTEGRATION_USER>",
+      "type": "string"
+    },
+    {
+      "key": "integrationPassword",
+      "value": "<INTEGRATION_PASSWORD>",
+      "type": "string"
+    },
+    {
+      "key": "testUserPassword",
+      "value": "<STRONG_PASSWORD_FOR_NEW_TEST_USERS>",
+      "type": "string"
+    },
+    {
+      "key": "conveyorBarcode",
+      "value": "HZA301",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "integrationToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tamperedToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "runId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sector",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "zone",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "shelfBarcode",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productSku",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "containerBarcode",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "putawayContainer",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workerUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "brigadierUsername",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "workerBadge",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "brigadierBadge",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderNumber",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pickTaskId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "putawayTaskId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
